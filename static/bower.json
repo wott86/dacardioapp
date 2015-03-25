@@ -1,0 +1,22 @@
+{
+  "name": "dacardioapp",
+  "version": "0.0.0",
+  "homepage": "https://github.com/Sunno/dacardioapp",
+  "authors": [
+    "Alvaro Marquina <thesunno@gmail.com>"
+  ],
+  "keywords": [
+    "cardio"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "~3.3.4"
+  }
+}
