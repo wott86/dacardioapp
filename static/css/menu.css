@@ -20,7 +20,8 @@
 #custom-bootstrap-menu.navbar-default .navbar-nav>.active>a:hover,
 #custom-bootstrap-menu.navbar-default .navbar-nav>.active>a:focus {
     color: rgba(0, 0, 0, 1);
-    background-color: rgba(92, 150, 184, 1);
+    background-color: #FFD6A4;
+    background-image: none;
 }
 #custom-bootstrap-menu.navbar-default .navbar-toggle {
     border-color: #5c96b8;
