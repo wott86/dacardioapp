@@ -1,14 +1,15 @@
+{% load staticfiles %}
 <!DOCTYPE html>
 <html>
 <head lang="es">
     <meta charset="UTF-8">
     <title>Da Cardio App</title>
-    <link rel="stylesheet" href="../static/bower_components/bootstrap/dist/css/bootstrap.min.css"/>
-    <link rel="stylesheet" href="../static/bower_components/bootstrap/dist/css/bootstrap-theme.min.css"/>
-    <script src="../static/bower_components/jquery/dist/jquery.min.js"></script>
-    <script src="../static/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" href="../static/css/main.css"/>
-    <link rel="stylesheet" href="../static/css/menu.css"/>
+    <link rel="stylesheet" href="{% static "bower_components/bootstrap/dist/css/bootstrap.min.css" %}"/>
+    <link rel="stylesheet" href="{% static "bower_components/bootstrap/dist/css/bootstrap-theme.min.css" %}"/>
+    <script src="{% static "bower_components/jquery/dist/jquery.min.js" %}"></script>
+    <script src="{% static "bower_components/bootstrap/dist/js/bootstrap.min.js" %}"></script>
+    <link rel="stylesheet" href="{% static "css/main.css" %}"/>
+    <link rel="stylesheet" href="{% static "css/menu.css" %}"/>
 </head>
 <body>
 <div id="header_wrapper" class="logged">
@@ -26,14 +27,15 @@
         </div>
         <div class="row">
             <div class="col-lg-6 col-lg-offset-3 col-md-6 col-md-offset-3">
-                <form>
+                <form method="post">
                     <div class="form-group">
-                        <label for="login">Usuario</label>
-                        <input type="email" class="form-control" id="login" placeholder="Ingrese su usuario">
+                        {% csrf_token %}
+                        <label for="username">Usuario</label>
+                        <input type="text" class="form-control" id="username" name="username" placeholder="Ingrese su usuario">
                     </div>
                     <div class="form-group">
                         <label for="password">Contrase&ntilde;a</label>
-                        <input type="password" class="form-control" id="password" placeholder="Ingrese su contrase&ntilde;a">
+                        <input type="password" class="form-control" id="password" name="password" placeholder="Ingrese su contrase&ntilde;a">
                     </div>
                     <button type="submit" class="btn btn-default">Ingresar</button>
                 </form>
