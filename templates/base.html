@@ -1,0 +1,54 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+<head lang="es">
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="{% static "bower_components/bootstrap/dist/css/bootstrap.min.css" %}"/>
+    <link rel="stylesheet" href="{% static "bower_components/bootstrap/dist/css/bootstrap-theme.min.css" %}"/>
+    <script src="{% static "bower_components/jquery/dist/jquery.min.js" %}"></script>
+    <script src="{% static "bower_components/bootstrap/dist/js/bootstrap.min.js" %}"></script>
+    <link rel="stylesheet" href="{% static "css/main.css" %}"/>
+    <link rel="stylesheet" href="{% static "css/menu.css" %}"/>
+</head>
+<body>
+<div id="header_wrapper" class="logged">
+    <div class="page-header">
+
+    </div>
+</div>
+{% block menu %}
+<div id="custom-bootstrap-menu" class="navbar navbar-default " role="navigation">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-menubuilder"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>
+            </button>
+        </div>
+        <div class="collapse navbar-collapse navbar-menubuilder">
+            <ul class="nav navbar-nav navbar-left">
+                <li class="active"><a href="#">Home</a>
+                </li>
+                <li><a href="#">Products</a>
+                </li>
+                <li><a href="#">About Us</a>
+                </li>
+                <li><a href="#">Contact Us</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}
+<div id="content">
+    {% block content %}{% endblock %}
+</div>
+
+<div id="footer">
+    <p>
+        Realizado por <b>Alvaro Marquina</b>
+    </p>
+    <p class="spider-logo">
+    </p>
+</div>
+</body>
+</html>
