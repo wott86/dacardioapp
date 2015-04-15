@@ -14,7 +14,7 @@ $ source .env/bin/activate # this activates your virtual environment
 Then, install requirements files in __conf/requirements.txt__ (virtual env must be activated)
 
 ```
-(.env)$ pip install -r conf/requeriments.txt
+(.env)$ pip install -r conf/requirements.txt
 
 ```
 
@@ -72,4 +72,4 @@ $ source .env/bin/activate
 
 ```
 
-It will take some time, have a cup of cofee, a snack and read a book.
+It will take some time, have a cup of coffee, a snack and read a book.
