@@ -60,10 +60,15 @@ WSGI_APPLICATION = 'cardio.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
 
+__author__ = 'alvaro'
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.contrib.gis.db.backends.postgis', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+        'NAME': 'dacardio',                      # Or path to database file if using sqlite3.
+        'USER': 'postgres',                      # Not used with sqlite3.
+        'PASSWORD': '',                  # Not used with sqlite3.
+        'HOST': 'localhost',                      # Set to empty string for localhost. Not used with sqlite3.
+        'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
     }
 }
 
@@ -100,8 +105,6 @@ AUTH_USER_MODEL = 'users.User'
 LOGIN_URL = '/users/login/'
 LOGIN_REDIRECT_URL = '/patients'
 
-
-
 # Templates
 TEMPLATES = [
     {
@@ -134,3 +137,17 @@ TEMPLATES = [
     #    }
     #},
 ]
+
+# cities
+CITIES_FILES = {
+    'city': {
+        'filename': 'cities1000.zip',
+        'urls':     ['http://download.geonames.org/export/dump/'+'{filename}']
+    },
+}
+
+# Local settings
+try:
+    from local_settings import *
+except:
+    pass
