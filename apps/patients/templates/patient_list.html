@@ -72,7 +72,7 @@
                                 <td>10/03/2003</td>
                                 <td>04/10/2010</td>
                                 <td class="actions">
-                                    <a href="#" title="{% trans "Ficha del paciente" %}" data-toggle="tooltip"
+                                    <a href="{% url 'patient_detail' forloop.counter %}" title="{% trans "Ficha del paciente" %}" data-toggle="tooltip"
                                        data-placement="left"><span class="glyphicon glyphicon-user"
                                                                    aria-hidden="true"></span></a>
                                     <a href="#" title="{% trans "Registros cardíacos del paciente" %}"

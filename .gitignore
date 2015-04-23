@@ -21,6 +21,8 @@ lib64/
 parts/
 sdist/
 var/
+media/*
+!media/.gitsave
 *.egg-info/
 .installed.cfg
 *.egg

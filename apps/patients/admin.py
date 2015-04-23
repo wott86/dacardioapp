@@ -1,8 +1,14 @@
+from apps.patients.forms import PatientAdminForm
+import models
+from utils.admin import register_models
 from django.contrib import admin
-from apps.patients import models
-import pyclbr
 
-# Register your models here.
-classes = pyclbr.readmodule_ex(models.__name__)
-for model in classes:
-    admin.site.register(getattr(models, model))
+
+class PatientModelAdmin(admin.ModelAdmin):
+    form = PatientAdminForm
+
+admins = {
+    models.Patient.__name__: PatientModelAdmin
+}
+
+register_models(models, admins)

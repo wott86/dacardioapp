@@ -1,6 +1,10 @@
 from apps.users.models import User
+from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext as _
+import os
+import uuid
+import mimetypes
 
 
 # ################## Info models
@@ -34,6 +38,12 @@ class RelationshipType(models.Model):
     name = models.CharField(max_length=256)
 
 
+def get_upload_path(instance, filename):
+        return os.path.join(settings.MEDIA_ROOT, 'patients', str(uuid.uuid4()) +
+                            ('.' + filename.split('.')[-1] if filename not in (None, '') else
+                            mimetypes.guess_extension(instance.image.file.content_type)))
+
+
 # ################## Patient data models
 class Patient(models.Model):
     """
@@ -57,6 +67,7 @@ class Patient(models.Model):
     last_name = models.CharField(max_length=256)
     id_card_prefix = models.CharField(max_length=1, choices=ID_CARD_PREFIXES, default='V')
     id_card_number = models.CharField(max_length=32, unique=True)
+    picture = models.ImageField(upload_to=get_upload_path, null=True, blank=True)
     birth_date = models.DateField()
     gender = models.CharField(max_length=1, choices=GENDERS)
     dwelling = models.BooleanField(default=True)
@@ -67,6 +78,7 @@ class Patient(models.Model):
     occupation = models.ForeignKey(Occupation, related_name='patients')
     education = models.ForeignKey(Education, related_name='patients')
     habits = models.ManyToManyField(Habit, related_name='patients')
+
 
 
 class History(models.Model):

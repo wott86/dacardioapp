@@ -1,7 +1,8 @@
 __author__ = 'alvaro'
-from django.conf.urls import patterns, include, url
+from django.conf.urls import patterns, url
 
 urlpatterns = patterns(
     'apps.patients.views',
-    url(r'^$', 'list_patients', name='list_patients')
+    url(r'^$', 'patient_list', name='patient_list'),
+    url(r'^(\d+)/$', 'patient_detail', name='patient_detail')
 )
