@@ -1,5 +1,7 @@
 # dacardioapp
 
+[TOC]
+
 ## Install instructions
 
 Create a [virtual environment](https://virtualenv.pypa.io/en/latest/) with these commands
@@ -18,7 +20,7 @@ Then, install requirements files in __conf/requirements.txt__ (virtual env must 
 
 ```
 
-## Setup database
+### Setup database
 
 Create a database in postgres, use the name you want
 
