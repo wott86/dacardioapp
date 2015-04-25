@@ -35,8 +35,8 @@
                     <div class="row">
                         <div class="col-lg-3">
                             <div id="patient_picture">
-                                {% if patient.photo %}
-                                    <img src="{{ BASE_URL }}{{ patient.photo.url }}" alt="photo" height="150px" width="150px"/>
+                                {% if patient.picture %}
+                                    <img src="{{ MEDIA_URL }}{{ patient.picture }}" alt="photo" height="150px" width="150px"/>
                                 {% else %}
                                     <img src="http://placehold.it/150x150" alt="photo" height="150px" width="150px"/>
                                 {% endif %}
@@ -45,7 +45,7 @@
                         </div>
                         <!-- Tab panes -->
                         <div class="tab-content">
-                            <div class="col-lg-6 tab-pane active" id="personal" role="tabpanel">
+                            <div class="tab-pane active" id="personal" role="tabpanel">
                                 {% include 'patient_personal_data.html' %}
                             </div>
                             <div class="tab-pane" id="clinics" role="tabpanel">

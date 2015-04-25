@@ -55,7 +55,7 @@ class RelationshipType(models.Model):
 
 
 def get_upload_path(instance, filename):
-        return os.path.join(settings.MEDIA_ROOT, 'patients', str(uuid.uuid4()) +
+        return os.path.join('patients', str(uuid.uuid4()) +
                             ('.' + filename.split('.')[-1] if filename not in (None, '') else
                             mimetypes.guess_extension(instance.image.file.content_type)))
 

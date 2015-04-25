@@ -1,36 +1,95 @@
 {% load i18n %}
 {% load l10n %}
-<p>
-    <b>{% trans 'Nombre' %}:</b> {{ patient.full_name }}
-</p>
-<p>
-    <b>{% trans 'C&eacute;dula de identidad' %}:</b> {{ patient.id_card }}
-</p>
-<p>
-    <b>{% trans 'Sexo' %}:</b> {{ patient.get_gender_display }}
-</p>
-<p>
-    <b>{% trans 'Fecha de nacimiento' %}:</b> {{ patient.birth_date|localize }}
-</p>
-<p>
-    <b>{% trans 'Edad' %}:</b> {{ patient.age }}
-</p>
-<p>
-    <b>{% trans 'Estado civil' %}:</b> {{ patient.get_marital_status_display }}
-</p>
-<p>
-    <b>{% trans 'Nivel socioecon&oacute;mico' %}:</b> {{ patient.ses.name }}
-</p>
-<p>
-    <b>{% trans 'Grado de instrucci&oacute;n' %}:</b> {{ patient.education.name }}
-</p>
-<p>
-    <b>{% trans 'Vivienda' %}:</b> {% if patient.dwelling %}
-        {% trans 'S&iacute;' %}
-    {% else %}
-        {% trans 'No' %}
-    {% endif %}
-</p>
-<p>
-    <b>{% trans 'Direcci&oacute;n' %}:</b> {{ patient.address }}
-</p>
+{% autoescape on %}
+
+<div class="row">
+    <div class="col-lg-7">
+        <p class="row">
+            <div class="col-lg-6">
+                <b>{% trans 'Nombre' %}:</b>
+            </div>
+            <div class="col-lg-6">
+                 {{ patient.full_name }}
+            </div>
+        </p>
+        <p class="row">
+            <div class="col-lg-6">
+                <b>{% trans 'C&eacute;dula de identidad' %}:</b>
+            </div>
+            <div class="col-lg-6">
+                 {{ patient.id_card }}
+            </div>
+        </p>
+        <p class="row">
+            <div class="col-lg-6">
+                <b>{% trans 'Sexo' %}:</b>
+            </div>
+            <div class="col-lg-6">
+                 {{ patient.get_gender_display }}
+            </div>
+        </p>
+        <p class="row">
+            <div class="col-lg-6">
+                <b>{% trans 'Fecha de nacimiento' %}:</b>
+            </div>
+            <div class="col-lg-6">
+                 {{ patient.birth_date|localize }}
+            </div>
+        </p>
+        <p class="row">
+            <div class="col-lg-6">
+                <b>{% trans 'Edad' %}:</b>
+            </div>
+            <div class="col-lg-6">
+                 {{ patient.age }}
+            </div>
+        </p>
+        <p class="row">
+            <div class="col-lg-6">
+                <b>{% trans 'Estado civil' %}:</b>
+            </div>
+            <div class="col-lg-6">
+                 {{ patient.get_marital_status_display }}
+            </div>
+        </p>
+        <p class="row">
+            <div class="col-lg-6">
+                <b>{% trans 'Nivel socioecon&oacute;mico' %}:</b>
+            </div>
+            <div class="col-lg-6">
+                 {{ patient.ses.name }}
+            </div>
+        </p>
+        <p class="row">
+            <div class="col-lg-6">
+                <b>{% trans 'Grado de instrucci&oacute;n' %}:</b>
+            </div>
+            <div class="col-lg-6">
+                 {{ patient.education.name }}
+            </div>
+        </p>
+        <p class="row">
+            <div class="col-lg-6">
+                <b>{% trans 'Vivienda' %}:</b>
+            </div>
+            <div class="col-lg-6">
+            {% if patient.dwelling %}
+                {% trans 'S&iacute;' %}
+            {% else %}
+                {% trans 'No' %}
+            {% endif %}
+            </div>
+        </p>
+        <p class="row">
+            <div class="col-lg-6">
+                <b>{% trans 'Direcci&oacute;n' %}:</b>
+            </div>
+            <div class="col-lg-6">
+                 {{ patient.address }}
+            </div>
+        </p>
+    </div>
+</div>
+
+
+{% endautoescape %}
