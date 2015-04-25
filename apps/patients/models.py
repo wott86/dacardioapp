@@ -16,12 +16,18 @@ class Ses(models.Model):
     """
     name = models.CharField(max_length=128)
 
+    def __unicode__(self):
+        return self.name
+
 
 class Education(models.Model):
     """
     Education level
     """
     name = models.CharField(max_length=128)
+
+    def __unicode__(self):
+        return self.name
 
 
 class Occupation(models.Model):
@@ -30,13 +36,22 @@ class Occupation(models.Model):
     """
     name = models.CharField(max_length=128)
 
+    def __unicode__(self):
+        return self.name
+
 
 class Habit(models.Model):
     name = models.CharField(max_length=128)
 
+    def __unicode__(self):
+        return self.name
+
 
 class RelationshipType(models.Model):
     name = models.CharField(max_length=256)
+
+    def __unicode__(self):
+        return self.name
 
 
 def get_upload_path(instance, filename):
@@ -141,10 +156,14 @@ class PersonalRecord(models.Model):
     name = models.CharField(max_length=256)
     patient = models.ForeignKey(Patient, related_name='personal_records')
 
+    def __unicode__(self):
+        return '%s - %s ' % (self.patient.full_name, self.name)
+
 
 class FamilyRecord(models.Model):
     name = models.CharField(max_length=256)
     patient = models.ForeignKey(Patient, related_name='family_records')
     relationship_type = models.ForeignKey(RelationshipType, related_name='family_records')
 
-
+    def __unicode__(self):
+        return '%s - %s (%s)' % (self.patient.full_name, self.name, self.relationship_type.name)
