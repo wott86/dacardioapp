@@ -3,6 +3,7 @@
 {% load static %}
 {% block extra_static %}
     <link rel="stylesheet" href="{% static "css/patient_detail.css" %}"/>
+    <script src="{% static "js/patient_detail.js" %}"></script>
 {% endblock %}
 {% block breadcrumbs %}
     <div class="container-fluid">
@@ -23,11 +24,34 @@
 {% block content %}
 <div class="container-fluid">
     <div class="row">
-        <div class="col-lg-3">
-            <div id="patient_picture">
-                <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+        <div class="col-lg-offset-2 col-lg-8">
+            <div role="tabpanel" id="tabs">
+                <!-- Nav tabs -->
+                <ul class="nav nav-tabs" role="tablist">
+                    <li role="presentation" class="active"><a href="#personal" aria-controls="personal" role="tab" data-toggle="tab">{% trans 'Datos personales' %}</a></li>
+                    <li role="presentation"><a href="#clinics" aria-controls="clinics" role="tab" data-toggle="tab">{% trans 'Datos clínicos' %}</a></li>
+                </ul>
+                <div class="container" id="patient-panel">
+                    <div class="row">
+                        <div class="col-lg-2">
+                            <div id="patient_picture">
+                                <img src="http://placehold.it/150x150" alt="photo" height="150px" width="150px"/>
+                            </div>
+                        </div>
+                        <!-- Tab panes -->
+                        <div class="tab-content">
+                            <div class="col-lg-6 tab-pane active" id="personal" role="tabpanel">
+                                {% include 'patient_personal_data.html' %}
+                            </div>
+                            <div class="col-lg-3 tab-pane" id="clinics" role="tabpanel">
+                                {% include 'patient_clinical_data.html' %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+
 </div>
 {% endblock %}

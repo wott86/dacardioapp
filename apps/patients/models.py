@@ -5,6 +5,7 @@ from django.utils.translation import ugettext as _
 import os
 import uuid
 import mimetypes
+from django.utils import timezone
 
 
 # ################## Info models
@@ -62,11 +63,18 @@ class Patient(models.Model):
         ('F', _('Femenino')),
     )
 
+    MARITAL_STATUS = (
+        ('s', _('Soltero')),
+        ('m', _('Casado')),
+        ('w', _('Viudo')),
+        ('d', _('divorciado')),
+    )
+
     # Fields
     first_name = models.CharField(max_length=256)
     last_name = models.CharField(max_length=256)
     id_card_prefix = models.CharField(max_length=1, choices=ID_CARD_PREFIXES, default='V')
-    id_card_number = models.CharField(max_length=32, unique=True)
+    id_card_number = models.CharField(max_length=32)
     picture = models.ImageField(upload_to=get_upload_path, null=True, blank=True)
     birth_date = models.DateField()
     gender = models.CharField(max_length=1, choices=GENDERS)
@@ -74,11 +82,35 @@ class Patient(models.Model):
     city = models.ForeignKey('cities.City', related_name='patients')
     street = models.TextField()
     street_2 = models.TextField()
+    marital_status = models.CharField(max_length=1, choices=MARITAL_STATUS, default='s')
     ses = models.ForeignKey(Ses, verbose_name='Socioeconomic status', related_name='patients')
     occupation = models.ForeignKey(Occupation, related_name='patients')
     education = models.ForeignKey(Education, related_name='patients')
     habits = models.ManyToManyField(Habit, related_name='patients')
 
+    @property
+    def full_name(self):
+        return ('%s %s' % (self.first_name, self.last_name)).strip()
+
+    @property
+    def id_card(self):
+        return '%s - %s' % (self.id_card_prefix, self.id_card_number)
+
+    @property
+    def age(self):
+        today = timezone.now()
+        return today.year - self.birth_date.year - ((today.month, today.day) < (self.birth_date.month,
+                                                                                self.birth_date.day))
+
+    @property
+    def address(self):
+        return '%s, %s' % (self.street, self.city.name)
+
+    def __unicode__(self):
+        return self.full_name
+
+    class Meta:
+        unique_together = ('id_card_prefix', 'id_card_number')
 
 
 class History(models.Model):

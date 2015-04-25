@@ -1,0 +1,36 @@
+{% load i18n %}
+{% load l10n %}
+<p>
+    <b>{% trans 'Nombre' %}:</b> {{ patient.full_name }}
+</p>
+<p>
+    <b>{% trans 'C&eacute;dula de identidad' %}:</b> {{ patient.id_card }}
+</p>
+<p>
+    <b>{% trans 'Sexo' %}:</b> {{ patient.get_gender_display }}
+</p>
+<p>
+    <b>{% trans 'Fecha de nacimiento' %}:</b> {{ patient.birth_date|localize }}
+</p>
+<p>
+    <b>{% trans 'Edad' %}:</b> {{ patient.age }}
+</p>
+<p>
+    <b>{% trans 'Estado civil' %}:</b> {{ patient.get_marital_status_display }}
+</p>
+<p>
+    <b>{% trans 'Nivel socioecon&oacute;mico' %}:</b> {{ patient.ses.name }}
+</p>
+<p>
+    <b>{% trans 'Grado de instrucci&oacute;n' %}:</b> {{ patient.education.name }}
+</p>
+<p>
+    <b>{% trans 'Vivienda' %}:</b> {% if patient.dwelling %}
+        {% trans 'S&iacute;' %}
+    {% else %}
+        {% trans 'No' %}
+    {% endif %}
+</p>
+<p>
+    <b>{% trans 'Direcci&oacute;n' %}:</b> {{ patient.address }}
+</p>
