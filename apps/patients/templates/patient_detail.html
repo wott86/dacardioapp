@@ -12,7 +12,7 @@
                 <ol class="breadcrumb">
                     <li><a href="#">Inicio</a></li>
                     <li><a href="{% url 'patient_list' %}">Pacientes</a></li>
-                    <li class="active">Pedro P&eacute;rez</li>
+                    <li class="active">{{ patient.full_name|escape }}</li>
                 </ol>
             </div>
         </div>
@@ -31,11 +31,16 @@
                     <li role="presentation" class="active"><a href="#personal" aria-controls="personal" role="tab" data-toggle="tab">{% trans 'Datos personales' %}</a></li>
                     <li role="presentation"><a href="#clinics" aria-controls="clinics" role="tab" data-toggle="tab">{% trans 'Datos clínicos' %}</a></li>
                 </ul>
-                <div class="container" id="patient-panel">
+                <div id="patient-panel">
                     <div class="row">
-                        <div class="col-lg-2">
+                        <div class="col-lg-3">
                             <div id="patient_picture">
-                                <img src="http://placehold.it/150x150" alt="photo" height="150px" width="150px"/>
+                                {% if patient.photo %}
+                                    <img src="{{ BASE_URL }}{{ patient.photo.url }}" alt="photo" height="150px" width="150px"/>
+                                {% else %}
+                                    <img src="http://placehold.it/150x150" alt="photo" height="150px" width="150px"/>
+                                {% endif %}
+
                             </div>
                         </div>
                         <!-- Tab panes -->
