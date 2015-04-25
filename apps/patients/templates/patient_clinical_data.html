@@ -19,7 +19,7 @@
         <b>{% trans 'Ocupaci&oacute;n' %}:</b>
     </div>
     <div class="col-lg-6">
-         {{ patient.last_history.date|localize }}
+         {{ patient.occupation.name|escape }}
     </div>
     <p></p>
     <div class="col-lg-3">
