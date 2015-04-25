@@ -106,6 +106,20 @@ class Patient(models.Model):
     def address(self):
         return '%s, %s' % (self.street, self.city.name)
 
+    @property
+    def first_history(self):
+        if self.history.all().exists():
+            return self.history.all().order_by('id')[0]
+        else:
+            return None
+
+    @property
+    def last_history(self):
+        if self.history.all().exists():
+            return self.history.all().order_by('-id')[0]
+        else:
+            return None
+
     def __unicode__(self):
         return self.full_name
 
@@ -119,15 +133,18 @@ class History(models.Model):
     date = models.DateTimeField(auto_now_add=True)
     modified_field = models.CharField(max_length=32)
 
+    def __unicode__(self):
+        return 'Patient: %s / M.D. %s' % (str(self.patient), self.modified_by.get_full_name())
+
 
 class PersonalRecord(models.Model):
     name = models.CharField(max_length=256)
-    patient = models.ForeignKey(Patient, related_name='personal_record')
+    patient = models.ForeignKey(Patient, related_name='personal_records')
 
 
 class FamilyRecord(models.Model):
     name = models.CharField(max_length=256)
-    patient = models.ForeignKey(Patient, related_name='family_record')
-    relationship_type = models.ForeignKey(RelationshipType, related_name='family_record')
+    patient = models.ForeignKey(Patient, related_name='family_records')
+    relationship_type = models.ForeignKey(RelationshipType, related_name='family_records')
 
 
