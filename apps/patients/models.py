@@ -82,7 +82,7 @@ class Patient(models.Model):
         ('s', _('Soltero')),
         ('m', _('Casado')),
         ('w', _('Viudo')),
-        ('d', _('divorciado')),
+        ('d', _('Divorciado')),
     )
 
     # Fields
