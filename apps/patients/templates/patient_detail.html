@@ -4,6 +4,9 @@
 {% block extra_static %}
     <link rel="stylesheet" href="{% static "css/patient_detail.css" %}"/>
     <script src="{% static "js/patient_detail.js" %}"></script>
+    {% if form %}
+    <script src="{% static "js/patient_form.js" %}"></script>
+    {% endif %}
 {% endblock %}
 {% block breadcrumbs %}
     <div class="container-fluid">
@@ -11,8 +14,17 @@
             <div class="col-lg-12">
                 <ol class="breadcrumb">
                     <li><a href="#">Inicio</a></li>
-                    <li><a href="{% url 'patient_list' %}">Pacientes</a></li>
+                    <li><a href="{% url 'patient_list' %}">{% trans 'Pacientes' %}</a></li>
+                    {% if form %}
+                        {% if form.instance.id %}
+                            <li><a href="{% url 'patient_detail' patient.id %}">{{ patient.full_name|escape }}</a></li>
+                            <li class="active">{% trans 'Editar' %}</li>
+                        {% else %}
+                            <li class="active">{% trans 'Nuevo' %}</li>
+                        {% endif %}
+                    {% else %}
                     <li class="active">{{ patient.full_name|escape }}</li>
+                    {% endif %}
                 </ol>
             </div>
         </div>
@@ -40,15 +52,22 @@
                                 {% else %}
                                     <img src="http://placehold.it/150x150" alt="photo" height="150px" width="150px"/>
                                 {% endif %}
-
+                            {% if not form %}
+                                <a href="{% url 'patient_edit' patient.id %}" title="{% trans "Editar paciente" %}" data-toggle="tooltip" data-placement="bottom"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
+                            {% endif %}
                             </div>
+
                         </div>
                         <!-- Tab panes -->
                         <div class="tab-content">
-                            <div class="tab-pane active" id="personal" role="tabpanel">
+                            <div class="tab-pane fade in active" id="personal" role="tabpanel">
+                                {% if form %}
+                                {% include 'patient_personal_data_form.html' %}
+                                {% else %}
                                 {% include 'patient_personal_data.html' %}
+                                {% endif %}
                             </div>
-                            <div class="tab-pane" id="clinics" role="tabpanel">
+                            <div class="tab-pane fade" id="clinics" role="tabpanel">
                                 {% include 'patient_clinical_data.html' %}
                             </div>
 

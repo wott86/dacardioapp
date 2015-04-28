@@ -16,3 +16,8 @@ class PatientBaseForm(forms.ModelForm):
 class PatientAdminForm(PatientBaseForm):
     class Meta(PatientBaseForm.Meta):
         pass
+
+
+class PatientForm(PatientBaseForm):
+    class Meta(PatientBaseForm.Meta):
+        pass
