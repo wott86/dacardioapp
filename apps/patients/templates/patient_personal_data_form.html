@@ -51,7 +51,7 @@
                         <b>{% trans 'Fecha de nacimiento' %}:</b>
                     </div>
                     <div class="col-lg-6">
-                         <input class="form-control" id="id_birth_date" name="birth_date" type="date" value="{{ form.birth_date.value|unlocalize }}">
+                         <input class="form-control datepicker" readonly="readonly" data-provide="datepicker" id="id_birth_date" name="birth_date" data-date-format="dd/mm/yyyy" type="text" value="{{ form.birth_date.value|date:"d/m/Y" }}">
                     </div>
                 </p>
                 <p class="row">

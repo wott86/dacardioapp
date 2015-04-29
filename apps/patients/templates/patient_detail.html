@@ -5,7 +5,15 @@
     <link rel="stylesheet" href="{% static "css/patient_detail.css" %}"/>
     <script src="{% static "js/patient_detail.js" %}"></script>
     {% if form %}
-    <script src="{% static "js/patient_form.js" %}"></script>
+        <link rel="stylesheet" href="{% static "bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker3.standalone.min.css" %}"/>
+        <script src="{% static "bower_components/bootstrap-datepicker/js/bootstrap-datepicker.js" %}"></script>
+        {% with 'bower_components/bootstrap-datepicker/dist/locales/bootstrap-datepicker.'|add:request.LANGUAGE_CODE|add:'.min.js' as datepicker_lang %}
+            <script src="{% static datepicker_lang %}"></script>
+        {% endwith %}
+        <script>
+        language = "{{ request.LANGUAGE_CODE }}"
+        </script>
+        <script src="{% static "js/patient_form.js" %}"></script>
     {% endif %}
 {% endblock %}
 {% block breadcrumbs %}
