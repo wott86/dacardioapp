@@ -1,5 +1,5 @@
+# -*- coding: utf-8 -*-
 from apps.users.models import User
-from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext as _
 import os
@@ -97,10 +97,15 @@ class Patient(models.Model):
     city = models.ForeignKey('cities.City', related_name='patients')
     street = models.TextField()
     street_2 = models.TextField()
+    phone_home = models.CharField(max_length=50, default='', blank=True)
+    phone_mobile = models.CharField(max_length=50, default='', blank=True)
+    phone_office = models.CharField(max_length=50, default='', blank=True)
     marital_status = models.CharField(max_length=1, choices=MARITAL_STATUS, default='s')
-    ses = models.ForeignKey(Ses, verbose_name='Socioeconomic status', related_name='patients')
+    ses = models.ForeignKey(Ses, verbose_name=_(u'Estatus socioeconómico'), related_name='patients')
     occupation = models.ForeignKey(Occupation, related_name='patients')
     education = models.ForeignKey(Education, related_name='patients')
+    personal_record = models.TextField(default='')
+    family_record = models.TextField(default='')
     habits = models.ManyToManyField(Habit, related_name='patients')
 
     @property
@@ -152,18 +157,18 @@ class History(models.Model):
         return 'Patient: %s / M.D. %s' % (str(self.patient), self.modified_by.get_full_name())
 
 
-class PersonalRecord(models.Model):
+"""class PersonalRecord(models.Model):
     name = models.CharField(max_length=256)
     patient = models.ForeignKey(Patient, related_name='personal_records')
 
     def __unicode__(self):
-        return '%s - %s ' % (self.patient.full_name, self.name)
+        return '%s - %s ' % (self.patient.full_name, self.name)"""
 
 
-class FamilyRecord(models.Model):
+"""class FamilyRecord(models.Model):
     name = models.CharField(max_length=256)
     patient = models.ForeignKey(Patient, related_name='family_records')
     relationship_type = models.ForeignKey(RelationshipType, related_name='family_records')
 
     def __unicode__(self):
-        return '%s - %s (%s)' % (self.patient.full_name, self.name, self.relationship_type.name)
+        return '%s - %s (%s)' % (self.patient.full_name, self.name, self.relationship_type.name)"""

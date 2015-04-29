@@ -31,17 +31,7 @@
                 <b>{% trans 'Antecedentes personales' %}:</b>
             </div>
             <div class="col-lg-6">
-            {% if patient.personal_records.all %}
-                 <ul>
-                     {% for record in patient.personal_records.all %}
-                     <li>
-                        {{ record.name|escape }}
-                     </li>
-                     {% endfor %}
-                 </ul>
-            {% else %}
-                {% trans 'No' %}
-            {% endif %}
+            {{ patient.personal_record }}
             </div>
         </p>
         <p class="row">
@@ -49,17 +39,7 @@
                 <b>{% trans 'Antecedentes familiares' %}:</b>
             </div>
             <div class="col-lg-6">
-            {% if patient.family_records.all %}
-                 <ul>
-                     {% for record in patient.family_records.all %}
-                     <li>
-                        {{ record.name|escape }}
-                     </li>
-                     {% endfor %}
-                 </ul>
-            {% else %}
-                {% trans 'No' %}
-            {% endif %}
+            {{ patient.family_record|escape }}
             </div>
         </p>
         <p class="row">
