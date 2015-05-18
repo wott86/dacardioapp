@@ -1,7 +1,7 @@
 {% load i18n %}
 {% load l10n %}
 {% autoescape on %}
-    <form action="" class="form-inline">
+    <form action="{% if form.instance.id %}{% url 'patient_detail' form.instance.id %}{% else %}{% url 'patient_list' %}{% endif %}" method="post" class="form-inline">
         <div class="row">
             <div class="col-lg-7">
                 <p class="row">

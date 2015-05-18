@@ -1,0 +1,43 @@
+{% load i18n %}
+{% load l10n %}
+{% autoescape on %}
+    <form action="" class="form-inline">
+        <div class="row">
+            <div class="col-lg-7">
+                <p class="row">
+                    <div class="col-lg-6">
+                        <b>{% trans 'Ocupaci&oacute;n' %}:</b>
+                    </div>
+                    <div class="col-lg-6">
+                        <select id="id_occupation" name="occupation" class="form-control">
+                        {% for value, text in form.occupation.field.choices %}
+                            <option value="{{ value }}"{% if form.occupation.value == value %} selected="selected"{% endif %}>{{ text }}</option>
+                        {% endfor %}
+                        </select>
+                    </div>
+                </p>
+                <p class="row">
+                    <div class="col-lg-6">
+                        <b>{% trans 'Antecedentes personales' %}:</b>
+                    </div>
+                    <div class="col-lg-6">
+                        <textarea name="personal_record" id="id_personal_record" cols="30" rows="10">{{ form.personal_record.value }}</textarea>
+                    </div>
+                </p>
+                <p class="row">
+                    <div class="col-lg-6">
+                        <b>{% trans 'Antecedentes familiares' %}:</b>
+                    </div>
+                    <div class="col-lg-6">
+                         <textarea name="personal_record" id="id_personal_record" cols="30" rows="10">{{ form.family_record.value }}</textarea>
+                    </div>
+                </p>
+            </div>
+        </div>
+        <p class="row">
+            <div class="col-lg-11" align="center">
+                <button id="btn_save" class="btn btn-default pull-right" type="submit">{% trans 'Guardar' %}</button>
+            </div>
+        </p>
+    </form>
+{% endautoescape %}

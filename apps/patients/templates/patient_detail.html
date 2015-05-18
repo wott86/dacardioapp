@@ -76,7 +76,11 @@
                                 {% endif %}
                             </div>
                             <div class="tab-pane fade" id="clinics" role="tabpanel">
+                                {% if form %}
+                                {% include 'patient_clinical_data_form.html' %}
+                                {% else %}
                                 {% include 'patient_clinical_data.html' %}
+                                {% endif %}
                             </div>
 
                         </div>
