@@ -107,3 +107,53 @@ $ source .env/bin/activate
 ```
 
 It will take some time, have a cup of coffee, a snack and read a book.
+
+### Installing static dependencies
+
+#### Setting up Nodejs and Bower
+
+Install [Nodejs](https://nodejs.org/), last version at the moment is 0.12, you can find installing instructions [here](https://nodesource.com/blog/nodejs-v012-iojs-and-the-nodesource-linux-repositories) (for Linux)
+
+After installing Nodejs, you need to install [Bower](http://bower.io/) in order to get static libraries dependencies (Bootstrap, JQuery, etc)
+
+```bash
+$ npm install -g bower
+```
+
+Then go to app __static__ folder and install dependencies
+
+```bash
+$ cd /path/to/app/static/
+$ bower install
+```
+
+#### Linking admin static files
+
+In case you are running this app as a wsgi app, you need to link admin static files, otherwise this step can be ignored.
+
+Remember to change __path_to_your_virtual_env__ to your .env folder path and __path_to_your_app__ to your app folder.
+
+```bash
+$ ln -s /path_to_your_virtual_env/lib/python2.7/site-packages/django/contrib/admin/static/admin/ /path_to_your_app/static/
+```
+
+### Running app
+
+First, activate virtualen if not already activated, ant then run server
+
+
+```bash
+$ source .env/bin/activate
+(.env)$ ./manage.py runserver
+
+```
+
+__Important__: this is a development server, not suitable for production environment or massive usage. In order to use it as a production server, you will need [Gunicorn](http://gunicorn.org/) or any other wsgi server. And you will also need a HTTP server, such as [Nginx](http://nginx.org/) (I recommend this one) or [Apache](http://httpd.apache.org/).
+
+### Deployment
+
+__Following steps are only for deployment, in development mode this is completely optional__
+
+## Roadmap
+
++ Finish deployment docs
