@@ -6,7 +6,7 @@
 
 Create a [virtual environment](https://virtualenv.pypa.io/en/latest/) with these commands
 
-```
+```bash
 $ cd /path/to/project/root/
 $ virtualenv .env
 $ source .env/bin/activate # this activates your virtual environment
@@ -15,16 +15,48 @@ $ source .env/bin/activate # this activates your virtual environment
 
 Then, install requirements files in __conf/requirements.txt__ (virtual env must be activated)
 
-```
+```bash
 (.env)$ pip install -r conf/requirements.txt
 
 ```
 
 ### Setup database
 
-Create a database in postgres, use the name you want
+Create a role and a database in postgres, use the name you want
 
-Add __postgis__ extension to database, if you are using pgadmin3, just right click over database and then select __add extension__ menu item.
+In our example we use dacardiouser and dacardiodb, you can change it to any names you like.
+
+Creating role
+
+```SQL
+CREATE ROLE dacardiouser LOGIN
+  ENCRYPTED PASSWORD 'md58d856455f3a6138c3e0f7da406bb3d14'
+  NOSUPERUSER INHERIT CREATEDB NOCREATEROLE NOREPLICATION;
+```
+
+Creating database
+```SQL
+CREATE DATABASE dacardiodb
+  WITH OWNER = dacardiouser
+       ENCODING = 'UTF8'
+       TABLESPACE = pg_default
+       LC_COLLATE = 'en_US.UTF-8'
+       LC_CTYPE = 'en_US.UTF-8'
+       CONNECTION LIMIT = -1;
+```
+
+Add __postgis__ extension to database, you need to install it before
+
+	Important: postgresql-9.3-postgis-scripts is only needed in Ubuntu 14.04, just in case it fails in another distro don't pay atention to it.
+
+
+```bash
+$ sudo apt-get install postgis postgresql-9.3-postgis-scripts
+```
+
+
+If you are using pgadmin3, just right click over database and then select __add extension__ menu item.
+
 
 If not using pgadmin3, use the console
 
@@ -54,7 +86,7 @@ DATABASES = {
 
 After setting database, activate virtual environment if not active and sync database, this will create all the tables
 
-```
+```bash
 (.env)$ ./manage.py syncdb
 
 ```
@@ -68,7 +100,7 @@ It will ask you if you want to create a superuser, say yes and fill data require
 
 After setting up database you must fill cities data
 
-```
+```bash
 $ source .env/bin/activate
 (.env)$ ./manage.py cities --import=all
 
