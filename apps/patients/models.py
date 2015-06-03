@@ -173,10 +173,15 @@ class Patient(models.Model):
 
 
 class History(models.Model):
+    ALL = 'ALL'
+    SEPARATOR = '[|]'
+
     modified_by = models.ForeignKey(User, related_name='history')
     patient = models.ForeignKey(Patient, related_name='history')
     date = models.DateTimeField(auto_now_add=True)
-    modified_field = models.CharField(max_length=32)
+    modified_field = models.TextField(default=ALL)
+    modified_old_value = models.TextField(default='')
+    modified_new_value = models.TextField(default='')
 
     def __unicode__(self):
         return 'Patient: %s / M.D. %s' % (str(self.patient), self.modified_by.get_full_name())

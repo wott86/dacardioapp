@@ -1,6 +1,7 @@
 from apps.patients.forms import PatientForm
-from apps.patients.models import Patient
+from apps.patients.models import Patient, History
 from django.core.urlresolvers import reverse
+from django.db.models import Model
 from django.http.response import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.views.generic.base import View
@@ -18,8 +19,11 @@ class PatientList(View):
     form_class = PatientForm
 
     def get(self, request):
+        data = {
+            'patients': Patient.objects.all()
+        }
         return HttpResponse(render(request, 'patient_list.html',
-                                   context=RequestContext(request)))
+                                   context=RequestContext(request, data)))
 
     def post(self, request):
         """
@@ -33,6 +37,10 @@ class PatientList(View):
         patient = None
         if form.is_valid():
             patient = form.save()
+            History.objects.create(
+                modified_by=request.user,
+                patient=patient
+            )
             messages.success(
                 request,
                 _('Los datos del paciente %(name)s han sido guardados &eacute;xitosamente') % {'name': patient.full_name})
@@ -66,6 +74,14 @@ class PatientDetail(View):
 
         if form.is_valid():
             patient = form.save()
+            for changed in form.changed_data:
+                History.objects.create(
+                    modified_by=request.user,
+                    patient=patient,
+                    modified_field=changed,
+                    modified_old_value=str(form.initial[changed]) if not isinstance(form.initial[changed], Model) else str(form.initial[changed].id),
+                    modified_new_value=str(form.cleaned_data[changed]) if not isinstance(form.cleaned_data[changed], Model) else str(form.cleaned_data[changed].id)
+                )
             messages.success(
                 request,
                 _('Los datos del paciente %(name)s han sido guardados &eacute;xitosamente') % {
