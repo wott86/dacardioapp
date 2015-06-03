@@ -1,117 +1,114 @@
 {% load i18n %}
 {% load l10n %}
 {% autoescape on %}
-    <form action="{% if form.instance.id %}{% url 'patient_detail' form.instance.id %}{% else %}{% url 'patient_list' %}{% endif %}" method="post" class="form-inline">
-        <div class="row">
-            <div class="col-lg-7">
-                <p class="row">
-                    <div class="col-lg-6">
-                        <b>{% trans 'Nombre' %}:</b>
-                    </div>
-                    <div class="col-lg-6">
-                        <input class="form-control" id="id_first_name" maxlength="256" name="first_name" type="text" value="{{ form.first_name.value.strip }}">
-                    </div>
-                </p>
-                <p class="row">
-                    <div class="col-lg-6">
-                        <b>{% trans 'Apellido' %}:</b>
-                    </div>
-                    <div class="col-lg-6">
-                         <input class="form-control" id="id_last_name" maxlength="256" name="last_name" type="text" value="{{ form.last_name.value.strip }}">
-                    </div>
-                </p>
-                <p class="row">
-                    <div class="col-lg-6">
-                        <b>{% trans 'C&eacute;dula de identidad' %}:</b>
-                    </div>
-                    <div class="col-lg-6">
-                         <select id="id_id_card_prefix" name="id_card_prefix" class="form-control">
-                             <option value="V"{% if form.id_card_prefix == 'V' %} selected="selected"{% endif %}>V</option>
-                             <option value="J"{% if form.id_card_prefix == 'J' %} selected="selected"{% endif %}>J</option>
-                             <option value="G"{% if form.id_card_prefix == 'G' %} selected="selected"{% endif %}>G</option>
-                             <option value="E"{% if form.id_card_prefix == 'E' %} selected="selected"{% endif %}>E</option>
-                         </select>
-                        <input class="form-control" id="id_id_card_number" maxlength="20" name="id_card_number" type="text" value="{{ form.id_card_number.value }}">
-                    </div>
-                </p>
-                <p class="row">
-                    <div class="col-lg-6">
-                        <b>{% trans 'Sexo' %}:</b>
-                    </div>
-                    <div class="col-lg-6">
-                         <select id="id_gender" name="gender" class="form-control">
-                             <option value="">---------</option>
-                             <option value="M"{% if form.gender.value.upper == 'M' %} selected="selected"{% endif %}>{% trans 'Masculino' %}</option>
-                             <option value="F"{% if form.gender.value.upper == 'F' %} selected="selected"{% endif %}>{% trans 'Femenino' %}</option>
-                         </select>
-                    </div>
-                </p>
-                <p class="row">
-                    <div class="col-lg-6">
-                        <b>{% trans 'Fecha de nacimiento' %}:</b>
-                    </div>
-                    <div class="col-lg-6">
-                         <input class="form-control datepicker" readonly="readonly" data-provide="datepicker" id="id_birth_date" name="birth_date" data-date-format="dd/mm/yyyy" type="text" value="{{ form.birth_date.value|date:"d/m/Y" }}">
-                    </div>
-                </p>
-                <p class="row">
-                    <div class="col-lg-6">
-                        <b>{% trans 'Estado civil' %}:</b>
-                    </div>
-                    <div class="col-lg-6">
-                        <select id="id_marital_status" name="marital_status" class="form-control">
-                        {% for value, text in form.marital_status.field.choices %}
-                            <option value="{{ value }}"{% if form.marital_status.value == value %} selected="selected"{% endif %}>{{ text }}</option>
-                        {% endfor %}
-                        </select>
-                    </div>
-                </p>
-                <p class="row">
-                    <div class="col-lg-6">
-                        <b>{% trans 'Nivel socioecon&oacute;mico' %}:</b>
-                    </div>
-                    <div class="col-lg-6">
-                        <select id="id_ses" name="ses" class="form-control">
-                        {% for value, text in form.ses.field.choices %}
-                            <option value="{{ value }}"{% if form.ses.value == value %} selected="selected"{% endif %}>{{ text }}</option>
-                        {% endfor %}
-                        </select>
-                    </div>
-                </p>
-                <p class="row">
-                    <div class="col-lg-6">
-                        <b>{% trans 'Grado de instrucci&oacute;n' %}:</b>
-                    </div>
-                    <div class="col-lg-6">
-                         <select id="id_education" name="education" class="form-control">
-                        {% for value, text in form.education.field.choices %}
-                            <option value="{{ value }}"{% if form.education.value == value %} selected="selected"{% endif %}>{{ text }}</option>
-                        {% endfor %}
-                        </select>
-                    </div>
-                </p>
-                <p class="row">
-                    <div class="col-lg-6">
-                        <b>{% trans 'Vivienda propia' %}:</b>
-                    </div>
-                    <div class="col-lg-6 checkbox">
-                    <input id="id_dwelling" name="dwelling" type="checkbox" class="form-control"{% if form.dwelling.value %} checked="checked"{% endif %} >
-                    </div>
-                </p>
-                <p class="row">
-                    <div class="col-lg-6">
-                        <b>{% trans 'Direcci&oacute;n' %}:</b>
-                    </div>
-                    <div class="col-lg-6">
-                        <textarea cols="40" id="id_street" name="street" rows="10" class="form-control">{{ form.street.value }}</textarea>
-                    </div>
-                </p>
-            </div>
-        </div>
+<div class="row">
+    <div class="col-lg-7 col-md-7 col-sm-7">
         <p class="row">
-            <div class="col-lg-11" align="center">
-                <button id="btn_next" class="btn btn-default pull-right" type="button">{% trans 'Siguiente' %}</button>
+            <div class="col-lg-6 col-md-6 col-sm-6">
+                <label for="id_first_name"><b>{% trans 'Nombre' %}:</b></label>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-6{% if form.first_name.errors %} has-error{% endif %}">
+                <input class="form-control" id="id_first_name" maxlength="256" name="first_name" type="text" value="{{ form.first_name.value.strip }}" />
             </div>
         </p>
-    </form>
+        <p class="row">
+            <div class="col-lg-6 col-md-6 col-sm-6">
+                <b>{% trans 'Apellido' %}:</b>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-6{% if form.last_name.errors %} has-error{% endif %}">
+                 <input class="form-control" id="id_last_name" maxlength="256" name="last_name" type="text" value="{{ form.last_name.value.strip }}">
+            </div>
+        </p>
+        <p class="row">
+            <div class="col-lg-6 col-md-6 col-sm-6">
+                <b>{% trans 'C&eacute;dula de identidad' %}:</b>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-6">
+                 <select id="id_id_card_prefix" name="id_card_prefix" class="form-control">
+                     <option value="V"{% if form.id_card_prefix == 'V' %} selected="selected"{% endif %}>V</option>
+                     <option value="J"{% if form.id_card_prefix == 'J' %} selected="selected"{% endif %}>J</option>
+                     <option value="G"{% if form.id_card_prefix == 'G' %} selected="selected"{% endif %}>G</option>
+                     <option value="E"{% if form.id_card_prefix == 'E' %} selected="selected"{% endif %}>E</option>
+                 </select>
+                <input class="form-control" id="id_id_card_number" maxlength="20" name="id_card_number" type="text" value="{% if form.id_card_number.value %}{{ form.id_card_number.value }}{% endif %}">
+            </div>
+        </p>
+        <p class="row">
+            <div class="col-lg-6 col-md-6 col-sm-6">
+                <b>{% trans 'Sexo' %}:</b>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-6">
+                 <select id="id_gender" name="gender" class="form-control">
+                     <option value="M"{% if form.gender.value.upper == 'M' %} selected="selected"{% endif %}>{% trans 'Masculino' %}</option>
+                     <option value="F"{% if form.gender.value.upper == 'F' %} selected="selected"{% endif %}>{% trans 'Femenino' %}</option>
+                 </select>
+            </div>
+        </p>
+        <p class="row">
+            <div class="col-lg-6 col-md-6 col-sm-6">
+                <b>{% trans 'Fecha de nacimiento' %}:</b>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-6{% if form.birth_date.errors %} has-error{% endif %}">
+                 <input class="form-control datepicker" readonly="readonly" data-provide="datepicker" id="id_birth_date" name="birth_date" data-date-format="dd/mm/yyyy" type="text" value="{{ form.birth_date.value|date:"d/m/Y" }}">
+            </div>
+        </p>
+        <p class="row">
+            <div class="col-lg-6 col-md-6 col-sm-6">
+                <b>{% trans 'Estado civil' %}:</b>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-6{% if form.marital_status.errors %} has-error{% endif %}">
+                <select id="id_marital_status" name="marital_status" class="form-control">
+                {% for value, text in form.marital_status.field.choices %}
+                    <option value="{{ value }}"{% if form.marital_status.value == value %} selected="selected"{% endif %}>{{ text }}</option>
+                {% endfor %}
+                </select>
+            </div>
+        </p>
+        <p class="row">
+            <div class="col-lg-6 col-md-6 col-sm-6">
+                <b>{% trans 'Nivel socioecon&oacute;mico' %}:</b>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-6{% if form.ses.errors %} has-error{% endif %}">
+                <select id="id_ses" name="ses" class="form-control">
+                {% for value, text in form.ses.field.choices %}
+                    <option value="{{ value }}"{% if form.ses.value == value %} selected="selected"{% endif %}>{{ text }}</option>
+                {% endfor %}
+                </select>
+            </div>
+        </p>
+        <p class="row">
+            <div class="col-lg-6 col-md-6 col-sm-6">
+                <b>{% trans 'Grado de instrucci&oacute;n' %}:</b>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-6{% if form.education.errors %} has-error{% endif %}">
+                 <select id="id_education" name="education" class="form-control">
+                {% for value, text in form.education.field.choices %}
+                    <option value="{{ value }}"{% if form.education.value == value %} selected="selected"{% endif %}>{{ text }}</option>
+                {% endfor %}
+                </select>
+            </div>
+        </p>
+        <p class="row">
+            <div class="col-lg-6 col-md-6 col-sm-6">
+                <b>{% trans 'Vivienda propia' %}:</b>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-6 checkbox">
+            <input id="id_dwelling" name="dwelling" type="checkbox" class="form-control"{% if form.dwelling.value %} checked="checked"{% endif %} >
+            </div>
+        </p>
+        <p class="row">
+            <div class="col-lg-6 col-md-6 col-sm-6">
+                <b>{% trans 'Direcci&oacute;n' %}:</b>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-6{% if form.street.errors %} has-error{% endif %}">
+                <textarea cols="40" id="id_street" name="street" rows="10" class="form-control">{% if form.street.value %}{{ form.street.value }}{% endif %}</textarea>
+            </div>
+        </p>
+    </div>
+</div>
+<p class="row">
+    <div class="col-lg-11" align="center">
+        <button id="btn_next" class="btn btn-default pull-right" type="button">{% trans 'Siguiente' %}</button>
+    </div>
+</p>
 {% endautoescape %}

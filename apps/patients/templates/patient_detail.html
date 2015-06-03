@@ -52,8 +52,28 @@
                     <li role="presentation"><a href="#clinics" aria-controls="clinics" role="tab" data-toggle="tab">{% trans 'Datos clínicos' %}</a></li>
                 </ul>
                 <div id="patient-panel">
+                    {% if form %}
+                        <form action="{% if form.instance.id %}{% url 'patient_detail' form.instance.id %}{% else %}{% url 'patient_list' %}{% endif %}" method="post" class="form-inline">
+                        {% csrf_token %}
+                        {% if form.errors %}
+                            <div class="fade in alert alert-dismissible text-center alert-danger" id="fail_alert">
+                                <button type="button" class="close" data-dismiss="alert" aria-label="{% trans 'Cerrar' %}"><span aria-hidden="true">&times;</span></button>
+                                {% trans 'Hay errores en los datos suministrados' %}
+                            </div>
+                        {% endif %}
+                    {% endif %}
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="{% if message.tags %}{{ message.tags }} {% endif %}fade in alert alert-dismissible text-center" id="success_alert">
+                                <button type="button" class="close" data-dismiss="alert" aria-label="{% trans 'Cerrar' %}"><span aria-hidden="true">&times;</span></button>
+                                {% autoescape off %}
+                                {{ message }}
+                                {% endautoescape %}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
                     <div class="row">
-                        <div class="col-lg-3">
+                        <div class="col-lg-3 col-md-3 col-sm-3">
                             <div id="patient_picture">
                                 {% if patient.picture %}
                                     <img src="{{ MEDIA_URL }}{{ patient.picture }}" alt="photo" height="150px" width="150px"/>
@@ -82,9 +102,11 @@
                                 {% include 'patient_clinical_data.html' %}
                                 {% endif %}
                             </div>
-
                         </div>
                     </div>
+                {% if form %}
+                </form>
+                {% endif %}
                 </div>
             </div>
         </div>

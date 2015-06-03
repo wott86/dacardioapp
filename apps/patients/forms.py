@@ -20,4 +20,4 @@ class PatientAdminForm(PatientBaseForm):
 
 class PatientForm(PatientBaseForm):
     class Meta(PatientBaseForm.Meta):
-        pass
+        exclude = ['street_2', 'habits']

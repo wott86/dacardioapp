@@ -8,13 +8,26 @@ import mimetypes
 from django.utils import timezone
 
 
-# ################## Info models
+# managers
+class OrderManager(models.Manager):
+    def get_queryset(self):
+        return super(OrderManager, self).get_queryset().order_by('order')
 
+
+class OrderNameManager(OrderManager):
+    def get_queryset(self):
+        return super(OrderNameManager, self).get_queryset().order_by('name')
+
+
+# ################## Info models
 class Ses(models.Model):
     """
     Socioeconomic status
     """
     name = models.CharField(max_length=128)
+    order = models.PositiveSmallIntegerField(default=0)
+
+    objects = OrderNameManager()
 
     def __unicode__(self):
         return self.name
@@ -25,6 +38,9 @@ class Education(models.Model):
     Education level
     """
     name = models.CharField(max_length=128)
+    order = models.PositiveSmallIntegerField(default=0)
+
+    objects = OrderManager()
 
     def __unicode__(self):
         return self.name
@@ -35,6 +51,9 @@ class Occupation(models.Model):
     What the patient does
     """
     name = models.CharField(max_length=128)
+    order = models.PositiveSmallIntegerField(default=0)
+
+    objects = OrderManager()
 
     def __unicode__(self):
         return self.name
@@ -42,6 +61,9 @@ class Occupation(models.Model):
 
 class Habit(models.Model):
     name = models.CharField(max_length=128)
+    order = models.PositiveSmallIntegerField(default=0)
+
+    objects = OrderManager()
 
     def __unicode__(self):
         return self.name
@@ -49,6 +71,9 @@ class Habit(models.Model):
 
 class RelationshipType(models.Model):
     name = models.CharField(max_length=256)
+    order = models.PositiveSmallIntegerField(default=0)
+
+    objects = OrderManager()
 
     def __unicode__(self):
         return self.name
@@ -94,9 +119,9 @@ class Patient(models.Model):
     birth_date = models.DateField()
     gender = models.CharField(max_length=1, choices=GENDERS)
     dwelling = models.BooleanField(default=True)
-    city = models.ForeignKey('cities.City', related_name='patients')
-    street = models.TextField()
-    street_2 = models.TextField()
+    city = models.ForeignKey('cities.City', related_name='patients', null=True, blank=True)
+    street = models.TextField(default='', blank=True)
+    street_2 = models.TextField(default='', blank=True)
     phone_home = models.CharField(max_length=50, default='', blank=True)
     phone_mobile = models.CharField(max_length=50, default='', blank=True)
     phone_office = models.CharField(max_length=50, default='', blank=True)
@@ -104,8 +129,8 @@ class Patient(models.Model):
     ses = models.ForeignKey(Ses, verbose_name=_(u'Estatus socioeconómico'), related_name='patients')
     occupation = models.ForeignKey(Occupation, related_name='patients')
     education = models.ForeignKey(Education, related_name='patients')
-    personal_record = models.TextField(default='')
-    family_record = models.TextField(default='')
+    personal_record = models.TextField(default='', blank=True)
+    family_record = models.TextField(default='', blank=True)
     habits = models.ManyToManyField(Habit, related_name='patients')
 
     @property
@@ -124,7 +149,7 @@ class Patient(models.Model):
 
     @property
     def address(self):
-        return '%s, %s' % (self.street, self.city.name)
+        return ('%s, %s' % (self.street, self.city.name)) if self.city else self.street
 
     @property
     def first_history(self):

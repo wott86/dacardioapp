@@ -1,8 +1,11 @@
-from apps.patients.forms import PatientBaseForm
+from apps.patients.forms import PatientForm
 from apps.patients.models import Patient
-from django.http.response import HttpResponse
-from django.shortcuts import render
+from django.core.urlresolvers import reverse
+from django.http.response import HttpResponse, HttpResponseRedirect
+from django.shortcuts import render, get_object_or_404
 from django.views.generic.base import View
+from django.contrib import messages
+from django.utils.translation import ugettext as _
 from faker import Factory
 
 fake = Factory.create()
@@ -12,7 +15,7 @@ from django.template.context import RequestContext
 
 
 class PatientList(View):
-    form_class = PatientBaseForm
+    form_class = PatientForm
 
     def get(self, request):
         return HttpResponse(render(request, 'patient_list.html',
@@ -30,6 +33,10 @@ class PatientList(View):
         patient = None
         if form.is_valid():
             patient = form.save()
+            messages.success(
+                request,
+                _('Los datos del paciente %(name)s han sido guardados &eacute;xitosamente') % {'name': patient.full_name})
+            return HttpResponseRedirect(reverse('patient_detail', args=(patient.id,)))
 
         data = {
             'patient': patient,
@@ -39,10 +46,10 @@ class PatientList(View):
 
 
 class PatientDetail(View):
-    form_class = PatientBaseForm
+    form_class = PatientForm
 
     def get(self, request, patient_id):
-        patient = Patient.objects.get(pk=1)
+        patient = get_object_or_404(Patient, id=patient_id)
         return HttpResponse(render(request, 'patient_detail.html',
                                    context=RequestContext(request, {'patient': patient})))
 
@@ -53,12 +60,18 @@ class PatientDetail(View):
         :param patient_id:
         :return:
         """
-        patient = Patient.objects.get(pk=1)
+        patient = get_object_or_404(Patient, id=patient_id)
         # processing form
         form = self.form_class(request.POST, request.FILES, instance=patient)
 
         if form.is_valid():
             patient = form.save()
+            messages.success(
+                request,
+                _('Los datos del paciente %(name)s han sido guardados &eacute;xitosamente') % {
+                    'name': patient.full_name
+                })
+            return HttpResponseRedirect(reverse('patient_detail', args=(patient.id,)))
 
         data = {
             'patient': patient,
@@ -68,7 +81,7 @@ class PatientDetail(View):
 
 
 class PatientEdit(View):
-    form_class = PatientBaseForm
+    form_class = PatientForm
 
     def get(self, request, patient_id):
         """
@@ -77,7 +90,7 @@ class PatientEdit(View):
         :param patient_id:
         :return:
         """
-        patient = Patient.objects.get(pk=1)
+        patient = get_object_or_404(Patient, id=patient_id)
         form = self.form_class(instance=patient)
         data = {
             'patient': patient,
@@ -87,7 +100,7 @@ class PatientEdit(View):
 
 
 class PatientNew(View):
-    form_class = PatientBaseForm
+    form_class = PatientForm
 
     def get(self, request):
         """
