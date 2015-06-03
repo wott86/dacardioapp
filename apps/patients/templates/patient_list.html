@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load i18n %}
+{% load l10n %}
 {% load static %}
 {% block extra_static %}
     <link rel="stylesheet" href="{% static "css/patient_list.css" %}"/>
@@ -53,24 +54,26 @@
                     <thead>
                     <tr>
                         <th>{% trans "Código" %}</th>
+                        <th>{% trans "Cédula" %}</th>
                         <th>{% trans "Nombre" %}</th>
                         <th>{% trans "Edad" %}</th>
                         <th>{% trans "Sexo" %}</th>
                         <th>{% trans "Fecha de registro" %}</th>
-                        <th>{% trans "Última grabación" %}</th>
+                        <th>{% trans "Última modificación" %}</th>
                         <th>{% trans "Acciones" %}</th>
                     </tr>
                     </thead>
                     <tbody>
                     {% with ''|center:6 as range %}
-                        {% for i in range %}
+                        {% for patient in page.object_list %}
                             <tr>
-                                <td>344{{ forloop.counter }}</td>
-                                <td>Pedro P&eacute;rez</td>
-                                <td>43</td>
-                                <td>M</td>
-                                <td>10/03/2003</td>
-                                <td>04/10/2010</td>
+                                <td>{{ patient.id }}</td>
+                                <td>{{ patient.id_card }}</td>
+                                <td>{{ patient.full_name }}</td>
+                                <td>{{ patient.age }}</td>
+                                <td>{{ patient.get_gender_display }}</td>
+                                <td>{{ patient.first_history.date|date }}</td>
+                                <td>{{ patient.last_history.date|date }}</td>
                                 <td class="actions">
                                     <a href="{% url 'patient_detail' forloop.counter %}" title="{% trans "Ficha del paciente" %}" data-toggle="tooltip"
                                        data-placement="left"><span class="glyphicon glyphicon-user"
@@ -82,7 +85,7 @@
                                        data-toggle="tooltip" data-placement="bottom"><span
                                             class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
                                     <a href="#" title="{% trans "Desactivar paciente" %}" data-toggle="tooltip"
-                                       data-placement="right"><span class="glyphicon glyphicon-remove"
+                                       data-placement="bottom"><span class="glyphicon glyphicon-remove"
                                                                     aria-hidden="true"></span></a>
                                 </td>
                             </tr>
@@ -93,20 +96,28 @@
                 <div align="center">
                     <nav>
                         <ul class="pagination">
-                            <li class="disabled">
-                                <a href="#" aria-label="Previous">
+                            <li class="{% if not page.has_previous %}disabled{% endif %}">
+                                {% if page.has_previous %}
+                                <a href="?page={{ page.previous_page_number }}" aria-label="Previous">
                                     <span aria-hidden="true">&laquo;</span>
                                 </a>
+                                {% else %}
+                                    <span aria-hidden="true">&laquo;</span>
+                                {% endif %}
                             </li>
-                            <li class="active"><a href="#">1</a></li>
-                            <li><a href="#">2</a></li>
-                            <li><a href="#">3</a></li>
-                            <li><a href="#">4</a></li>
-                            <li><a href="#">5</a></li>
-                            <li>
-                                <a href="#" aria-label="Next">
+                            {% for i in page.paginator.range_pages %}
+                                <li class="{% if page.number == i %}active{% endif %}"><a href="?page={{ i }}">1</a></li>
+                            {% empty %}
+                                <li class="active"><a href="?page=1">1</a></li>
+                            {% endfor %}
+                            <li class="{% if not page.has_next %}disabled{% endif %}">
+                                {% if page.has_next %}
+                                <a href="?page={{ page.next_page_number }}" aria-label="Next">
                                     <span aria-hidden="true">&raquo;</span>
                                 </a>
+                                {% else %}
+                                    <span aria-hidden="true">&raquo;</span>
+                                {% endif %}
                             </li>
                         </ul>
                     </nav>

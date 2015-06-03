@@ -7,6 +7,7 @@ from django.shortcuts import render, get_object_or_404
 from django.views.generic.base import View
 from django.contrib import messages
 from django.utils.translation import ugettext as _
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from faker import Factory
 
 fake = Factory.create()
@@ -17,10 +18,18 @@ from django.template.context import RequestContext
 
 class PatientList(View):
     form_class = PatientForm
+    paginator_class = Paginator
 
     def get(self, request):
+        paginator = self.paginator_class(Patient.objects.all(), 25)
+        try:
+            page = paginator.page(request.GET.get('page', 1))
+        except PageNotAnInteger:
+            page = paginator.page(1)
+        except EmptyPage:
+            page = paginator.page(paginator.num_pages)
         data = {
-            'patients': Patient.objects.all()
+            'page': page,
         }
         return HttpResponse(render(request, 'patient_list.html',
                                    context=RequestContext(request, data)))

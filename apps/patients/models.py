@@ -139,7 +139,7 @@ class Patient(models.Model):
 
     @property
     def id_card(self):
-        return '%s - %s' % (self.id_card_prefix, self.id_card_number)
+        return '%s-%s' % (self.id_card_prefix, self.id_card_number)
 
     @property
     def age(self):
