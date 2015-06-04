@@ -131,7 +131,7 @@ class Patient(models.Model):
     education = models.ForeignKey(Education, related_name='patients')
     personal_record = models.TextField(default='', blank=True)
     family_record = models.TextField(default='', blank=True)
-    habits = models.ManyToManyField(Habit, related_name='patients')
+    habits = models.ManyToManyField(Habit, related_name='patients', blank=True)
 
     @property
     def full_name(self):

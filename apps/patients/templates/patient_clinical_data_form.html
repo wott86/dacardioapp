@@ -17,10 +17,18 @@
         </p>
         <p class="row">
             <div class="col-lg-6 col-md-6 col-sm-6">
+                <b>{% trans 'H&aacute;bitos' %}:</b>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-6{% if form.habits.errors %} has-error{% endif %}">
+                {{ form.habits }}
+            </div>
+        </p>
+        <p class="row">
+            <div class="col-lg-6 col-md-6 col-sm-6">
                 <b>{% trans 'Antecedentes personales' %}:</b>
             </div>
             <div class="col-lg-6 col-md-6 col-sm-6{% if form.personal_record.errors %} has-error{% endif %}">
-                <textarea name="personal_record" id="id_personal_record" cols="30" rows="10">{{ form.personal_record.value }}</textarea>
+                <textarea name="personal_record" class="form-control" id="id_personal_record" cols="30" rows="10">{{ form.personal_record.value }}</textarea>
             </div>
         </p>
         <p class="row">
@@ -28,14 +36,14 @@
                 <b>{% trans 'Antecedentes familiares' %}:</b>
             </div>
             <div class="col-lg-6 col-md-6 col-sm-6{% if form.family_record.errors %} has-error{% endif %}">
-                 <textarea name="personal_record" id="id_family_record" cols="30" rows="10">{% if form.family_record.value %}{{ form.family_record.value }}{% endif %}</textarea>
+                 <textarea name="personal_record" class="form-control" id="id_family_record" cols="30" rows="10">{% if form.family_record.value %}{{ form.family_record.value }}{% endif %}</textarea>
             </div>
         </p>
     </div>
 </div>
 <p class="row">
     <div class="col-lg-11" align="center">
-        <button id="btn_save" class="btn btn-default pull-right" type="submit">{% trans 'Guardar' %}</button>
+        <button id="btn_save" class="btn btn-primary pull-right" type="submit">{% trans 'Guardar' %}</button>
     </div>
 </p>
 {% endautoescape %}
