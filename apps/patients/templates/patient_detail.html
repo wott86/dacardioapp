@@ -57,7 +57,7 @@
                 </ul>
                 <div id="patient-panel">
                     {% if form %}
-                        <form action="{% if form.instance.id %}{% url 'patient_detail' form.instance.id %}{% else %}{% url 'patient_list' %}{% endif %}" method="post" class="form-inline">
+                        <form action="{% if form.instance.id %}{% url 'patient_detail' form.instance.id %}{% else %}{% url 'patient_list' %}{% endif %}" method="post" enctype="multipart/form-data" class="form-inline">
                         {% csrf_token %}
                         {% if form.errors %}
                             <div class="fade in alert alert-dismissible text-center alert-danger" id="fail_alert">
@@ -79,13 +79,25 @@
                     <div class="row">
                         <div class="col-lg-3 col-md-3 col-sm-3">
                             <div id="patient_picture">
-                                {% if patient.picture %}
-                                    <img src="{{ MEDIA_URL }}{{ patient.picture }}" alt="photo" height="150px" width="150px"/>
-                                {% else %}
-                                    <img src="http://placehold.it/150x150" alt="photo" height="150px" width="150px"/>
-                                {% endif %}
+                                <div>
+                                    {% if patient.picture %}
+                                        <img src="{{ MEDIA_URL }}{{ patient.picture }}" alt="photo" height="150px" width="150px" class="img-rounded"/>
+                                    {% else %}
+                                        <img src="http://placehold.it/150x150" alt="photo" height="150px" width="150px" class="img-rounded"/>
+                                    {% endif %}
+                                </div>
                             {% if not form %}
-                                <a href="{% url 'patient_edit' patient.id %}" title="{% trans "Editar paciente" %}" data-toggle="tooltip" data-placement="bottom"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
+                                <h3 class="">
+                                    <a href="{% url 'patient_edit' patient.id %}" title="{% trans "Editar paciente" %}" data-toggle="tooltip" data-placement="right"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
+                                </h3>
+                            {% else %}
+                                <br/>
+                                <p class="text-danger">
+                                {% for error in form.picture.errors %}
+                                    {{ error }}{% if not forloop.last %}, {% endif %}
+                                {% endfor %}
+                                </p>
+                                {{ form.picture }}
                             {% endif %}
                             </div>
 
