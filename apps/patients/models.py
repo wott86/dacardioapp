@@ -133,6 +133,10 @@ class Patient(models.Model):
     family_record = models.TextField(default='', blank=True)
     habits = models.ManyToManyField(Habit, related_name='patients', blank=True)
 
+    class Meta:
+        verbose_name = _('Paciente')
+        verbose_name_plural = _('Pacientes')
+
     @property
     def full_name(self):
         return ('%s %s' % (self.first_name, self.last_name)).strip()
