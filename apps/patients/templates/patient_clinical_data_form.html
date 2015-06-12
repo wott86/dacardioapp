@@ -36,7 +36,7 @@
                 <b>{% trans 'Antecedentes familiares' %}:</b>
             </div>
             <div class="col-lg-6 col-md-6 col-sm-6{% if form.family_record.errors %} has-error{% endif %}">
-                 <textarea name="personal_record" class="form-control" id="id_family_record" cols="30" rows="10">{% if form.family_record.value %}{{ form.family_record.value }}{% endif %}</textarea>
+                 <textarea name="family_record" class="form-control" id="id_family_record" cols="30" rows="10">{% if form.family_record.value %}{{ form.family_record.value }}{% endif %}</textarea>
             </div>
         </p>
     </div>
