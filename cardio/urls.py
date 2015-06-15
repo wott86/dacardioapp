@@ -9,7 +9,7 @@ urlpatterns = patterns('',
                        # url(r'^$', 'cardio.views.home', name='home'),
                        # url(r'^blog/', include('blog.urls')),
 
-                       url(r'^$', RedirectView.as_view(url='patients/')),
+                       url(r'^$', RedirectView.as_view(url='patients/', permanent=True)),
                        url(r'^admin/', include(admin.site.urls)),
 
                        url(r'^users/', include('apps.users.urls')),
