@@ -72,7 +72,7 @@ class PatientDetail(View):
 
     def post(self, request, patient_id):
         """
-        Saves an user edit
+        Saves a patient edit
         :param request:
         :param patient_id:
         :return:

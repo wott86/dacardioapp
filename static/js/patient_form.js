@@ -8,5 +8,10 @@ $(function(){
     $('.datepicker').datepicker({
         language: language
     });
-    $('#patient_picture').find('a').remove();
+    $('#patient_picture').find('p').remove();
+    $('#id_picture').fileinput({
+        language: language,
+        showUpload: false,
+        showRemove: false
+    });
 });

@@ -17,12 +17,12 @@ class PatientBaseForm(forms.ModelForm):
     def clean_picture(self):
         picture = self.cleaned_data.get('picture', None)
 
-        if picture:
+        '''if picture:
             w, h = get_image_dimensions(picture)
             if abs(w - h) > 1:
-                raise forms.ValidationError(_('La imagen debe ser cuadrada'))
+                raise forms.ValidationError(_('La imagen debe ser cuadrada'))'''
 
-        return self.cleaned_data
+        return picture
 
 
 class PatientAdminForm(PatientBaseForm):
@@ -36,5 +36,5 @@ class PatientForm(PatientBaseForm):
         widgets = {
             'city': forms.TextInput,
             'habits': forms.SelectMultiple(attrs={'class': 'selectpicker'}),
-            'picture': forms.ClearableFileInput()
+            'picture': forms.ClearableFileInput(attrs={'class': 'testing_class'})
         }
