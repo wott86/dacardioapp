@@ -28,7 +28,7 @@ class Point(models.Model):
     flagged = models.BooleanField(default=False)
 
     def __unicode__(self):
-        return u'%s - %s - %s' % (str(self.record), self.x, self.y)
+        return u'%s - %s - %s' % (unicode(self.record), self.x, self.y)
 
 class Anomaly(models.Model):
     name = models.CharField(max_length=256)
@@ -45,5 +45,5 @@ class Annotation(models.Model):
     anomaly = models.ForeignKey('records.Anomaly', null=True, blank=True)
 
     def __unicode__(self):
-        return u'(%s) - %s - %s' % (str(self.point), self.created_by.full_name, self.created.isoformat())
+        return u'(%s) - %s - %s' % (unicode(self.point), self.created_by.full_name, self.created.isoformat())
 
