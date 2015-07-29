@@ -188,7 +188,7 @@ class History(models.Model):
     modified_new_value = models.TextField(default='')
 
     def __unicode__(self):
-        return 'Patient: %s / M.D. %s' % (str(self.patient), self.modified_by.get_full_name())
+        return 'Patient: %s / M.D. %s' % (unicode(self.patient), self.modified_by.get_full_name())
 
 
 """class PersonalRecord(models.Model):
