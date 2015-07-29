@@ -7,6 +7,9 @@ class Record(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
 
+    def __unicode__(self):
+        return '%s (%s)' % (self.patient.full_name, self.created.isoformat())
+
 
 class Point(models.Model):
     WAVES_TYPES = (
@@ -19,15 +22,19 @@ class Point(models.Model):
     )
 
     record = models.ForeignKey('records.Record')
-    x = models.FloatField()
+    x = models.FloatField(db_index=True)
     y = models.FloatField()
     wave = models.CharField(max_length=1, choices=WAVES_TYPES, null=True, blank=True)
     flagged = models.BooleanField(default=False)
 
+    def __unicode__(self):
+        return '%s - %s - %s' % (str(self.record), self.x, self.y)
 
 class Anomaly(models.Model):
     name = models.CharField(max_length=256)
 
+    def __unicode__(self):
+        return self.name
 
 class Annotation(models.Model):
     point = models.ForeignKey('records.Point')
@@ -36,4 +43,7 @@ class Annotation(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey('users.User')
     anomaly = models.ForeignKey('records.Anomaly', null=True, blank=True)
+
+    def __unicode__(self):
+        return '(%s) - %s - %s' % (str(self.point), self.created_by.full_name, self.created.isoformat())
 
