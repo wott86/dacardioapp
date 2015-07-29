@@ -40,7 +40,8 @@ INSTALLED_APPS = (
     'django_extensions',
     'cities',
     'apps.users',
-    'apps.patients'
+    'apps.patients',
+    'apps.records'
 )
 
 MIDDLEWARE_CLASSES = (
