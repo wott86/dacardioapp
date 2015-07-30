@@ -52,6 +52,15 @@
                  <input class="form-control datepicker" readonly="readonly" data-provide="datepicker" id="id_birth_date" name="birth_date" data-date-format="dd/mm/yyyy" type="text" value="{{ form.birth_date.value|date:"d/m/Y" }}">
             </div>
         </p>
+
+        <p class="row">
+            <div class="col-lg-6 col-md-6 col-sm-6">
+                <b>{% trans 'Lugar de nacimiento' %}:</b>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-6{% if form.birth_place.errors %} has-error{% endif %}">
+                 <input class="form-control" id="id_birth_place" name="birth_place" type="text" value="{{ form.birth_place.value }}">
+            </div>
+        </p>
         <p class="row">
             <div class="col-lg-6 col-md-6 col-sm-6">
                 <b>{% trans 'Estado civil' %}:</b>

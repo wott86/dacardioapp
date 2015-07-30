@@ -38,6 +38,14 @@
         </p>
         <p class="row">
             <div class="col-lg-6">
+                <b>{% trans 'Lugar de nacimiento' %}:</b>
+            </div>
+            <div class="col-lg-6">
+                 {{ patient.birth_place|capfirst }}
+            </div>
+        </p>
+        <p class="row">
+            <div class="col-lg-6">
                 <b>{% trans 'Edad' %}:</b>
             </div>
             <div class="col-lg-6">

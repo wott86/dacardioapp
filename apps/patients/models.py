@@ -117,6 +117,7 @@ class Patient(models.Model):
     id_card_number = models.CharField(max_length=32)
     picture = models.ImageField(upload_to=get_upload_path, null=True, blank=True)
     birth_date = models.DateField()
+    birth_place = models.CharField(max_length=256, default='', blank=True)
     gender = models.CharField(max_length=1, choices=GENDERS)
     dwelling = models.BooleanField(default=True)
     city = models.ForeignKey('cities.City', related_name='patients', null=True, blank=True)
