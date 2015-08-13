@@ -30,23 +30,12 @@
             <div class="col-lg-3">
                 <b>{% trans 'Antecedentes personales' %}:</b>
             </div>
-            <div class="col-lg-6">
-            {{ patient.personal_record }}
-            </div>
         </p>
         <p class="row">
-        <div class="col-lg-3">
-                <b>{% trans 'Antecedentes familiares' %}:</b>
+            <div class="col-lg-offset-1 col-lg-2">
+                <i>{% trans 'H&aacute;bitos personales' %}:</i>
             </div>
-            <div class="col-lg-6">
-            {{ patient.family_record|escape }}
-            </div>
-        </p>
-        <p class="row">
-            <div class="col-lg-3">
-                <b>{% trans 'H&aacute;bitos personales' %}:</b>
-            </div>
-            <div class="col-lg-6">
+            <div class="col-lg-offset-1 col-lg-5">
             {% if patient.habits.all %}
                  <ul>
                      {% for record in patient.habits.all %}
@@ -58,6 +47,22 @@
             {% else %}
                 {% trans 'No' %}
             {% endif %}
+            </div>
+        </p>
+        <p class="row">
+            <div class="col-lg-offset-1 col-lg-2">
+                <i>{% trans 'Patológicos' %}:</i>
+            </div>
+            <div class="col-lg-offset-1 col-lg-5">
+            {{ patient.personal_record }}
+            </div>
+        </p>
+        <p class="row">
+            <div class="col-lg-3">
+                <b>{% trans 'Antecedentes familiares' %}:</b>
+            </div>
+            <div class="col-lg-6">
+            {{ patient.family_record|escape }}
             </div>
         </p>
     </div>

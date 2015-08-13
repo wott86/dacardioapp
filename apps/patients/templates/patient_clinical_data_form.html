@@ -17,15 +17,20 @@
         </p>
         <p class="row">
             <div class="col-lg-6 col-md-6 col-sm-6">
-                <b>{% trans 'H&aacute;bitos' %}:</b>
+                <b>{% trans 'Antecedentes personales' %}:</b>
+            </div>
+        </p>
+        <p class="row">
+            <div class="col-lg-offset-1 col-md-offset-1 col-sm-offset-1 col-lg-5 col-md-5 col-sm-5">
+                <i>{% trans 'H&aacute;bitos' %}:</i>
             </div>
             <div class="col-lg-6 col-md-6 col-sm-6{% if form.habits.errors %} has-error{% endif %}">
                 {{ form.habits }}
             </div>
         </p>
         <p class="row">
-            <div class="col-lg-6 col-md-6 col-sm-6">
-                <b>{% trans 'Antecedentes personales' %}:</b>
+            <div class="col-lg-offset-1 col-md-offset-1 col-sm-offset-1 col-lg-5 col-md-5 col-sm-5">
+                <i>{% trans 'Patológicos' %}:</i>
             </div>
             <div class="col-lg-6 col-md-6 col-sm-6{% if form.personal_record.errors %} has-error{% endif %}">
                 <textarea name="personal_record" class="form-control" id="id_personal_record" cols="30" rows="10">{{ form.personal_record.value }}</textarea>
