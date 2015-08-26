@@ -3,73 +3,73 @@
 {% autoescape on %}
 
 <div class="row">
-    <div class="col-lg-7">
+    <div class="col-lg-7 col-md-7 col-sm-7 col-xs-6">
         <p class="row">
-            <div class="col-lg-6">
+            <div class="col-lg-6 col-md-6 col-sm-6">
                 <b>{% trans 'Nombre' %}:</b>
             </div>
-            <div class="col-lg-6">
+            <div class="col-lg-6 col-md-6 col-sm-6">
                  {{ patient.full_name }}
             </div>
         </p>
         <p class="row">
-            <div class="col-lg-6">
+            <div class="col-lg-6 col-md-6 col-sm-6">
                 <b>{% trans 'C&eacute;dula de identidad' %}:</b>
             </div>
-            <div class="col-lg-6">
+            <div class="col-lg-6 col-md-6 col-sm-6">
                  {{ patient.id_card }}
             </div>
         </p>
         <p class="row">
-            <div class="col-lg-6">
+            <div class="col-lg-6 col-md-6 col-sm-6">
                 <b>{% trans 'Sexo' %}:</b>
             </div>
-            <div class="col-lg-6">
+            <div class="col-lg-6 col-md-6 col-sm-6">
                  {{ patient.get_gender_display }}
             </div>
         </p>
         <p class="row">
-            <div class="col-lg-6">
+            <div class="col-lg-6 col-md-6 col-sm-6">
                 <b>{% trans 'Fecha de nacimiento' %}:</b>
             </div>
-            <div class="col-lg-6">
+            <div class="col-lg-6 col-md-6 col-sm-6">
                  {{ patient.birth_date|localize }}
             </div>
         </p>
         <p class="row">
-            <div class="col-lg-6">
+            <div class="col-lg-6 col-md-6 col-sm-6">
                 <b>{% trans 'Lugar de nacimiento' %}:</b>
             </div>
-            <div class="col-lg-6">
+            <div class="col-lg-6 col-md-6 col-sm-6">
                  {{ patient.birth_place|capfirst }}
             </div>
         </p>
         <p class="row">
-            <div class="col-lg-6">
+            <div class="col-lg-6 col-md-6 col-sm-6">
                 <b>{% trans 'Edad' %}:</b>
             </div>
-            <div class="col-lg-6">
+            <div class="col-lg-6 col-md-6 col-sm-6">
                  {{ patient.age }}
             </div>
         </p>
         <p class="row">
-            <div class="col-lg-6">
+            <div class="col-lg-6 col-md-6 col-sm-6">
                 <b>{% trans 'Estado civil' %}:</b>
             </div>
-            <div class="col-lg-6">
+            <div class="col-lg-6 col-md-6 col-sm-6">
                  {{ patient.get_marital_status_display }}
             </div>
         </p>
         <p class="row">
-            <div class="col-lg-6">
+            <div class="col-lg-6 col-md-6 col-sm-6">
                 <b>{% trans 'Nivel socioecon&oacute;mico' %}:</b>
             </div>
-            <div class="col-lg-6">
+            <div class="col-lg-6 col-md-6 col-sm-6">
                  {{ patient.ses.name }}
             </div>
         </p>
         <p class="row">
-            <div class="col-lg-6">
+            <div class="col-lg-6 col-md-6 col-sm-6">
                 <b>{% trans 'Grado de instrucci&oacute;n' %}:</b>
             </div>
             <div class="col-lg-6">
@@ -77,10 +77,10 @@
             </div>
         </p>
         <p class="row">
-            <div class="col-lg-6">
+            <div class="col-lg-6 col-md-6 col-sm-6">
                 <b>{% trans 'Vivienda propia' %}:</b>
             </div>
-            <div class="col-lg-6">
+            <div class="col-lg-6 col-md-6 col-sm-6">
             {% if patient.dwelling %}
                 {% trans 'S&iacute;' %}
             {% else %}
@@ -89,10 +89,10 @@
             </div>
         </p>
         <p class="row">
-            <div class="col-lg-6">
+            <div class="col-lg-6 col-md-6 col-sm-6">
                 <b>{% trans 'Direcci&oacute;n' %}:</b>
             </div>
-            <div class="col-lg-6">
+            <div class="col-lg-6 col-md-6 col-sm-6">
                  {{ patient.address }}
             </div>
         </p>

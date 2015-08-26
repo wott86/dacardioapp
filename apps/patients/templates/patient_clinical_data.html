@@ -1,41 +1,41 @@
 {% load i18n %}
 {% load l10n %}
 <div class="row">
-    <div class="col-lg-7">
+    <div class="col-lg-7 col-md-7 col-sm-7 col-xs-6">
         <p class="row">
-            <div class="col-lg-3">
+            <div class="col-lg-3 col-md-3 col-sm-3">
                 <b>{% trans 'Fecha de ingreso' %}:</b>
             </div>
-            <div class="col-lg-6">
+            <div class="col-lg-6 col-md-6 col-sm-6">
                  {{ patient.first_history.date|localize }}
             </div>
         </p>
         <p class="row">
-            <div class="col-lg-3">
+            <div class="col-lg-3 col-md-3 col-sm-3">
                 <b>{% trans '&Uacute;ltima modificaci&oacute;n' %}:</b>
             </div>
-            <div class="col-lg-6">
+            <div class="col-lg-6 col-md-6 col-sm-6">
                  {{ patient.last_history.date|localize }}
             </div>
         </p>
         <p class="row">
-            <div class="col-lg-3">
+            <div class="col-lg-3 col-md-3 col-sm-3">
                 <b>{% trans 'Ocupaci&oacute;n' %}:</b>
             </div>
-            <div class="col-lg-6">
+            <div class="col-lg-6 col-md-6 col-sm-6">
                  {{ patient.occupation.name|escape }}
             </div>
         </p>
         <p class="row">
-            <div class="col-lg-3">
+            <div class="col-lg-3 col-md-3 col-sm-3">
                 <b>{% trans 'Antecedentes personales' %}:</b>
             </div>
         </p>
         <p class="row">
-            <div class="col-lg-offset-1 col-lg-2">
+            <div class="col-lg-offset-1 col-lg-2 col-md-2 col-sm-2">
                 <i>{% trans 'H&aacute;bitos personales' %}:</i>
             </div>
-            <div class="col-lg-offset-1 col-lg-5">
+            <div class="col-lg-offset-1 col-lg-5 col-md-5 col-sm-5">
             {% if patient.habits.all %}
                  <ul>
                      {% for record in patient.habits.all %}
@@ -50,18 +50,18 @@
             </div>
         </p>
         <p class="row">
-            <div class="col-lg-offset-1 col-lg-2">
+            <div class="col-lg-offset-1 col-lg-2 col-md-2 col-sm-2">
                 <i>{% trans 'Patológicos' %}:</i>
             </div>
-            <div class="col-lg-offset-1 col-lg-5">
+            <div class="col-lg-offset-1 col-lg-5 col-md-5 col-sm-5">
             {{ patient.personal_record }}
             </div>
         </p>
         <p class="row">
-            <div class="col-lg-3">
+            <div class="col-lg-3 col-md-3 col-sm-3">
                 <b>{% trans 'Antecedentes familiares' %}:</b>
             </div>
-            <div class="col-lg-6">
+            <div class="col-lg-6 col-md-6 col-sm-6">
             {{ patient.family_record|escape }}
             </div>
         </p>
