@@ -32,6 +32,9 @@ class Ses(models.Model):
     def __unicode__(self):
         return self.name
 
+    class Meta:
+        verbose_name = _(u'estatus socioeconómico')
+
 
 class Education(models.Model):
     """
@@ -44,6 +47,10 @@ class Education(models.Model):
 
     def __unicode__(self):
         return self.name
+
+    class Meta:
+        verbose_name = _(u'nivel educativo')
+        verbose_name_plural = _(u'niveles educativos')
 
 
 class Occupation(models.Model):
@@ -58,6 +65,10 @@ class Occupation(models.Model):
     def __unicode__(self):
         return self.name
 
+    class Meta:
+        verbose_name = _(u'ocupación')
+        verbose_name_plural = _('ocupaciones')
+
 
 class Habit(models.Model):
     name = models.CharField(max_length=128)
@@ -68,6 +79,10 @@ class Habit(models.Model):
     def __unicode__(self):
         return self.name
 
+    class Meta:
+        verbose_name = _(u'hábito')
+        verbose_name_plural = _(u'hábitos')
+
 
 class RelationshipType(models.Model):
     name = models.CharField(max_length=256)
@@ -77,6 +92,9 @@ class RelationshipType(models.Model):
 
     def __unicode__(self):
         return self.name
+
+    class Meta:
+        verbose_name = _('parentesco')
 
 
 def get_upload_path(instance, filename):
@@ -120,7 +138,6 @@ class Patient(models.Model):
     birth_place = models.CharField(max_length=256, default='', blank=True)
     gender = models.CharField(max_length=1, choices=GENDERS)
     dwelling = models.BooleanField(default=True)
-    city = models.ForeignKey('cities.City', related_name='patients', null=True, blank=True)
     street = models.TextField(default='', blank=True)
     street_2 = models.TextField(default='', blank=True)
     phone_home = models.CharField(max_length=50, default='', blank=True)
@@ -133,10 +150,6 @@ class Patient(models.Model):
     personal_record = models.TextField(default='', blank=True)
     family_record = models.TextField(default='', blank=True)
     habits = models.ManyToManyField(Habit, related_name='patients', blank=True)
-
-    class Meta:
-        verbose_name = _('Paciente')
-        verbose_name_plural = _('Pacientes')
 
     @property
     def full_name(self):
@@ -175,6 +188,7 @@ class Patient(models.Model):
 
     class Meta:
         unique_together = ('id_card_prefix', 'id_card_number')
+        verbose_name = _('paciente')
 
 
 class History(models.Model):
@@ -190,6 +204,10 @@ class History(models.Model):
 
     def __unicode__(self):
         return 'Patient: %s / M.D. %s' % (unicode(self.patient), self.modified_by.get_full_name())
+
+    class Meta:
+        verbose_name = _('historial')
+        verbose_name_plural = _('historial')
 
 
 """class PersonalRecord(models.Model):

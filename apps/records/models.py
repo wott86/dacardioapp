@@ -1,4 +1,7 @@
+# coding=utf-8
 from django.db import models
+from django.utils.translation import ugettext as _
+
 
 # Create your models here.
 class Record(models.Model):
@@ -9,6 +12,9 @@ class Record(models.Model):
 
     def __unicode__(self):
         return u'%s (%s)' % (self.patient.full_name, self.created.isoformat())
+
+    class Meta:
+        verbose_name = _('registro')
 
 
 class Point(models.Model):
@@ -30,11 +36,19 @@ class Point(models.Model):
     def __unicode__(self):
         return u'%s - %s - %s' % (unicode(self.record), self.x, self.y)
 
+    class Meta:
+        verbose_name = _('punto')
+
+
 class Anomaly(models.Model):
     name = models.CharField(max_length=256)
 
     def __unicode__(self):
         return self.name
+
+    class Meta:
+        verbose_name = _(u'anomalía')
+
 
 class Annotation(models.Model):
     point = models.ForeignKey('records.Point')
@@ -47,3 +61,6 @@ class Annotation(models.Model):
     def __unicode__(self):
         return u'(%s) - %s - %s' % (unicode(self.point), self.created_by.full_name, self.created.isoformat())
 
+    class Meta:
+        verbose_name = _(u'anotación')
+        verbose_name_plural = _('anotaciones')
