@@ -24,8 +24,8 @@ class Ses(models.Model):
     """
     Socioeconomic status
     """
-    name = models.CharField(max_length=128)
-    order = models.PositiveSmallIntegerField(default=0)
+    name = models.CharField(max_length=128, verbose_name=_('nombre'))
+    order = models.PositiveSmallIntegerField(default=0, verbose_name=_('orden'))
 
     objects = OrderNameManager()
 
@@ -40,8 +40,8 @@ class Education(models.Model):
     """
     Education level
     """
-    name = models.CharField(max_length=128)
-    order = models.PositiveSmallIntegerField(default=0)
+    name = models.CharField(max_length=128, verbose_name=_('nombre'))
+    order = models.PositiveSmallIntegerField(default=0, verbose_name=_('orden'))
 
     objects = OrderManager()
 
@@ -57,8 +57,8 @@ class Occupation(models.Model):
     """
     What the patient does
     """
-    name = models.CharField(max_length=128)
-    order = models.PositiveSmallIntegerField(default=0)
+    name = models.CharField(max_length=128, verbose_name=_('nombre'))
+    order = models.PositiveSmallIntegerField(default=0, verbose_name=_('orden'))
 
     objects = OrderManager()
 
@@ -71,8 +71,8 @@ class Occupation(models.Model):
 
 
 class Habit(models.Model):
-    name = models.CharField(max_length=128)
-    order = models.PositiveSmallIntegerField(default=0)
+    name = models.CharField(max_length=128, verbose_name=_('nombre'))
+    order = models.PositiveSmallIntegerField(default=0, verbose_name=_('orden'))
 
     objects = OrderManager()
 
@@ -85,8 +85,8 @@ class Habit(models.Model):
 
 
 class RelationshipType(models.Model):
-    name = models.CharField(max_length=256)
-    order = models.PositiveSmallIntegerField(default=0)
+    name = models.CharField(max_length=256, verbose_name=_('nombre'))
+    order = models.PositiveSmallIntegerField(default=0, verbose_name=_('orden'))
 
     objects = OrderManager()
 
@@ -129,27 +129,29 @@ class Patient(models.Model):
     )
 
     # Fields
-    first_name = models.CharField(max_length=256)
-    last_name = models.CharField(max_length=256)
-    id_card_prefix = models.CharField(max_length=1, choices=ID_CARD_PREFIXES, default='V')
-    id_card_number = models.CharField(max_length=32)
-    picture = models.ImageField(upload_to=get_upload_path, null=True, blank=True)
-    birth_date = models.DateField()
-    birth_place = models.CharField(max_length=256, default='', blank=True)
-    gender = models.CharField(max_length=1, choices=GENDERS)
-    dwelling = models.BooleanField(default=True)
-    street = models.TextField(default='', blank=True)
-    street_2 = models.TextField(default='', blank=True)
-    phone_home = models.CharField(max_length=50, default='', blank=True)
-    phone_mobile = models.CharField(max_length=50, default='', blank=True)
-    phone_office = models.CharField(max_length=50, default='', blank=True)
-    marital_status = models.CharField(max_length=1, choices=MARITAL_STATUS, default='s')
+    chart_number = models.CharField(max_length=50, verbose_name=_(u'número de historia'), null=True, blank=True,
+                                    unique=True)
+    first_name = models.CharField(max_length=256, verbose_name=_('nombre'))
+    last_name = models.CharField(max_length=256, verbose_name=_('apellido'))
+    id_card_prefix = models.CharField(max_length=1, choices=ID_CARD_PREFIXES, default='V',
+                                      verbose_name=_(u'prefijo de la cédula'))
+    id_card_number = models.CharField(max_length=32, verbose_name=_(u'cédula de identidad'))
+    picture = models.ImageField(upload_to=get_upload_path, null=True, blank=True, verbose_name=_('foto'))
+    birth_date = models.DateField(verbose_name=_('fecha de nacimiento'))
+    birth_place = models.CharField(max_length=256, default='', blank=True, verbose_name=_('lugar de nacimiento'))
+    gender = models.CharField(max_length=1, choices=GENDERS, verbose_name=_('sexo'))
+    dwelling = models.BooleanField(default=True, verbose_name=_(u'¿Posee vivienda?'))
+    street = models.TextField(default='', blank=True, verbose_name=_(u'dirección'))
+    phone_home = models.CharField(max_length=50, default='', blank=True, verbose_name=_(u'teléfono casa'))
+    phone_mobile = models.CharField(max_length=50, default='', blank=True, verbose_name=_(u'teléfono móvil'))
+    phone_office = models.CharField(max_length=50, default='', blank=True, verbose_name=_(u'teléfono oficina'))
+    marital_status = models.CharField(max_length=1, choices=MARITAL_STATUS, default='s', verbose_name=_('estado civil'))
     ses = models.ForeignKey(Ses, verbose_name=_(u'Estatus socioeconómico'), related_name='patients')
-    occupation = models.ForeignKey(Occupation, related_name='patients')
-    education = models.ForeignKey(Education, related_name='patients')
-    personal_record = models.TextField(default='', blank=True)
-    family_record = models.TextField(default='', blank=True)
-    habits = models.ManyToManyField(Habit, related_name='patients', blank=True)
+    occupation = models.ForeignKey(Occupation, related_name='patients', verbose_name=_(u'ocupación'))
+    education = models.ForeignKey(Education, related_name='patients', verbose_name=_(u'educación'))
+    personal_record = models.TextField(default='', blank=True, verbose_name=_(u'antecedentes patológicos'))
+    family_record = models.TextField(default='', blank=True, verbose_name=_('antecedentes familiares'))
+    habits = models.ManyToManyField(Habit, related_name='patients', blank=True, verbose_name=_(u'hábitos personales'))
 
     @property
     def full_name(self):
@@ -195,33 +197,22 @@ class History(models.Model):
     ALL = 'ALL'
     SEPARATOR = '[|]'
 
-    modified_by = models.ForeignKey(User, related_name='history')
-    patient = models.ForeignKey(Patient, related_name='history')
-    date = models.DateTimeField(auto_now_add=True)
-    modified_field = models.TextField(default=ALL)
-    modified_old_value = models.TextField(default='')
-    modified_new_value = models.TextField(default='')
+    modified_by = models.ForeignKey(User, related_name='history', verbose_name=_('modificado por'))
+    patient = models.ForeignKey(Patient, related_name='history', verbose_name=_('paciente'))
+    date = models.DateTimeField(auto_now_add=True, verbose_name=_('fecha'))
+    modified_field = models.TextField(default=ALL, verbose_name=_('campo modificado'))
+    modified_old_value = models.TextField(default='', verbose_name=_('antiguo valor'))
+    modified_new_value = models.TextField(default='', verbose_name=_('nuevo valor'))
 
     def __unicode__(self):
         return 'Patient: %s / M.D. %s' % (unicode(self.patient), self.modified_by.get_full_name())
 
     class Meta:
-        verbose_name = _('historial')
-        verbose_name_plural = _('historial')
+        verbose_name = _('historial de cambios')
+        verbose_name_plural = _('historial de cambios')
 
 
-"""class PersonalRecord(models.Model):
-    name = models.CharField(max_length=256)
-    patient = models.ForeignKey(Patient, related_name='personal_records')
-
-    def __unicode__(self):
-        return '%s - %s ' % (self.patient.full_name, self.name)"""
-
-
-"""class FamilyRecord(models.Model):
-    name = models.CharField(max_length=256)
-    patient = models.ForeignKey(Patient, related_name='family_records')
-    relationship_type = models.ForeignKey(RelationshipType, related_name='family_records')
-
-    def __unicode__(self):
-        return '%s - %s (%s)' % (self.patient.full_name, self.name, self.relationship_type.name)"""
+class Diagnosis(models.Model):
+    patient = models.ForeignKey(Patient, verbose_name=_('paciente'))
+    anomalies = models.ManyToManyField('records.Anomaly', verbose_name=_(u'anomalías'))
+    description = models.TextField(verbose_name=_(u'descripción'))
