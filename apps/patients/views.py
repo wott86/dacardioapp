@@ -1,5 +1,6 @@
-from apps.patients.forms import PatientForm
-from apps.patients.models import Patient, History
+# coding=utf-8
+from apps.patients.forms import PatientForm, DiagnosisForm
+from apps.patients.models import Patient, History, Diagnosis
 from django.core.urlresolvers import reverse
 from django.db.models import Model
 from django.http.response import HttpResponse, HttpResponseRedirect
@@ -88,8 +89,8 @@ class PatientDetail(View):
                     modified_by=request.user,
                     patient=patient,
                     modified_field=changed,
-                    modified_old_value=str(form.initial[changed]) if not isinstance(form.initial[changed], Model) else str(form.initial[changed].id),
-                    modified_new_value=str(form.cleaned_data[changed]) if not isinstance(form.cleaned_data[changed], Model) else str(form.cleaned_data[changed].id)
+                    modified_old_value=unicode(form.initial[changed]) if not isinstance(form.initial[changed], Model) else str(form.initial[changed].id),
+                    modified_new_value=unicode(form.cleaned_data[changed]) if not isinstance(form.cleaned_data[changed], Model) else str(form.cleaned_data[changed].id)
                 )
             messages.success(
                 request,
@@ -124,6 +125,18 @@ class PatientEdit(View):
         return HttpResponse(render(request, 'patient_detail.html', context=RequestContext(request, data)))
 
 
+class PatientDelete(View):
+
+    def get(self, request, patient_id):
+        patient = get_object_or_404(Patient, id=patient_id)
+
+        patient.active = False
+        patient.save()
+        messages.success(
+                         request,
+                         _(u'El paciente %(name)s han desactivado éxitosamente') % {'name': patient.full_name})
+        return HttpResponseRedirect(reverse('patient_list'))
+
 class PatientNew(View):
     form_class = PatientForm
 
@@ -138,3 +151,54 @@ class PatientNew(View):
             'form': form
         }
         return HttpResponse(render(request, 'patient_detail.html', context=RequestContext(request, data)))
+
+
+class DiagnosisList(View):
+    paginator_class = Paginator
+
+    def get(self, request, patient_id):
+        patient = get_object_or_404(Patient, id=patient_id)
+        paginator = self.paginator_class(patient.diagnosis.all().order_by('-id'), 25)
+        try:
+            page = paginator.page(request.GET.get('page', 1))
+        except PageNotAnInteger:
+            page = paginator.page(1)
+        except EmptyPage:
+            page = paginator.page(paginator.num_pages)
+        data = {
+            'patient': patient,
+            'page': page,
+        }
+        return HttpResponse(render(request, 'diagnosis_list.html', context=RequestContext(request, data)))
+
+
+class DiagnosisNew(View):
+    form_class = DiagnosisForm
+
+    def get(self, request, patient_id):
+        patient = get_object_or_404(Patient, id=patient_id)
+        data = {
+            'patient': patient,
+            'form': self.form_class()
+        }
+
+        return HttpResponse(render(request, 'diagnosis_form.html', context=RequestContext(request, data)))
+
+    def post(self, request, patient_id):
+        patient = get_object_or_404(Patient, id=patient_id)
+
+        form = self.form_class(request.POST, request.Files)
+        if not form.is_valid():
+            data = {
+                'patient': patient,
+                'form': form
+            }
+            return HttpResponse(render(request, 'diagnosis_form.html', context=RequestContext(request, data)))
+
+
+class DiagnosisDetail(View):
+    def get(self, request, diagnosis_id):
+        diagnosis = get_object_or_404(Diagnosis, id=diagnosis_id)
+        data = {
+            'diagnosis': diagnosis
+        }

@@ -129,6 +129,7 @@ class Patient(models.Model):
     )
 
     # Fields
+    active = models.BooleanField(default=True)
     chart_number = models.CharField(max_length=50, verbose_name=_(u'número de historia'), null=True, blank=True,
                                     unique=True)
     first_name = models.CharField(max_length=256, verbose_name=_('nombre'))
@@ -169,7 +170,7 @@ class Patient(models.Model):
 
     @property
     def address(self):
-        return ('%s, %s' % (self.street, self.city.name)) if self.city else self.street
+        return self.street
 
     @property
     def first_history(self):
@@ -213,6 +214,7 @@ class History(models.Model):
 
 
 class Diagnosis(models.Model):
-    patient = models.ForeignKey(Patient, verbose_name=_('paciente'))
+    patient = models.ForeignKey(Patient, related_name='diagnosis', verbose_name=_('paciente'))
     anomalies = models.ManyToManyField('records.Anomaly', verbose_name=_(u'anomalías'))
     description = models.TextField(verbose_name=_(u'descripción'))
+    date = models.DateTimeField(auto_now_add=True, verbose_name=_(u'fecha de creación'), null=True)

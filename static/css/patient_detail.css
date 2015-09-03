@@ -14,3 +14,8 @@
 #patient_picture {
     width: 150px;
 }
+
+#actions a {
+    display: inline-block;
+    margin: 2px;
+}

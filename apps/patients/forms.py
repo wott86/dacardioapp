@@ -1,4 +1,4 @@
-from apps.patients.models import Patient
+from apps.patients.models import Patient, Diagnosis
 from django import forms
 from django.utils.translation import ugettext as _
 from django.core.files.images import get_image_dimensions
@@ -38,3 +38,9 @@ class PatientForm(PatientBaseForm):
             'habits': forms.SelectMultiple(attrs={'class': 'selectpicker'}),
             'picture': forms.ClearableFileInput(attrs={'class': 'testing_class'})
         }
+
+
+class DiagnosisForm(forms.ModelForm):
+    class Meta:
+        model = Diagnosis
+        exclude = ['patient']
