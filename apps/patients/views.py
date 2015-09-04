@@ -22,7 +22,7 @@ class PatientList(View):
     paginator_class = Paginator
 
     def get(self, request):
-        paginator = self.paginator_class(Patient.objects.all(), 25)
+        paginator = self.paginator_class(Patient.objects.all().order_by('-id'), 25)
         try:
             page = paginator.page(request.GET.get('page', 1))
         except PageNotAnInteger:
