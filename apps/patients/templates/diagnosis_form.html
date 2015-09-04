@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static %}
+{% block extra_static %}
+    <link rel="stylesheet" href="{% static "css/patient_detail.css" %}"/>
+    <script src="{% static "js/patient_detail.js" %}"></script>
+    <link rel="stylesheet" href="{% static "bower_components/bootstrap-select/dist/css/bootstrap-select.min.css" %}"/>
+    <link rel="stylesheet" href="{% static "css/diagnosis/form.css" %}"/>
+    <script src="{% static "bower_components/bootstrap-select/dist/js/bootstrap-select.min.js" %}"></script>
+    <script src="{% static 'bower_components/bootstrap-select/dist/js/i18n/defaults-es_CL.min.js' %}"></script>
+    <script>
+    language = "{{ request.LANGUAGE_CODE }}"
+    </script>
+{% endblock %}
+{% block breadcrumbs %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <ol class="breadcrumb">
+                    <li><a href="#">Inicio</a></li>
+                    <li><a href="{% url 'patient_list' %}">Pacientes</a></li>
+                    <li><a href="{% url 'patient_detail' patient.id %}">{{ patient.full_name|escape }}</a></li>
+                    <li><a href="{% url 'diagnosis_list' patient.id %}">{% trans 'Diagnóstico' %}</a></li>
+                    <li class="active">{% trans 'Nuevo dianóstico' %}</li>
+                </ol>
+            </div>
+        </div>
+
+    </div>
+{% endblock %}
+
+
+{% block content %}
+<div class="container-fluid">
+
+    <div class="row">
+        <div class="col-lg-offset-2 col-md-offset-2 col-sm-offset-2 col-xs-offset-2 col-lg-8 col-md-8 col-sm-8 col-sx-8">
+            <div class="panel panel-default">
+                <div class="panel-heading">{% trans 'Nuevo diagnóstico' %}</div>
+                <div class="panel-body">
+                    <form action="{% url 'diagnosis_new' patient.id %}" method="post" class="form-inline">
+                        {% csrf_token %}
+                        <p class="row">
+                            <div class="col-lg-offset-2 col-md-offset-2 col-sm-offset-2 col-lg-2 col-md-2 col-sm-2">
+                                <label for="id_anomalies"></label><b>{% trans 'Anomalías' %}:</b>
+                            </div>
+                            <div class="col-lg-5 col-md-5 col-sm-5{% if form.anomalies.errors %} has-error{% endif %}">
+                                {{ form.anomalies }}
+                            </div>
+                        </p>
+                        <p class="row">
+                            <div class="col-lg-offset-2 col-md-offset-2 col-sm-offset-2 col-lg-2 col-md-2 col-sm-2">
+                                <label for="id_description"></label><b>{% trans 'Descripción' %}:</b>
+                            </div>
+                            <div class="col-lg-5 col-md-5 col-sm-5{% if form.anomalies.errors %} has-error{% endif %}">
+                                <textarea cols="40" class="form-control" id="id_description" name="description" rows="10"></textarea>
+                            </div>
+                        </p>
+                        <p class="row">
+                            <div class="col-lg-9 col-md-9 col-sm-9" align="right">
+                                <button id="btn_save" class="btn btn-primary" type="submit">{% trans 'Guardar' %}</button>
+                            </div>
+                        </p>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+{% endblock %}
