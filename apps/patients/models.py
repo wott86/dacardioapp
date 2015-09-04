@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from apps.users.models import User
 from django.db import models
 from django.utils.translation import ugettext as _
 import os
@@ -130,8 +129,7 @@ class Patient(models.Model):
 
     # Fields
     active = models.BooleanField(default=True)
-    chart_number = models.CharField(max_length=50, verbose_name=_(u'número de historia'), null=True, blank=True,
-                                    unique=True)
+    chart_number = models.CharField(max_length=50, verbose_name=_(u'número de historia'), null=True, blank=True)
     first_name = models.CharField(max_length=256, verbose_name=_('nombre'))
     last_name = models.CharField(max_length=256, verbose_name=_('apellido'))
     id_card_prefix = models.CharField(max_length=1, choices=ID_CARD_PREFIXES, default='V',
@@ -198,7 +196,7 @@ class History(models.Model):
     ALL = 'ALL'
     SEPARATOR = '[|]'
 
-    modified_by = models.ForeignKey(User, related_name='history', verbose_name=_('modificado por'))
+    modified_by = models.ForeignKey('users.User', related_name='history', verbose_name=_('modificado por'))
     patient = models.ForeignKey(Patient, related_name='history', verbose_name=_('paciente'))
     date = models.DateTimeField(auto_now_add=True, verbose_name=_('fecha'))
     modified_field = models.TextField(default=ALL, verbose_name=_('campo modificado'))
@@ -216,5 +214,6 @@ class History(models.Model):
 class Diagnosis(models.Model):
     patient = models.ForeignKey(Patient, related_name='diagnosis', verbose_name=_('paciente'))
     anomalies = models.ManyToManyField('records.Anomaly', verbose_name=_(u'anomalías'))
-    description = models.TextField(verbose_name=_(u'descripción'))
+    description = models.TextField(verbose_name=_(u'descripción'), default='', blank=True)
+    made_by = models.ForeignKey('users.User', null=True, verbose_name=_('Hecho por'))
     date = models.DateTimeField(auto_now_add=True, verbose_name=_(u'fecha de creación'), null=True)

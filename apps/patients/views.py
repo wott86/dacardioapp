@@ -71,6 +71,25 @@ class PatientDetail(View):
         return HttpResponse(render(request, 'patient_detail.html',
                                    context=RequestContext(request, {'patient': patient})))
 
+
+class PatientEdit(View):
+    form_class = PatientForm
+
+    def get(self, request, patient_id):
+        """
+        Shows patient edit form
+        :param request:
+        :param patient_id:
+        :return:
+        """
+        patient = get_object_or_404(Patient, id=patient_id)
+        form = self.form_class(instance=patient)
+        data = {
+            'patient': patient,
+            'form': form
+        }
+        return HttpResponse(render(request, 'patient_detail.html', context=RequestContext(request, data)))
+
     def post(self, request, patient_id):
         """
         Saves a patient edit
@@ -106,25 +125,6 @@ class PatientDetail(View):
         return HttpResponse(render(request, 'patient_detail.html', context=RequestContext(request, data)))
 
 
-class PatientEdit(View):
-    form_class = PatientForm
-
-    def get(self, request, patient_id):
-        """
-        Shows patient edit form
-        :param request:
-        :param patient_id:
-        :return:
-        """
-        patient = get_object_or_404(Patient, id=patient_id)
-        form = self.form_class(instance=patient)
-        data = {
-            'patient': patient,
-            'form': form
-        }
-        return HttpResponse(render(request, 'patient_detail.html', context=RequestContext(request, data)))
-
-
 class PatientDelete(View):
 
     def get(self, request, patient_id):
@@ -136,6 +136,7 @@ class PatientDelete(View):
                          request,
                          _(u'El paciente %(name)s han desactivado éxitosamente') % {'name': patient.full_name})
         return HttpResponseRedirect(reverse('patient_list'))
+
 
 class PatientNew(View):
     form_class = PatientForm
@@ -187,13 +188,26 @@ class DiagnosisNew(View):
     def post(self, request, patient_id):
         patient = get_object_or_404(Patient, id=patient_id)
 
-        form = self.form_class(request.POST, request.Files)
+        form = self.form_class(request.POST)
         if not form.is_valid():
             data = {
                 'patient': patient,
                 'form': form
             }
             return HttpResponse(render(request, 'diagnosis_form.html', context=RequestContext(request, data)))
+
+        diagnosis = form.save(commit=False)
+        diagnosis.made_by = request.user
+        diagnosis.patient = patient
+        diagnosis.save()
+        form.save_m2m()
+        messages.success(
+            request,
+            _(u'El diagnóstico del paciente %(name)s ha sido guardado éxitosamente') % {
+                'name': patient.full_name
+            }
+        )
+        return HttpResponseRedirect(reverse('diagnosis_list', args=(patient_id,)))
 
 
 class DiagnosisDetail(View):

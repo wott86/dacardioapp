@@ -61,7 +61,7 @@
                 </ul>
                 <div id="patient-panel">
                     {% if form %}
-                        <form action="{% if form.instance.id %}{% url 'patient_detail' form.instance.id %}{% else %}{% url 'patient_list' %}{% endif %}" method="post" enctype="multipart/form-data" class="form-inline">
+                        <form action="{% if form.instance.id %}{% url 'patient_edit' form.instance.id %}{% else %}{% url 'patient_list' %}{% endif %}" method="post" enctype="multipart/form-data" class="form-inline">
                         {% csrf_token %}
                         {% if form.errors %}
                             <div class="fade in alert alert-dismissible text-center alert-danger" id="fail_alert">
@@ -69,16 +69,6 @@
                                 {% trans 'Hay errores en los datos suministrados' %}
                             </div>
                         {% endif %}
-                    {% endif %}
-                    {% if messages %}
-                        {% for message in messages %}
-                            <div class="{% if message.tags %}{{ message.tags }} {% endif %}fade in alert alert-dismissible text-center" id="success_alert">
-                                <button type="button" class="close" data-dismiss="alert" aria-label="{% trans 'Cerrar' %}"><span aria-hidden="true">&times;</span></button>
-                                {% autoescape off %}
-                                {{ message }}
-                                {% endautoescape %}
-                            </div>
-                        {% endfor %}
                     {% endif %}
                     <div class="row">
                         <div class="col-lg-3 col-md-3 col-sm-3 col-xs-5">

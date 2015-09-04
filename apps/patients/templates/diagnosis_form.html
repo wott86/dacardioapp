@@ -39,6 +39,13 @@
                 <div class="panel-heading">{% trans 'Nuevo diagnóstico' %}</div>
                 <div class="panel-body">
                     <form action="{% url 'diagnosis_new' patient.id %}" method="post" class="form-inline">
+                        {% if form.errors %}
+                            <div class="fade in alert alert-dismissible text-center alert-danger" id="fail_alert">
+                                <button type="button" class="close" data-dismiss="alert" aria-label="{% trans 'Cerrar' %}"><span aria-hidden="true">&times;</span></button>
+                                {% trans 'Hay errores en los datos suministrados' %}
+                            {{ form.errors }}
+                            </div>
+                        {% endif %}
                         {% csrf_token %}
                         <p class="row">
                             <div class="col-lg-offset-2 col-md-offset-2 col-sm-offset-2 col-lg-2 col-md-2 col-sm-2">

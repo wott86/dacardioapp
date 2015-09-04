@@ -32,7 +32,7 @@ class PatientAdminForm(PatientBaseForm):
 
 class PatientForm(PatientBaseForm):
     class Meta(PatientBaseForm.Meta):
-        exclude = ['street_2']
+        exclude = ['street_2', 'chart_number']
         widgets = {
             'city': forms.TextInput,
             'habits': forms.SelectMultiple(attrs={'class': 'selectpicker'}),
@@ -43,4 +43,7 @@ class PatientForm(PatientBaseForm):
 class DiagnosisForm(forms.ModelForm):
     class Meta:
         model = Diagnosis
-        exclude = ['patient']
+        exclude = ['patient', 'made_by']
+        widgets = {
+            'anomalies': forms.SelectMultiple(attrs={'class': 'selectpicker'})
+        }
