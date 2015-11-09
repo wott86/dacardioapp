@@ -14,6 +14,7 @@ urlpatterns = patterns('',
 
                        url(r'^users/', include('apps.users.urls')),
                        url(r'^patients/', include('apps.patients.urls')),
+                       url(r'^records/', include('apps.records.urls')),
 )
 
 if settings.DEBUG:
