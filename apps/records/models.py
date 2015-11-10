@@ -27,7 +27,7 @@ class Point(models.Model):
         ('u', 'u')
     )
 
-    record = models.ForeignKey('records.Record', verbose_name=_('registro'))
+    record = models.ForeignKey('records.Record', verbose_name=_('registro'), related_name='points')
     x = models.FloatField(db_index=True)
     y = models.FloatField()
     wave = models.CharField(max_length=1, choices=WAVES_TYPES, null=True, blank=True, verbose_name=_('onda detectada'))
