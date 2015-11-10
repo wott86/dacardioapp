@@ -10,5 +10,5 @@ class GraphicView(View):
     def get(self, request, record_id):
         record = get_object_or_404(Record, id=record_id)
         response = HttpResponse(content_type='image/png')
-        plot.get_image(record, response)
+        plot.get_image(record, response, limit=request.GET.get('samples', None))
         return response

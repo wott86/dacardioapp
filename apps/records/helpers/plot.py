@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 
 def get_image(record, file_like, format_='png', limit=None, offset=None):
     #plt.plot([1,2,3,4])
+    plt.clf()
     x = []
     y = []
     points = record.points.all()
