@@ -17,6 +17,29 @@ class Record(models.Model):
         verbose_name = _('registro')
 
 
+class Channel(models.Model):
+    CHANNEL_TYPES = (
+        ('n', _('Normal')),
+        ('i', _('Integrada')),
+        ('c', _(u'Cuadrática')),
+        ('r', _('Original')),
+        ('d', _('Derivada')),
+        ('f', _('Filtrada'))
+    )
+
+    record = models.ForeignKey(Record, verbose_name=_('registro'), related_name='channels')
+    type = models.CharField(max_length=2, default='n', choices=CHANNEL_TYPES, verbose_name=_('tipo'))
+    name = models.CharField(max_length=50, blank=True, default='', verbose_name=_('nombre'))
+    description = models.TextField(blank=True, default='', verbose_name=_(u'descripción'))
+
+    class Meta:
+        verbose_name = _('canal')
+        verbose_name_plural = _('canales')
+
+    def __unicode__(self):
+        return '%s - %s - %s' % (unicode(self.record), self.get_type_display(), self.name)
+
+
 class Point(models.Model):
     WAVES_TYPES = (
         (None, 'None'),
@@ -27,14 +50,14 @@ class Point(models.Model):
         ('u', 'u')
     )
 
-    record = models.ForeignKey('records.Record', verbose_name=_('registro'), related_name='points')
+    channel = models.ForeignKey(Channel, verbose_name=_('canal'), related_name='points')
     x = models.FloatField(db_index=True)
     y = models.FloatField()
     wave = models.CharField(max_length=1, choices=WAVES_TYPES, null=True, blank=True, verbose_name=_('onda detectada'))
     flagged = models.BooleanField(default=False, verbose_name=_('marca'))
 
     def __unicode__(self):
-        return u'%s - %s - %s' % (unicode(self.record), self.x, self.y)
+        return u'%s - %s - %s' % (unicode(self.channel), self.x, self.y)
 
     class Meta:
         verbose_name = _('punto')
