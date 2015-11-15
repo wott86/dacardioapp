@@ -1,0 +1,39 @@
+cfap_02_1ev_102819_Srr.dat 4273
+cfap_02_2ev_153735_Srr.dat 5303
+cfap_04_1ev_141026_Srr.dat 4364
+cfap_04_2ev_161829_Srr.dat 4499
+cfap_05_1ev_034755_Srr.dat 5291
+cfap_06_1ev_111903_Srr.dat 4601
+cfap_08_1ev_235342_Srr.dat 4555
+cfap_09_1ev_050309_Srr.dat 3433
+cfap_10_1ev_215631_Srr.dat 5542
+cfap_11_1ev_021600_Srr.dat 3747
+cfap_12_1ev_204610_Srr.dat 4595
+cfap_13_1ev_232822_Srr.dat 4178
+cfap_15_1ev_204006_Srr.dat 5574
+cfap_21_1ev_104351_Srr.dat 4373
+cfap_22_1ev_113304_Srr.dat 5402
+cfap_24_1ev_045002_Srr.dat 4351
+cfap_25_1ev_154020_Srr.dat 4947
+cfap_26_1ev_131821_Srr.dat 3348
+cfap_27_1ev_120647_Srr.dat 4145
+cfap_27_2ev_133311_Srr.dat 3589
+cfap_27_3ev_151014_Srr.dat 3907
+cfap_27_4ev_180930_Srr.dat 3696
+cfap_27_5ev_195008_Srr.dat 3288
+cfap_27_6ev_022833_Srr.dat 3100
+cfap_27_7ev_055634_Srr.dat 3161
+cfap_27_8ev_082535_Srr.dat 4395
+cfap_28_1ev_002832_Srr.dat 4719
+cfap_29_1ev_030005_Srr.dat 4472
+cfap_30_1ev_065858_Srr.dat 3223
+
+
+29 eventos de FAP en  20 individuos.
+
+
+
+
+
+
+

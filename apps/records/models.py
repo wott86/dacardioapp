@@ -24,7 +24,8 @@ class Channel(models.Model):
         ('c', _(u'Cuadrática')),
         ('r', _('Original')),
         ('d', _('Derivada')),
-        ('f', _('Filtrada'))
+        ('f', _('Filtrada')),
+        ('r', _('RR'))
     )
 
     record = models.ForeignKey(Record, verbose_name=_('registro'), related_name='channels')

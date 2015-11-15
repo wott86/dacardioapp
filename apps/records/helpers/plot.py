@@ -6,7 +6,7 @@ def get_image(channel, file_like, format_='png', limit=None, offset=None):
     plt.clf()
     x = []
     y = []
-    points = channel.points.all()
+    points = channel.points.all().order_by('x')
     if limit is not None and offset is not None:
         points = points[offset:limit]
     elif limit is not None and offset is None:
