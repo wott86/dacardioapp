@@ -6,5 +6,5 @@ from django.conf.urls import patterns, url
 
 urlpatterns = patterns(
     'apps.records.views',
-    url(r'^(\d+)/image/$', GraphicView.as_view(), name='record_image'),
+    url(r'^(\d+)/channel/(\d+)/image/$', GraphicView.as_view(), name='record_image'),
 )

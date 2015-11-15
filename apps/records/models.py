@@ -1,5 +1,6 @@
 # coding=utf-8
 from django.db import models
+from django.db.models.aggregates import Avg, StdDev
 from django.utils.translation import ugettext as _
 
 
@@ -43,9 +44,20 @@ class Channel(models.Model):
     def get_media_points(self, initial_time, final_time, interval):
         y = []
         while initial_time < final_time:
-            points = self.points.filter(x__gte=initial_time, x__lte=initial_time+interval).order_by('x')
-            count = points.count()
-            y.append(sum([p.y for p in points])/count if count > 0 else 0)
+            y.append(
+                self.points.filter(x__gte=initial_time,
+                                   x__lte=initial_time+interval).order_by('x').aggregate(average=Avg('y'))['average']
+            )
+            initial_time += interval
+        return range(1, len(y) + 1), y
+
+    def get_standard_deviation_points(self, initial_time, final_time, interval):
+        y = []
+        while initial_time < final_time:
+            std_dev = self.points.filter(x__gte=initial_time,
+                                         x__lte=initial_time+interval).order_by('x').aggregate(std_dev=StdDev('y'))
+
+            y.append(std_dev['std_dev'])
             initial_time += interval
         return range(1, len(y) + 1), y
 

@@ -1,4 +1,6 @@
+# coding=utf-8
 import matplotlib.pyplot as plt
+from django.utils.translation import ugettext as _
 
 
 def get_channel_image(channel, file_like, format_='png', limit=None, offset=None):
@@ -24,14 +26,19 @@ def get_media_image(channel, file_like, initial_time, final_time, interval, form
     get_image(x, y, file_like, 'RR Media: %s' % channel.record.patient.full_name, format_=format_)
 
 
+def get_standard_deviation_image(channel, file_like, initial_time, final_time, interval, format_='png'):
+    x, y = channel.get_standard_deviation_points(initial_time, final_time, interval)
+    get_image(x, y, file_like, _(u'RR Desviación estándard: %s') % channel.record.patient.full_name, format_=format_)
+
+
 def get_return_map_image(channel, file_like, initial_time, final_time, format_='png'):
     x, y = channel.get_return_map(initial_time, final_time)
-    get_image(x, y, file_like, 'RR Mapa de retorno: %s' % channel.record.patient.full_name, format_=format_, mode='.')
+    get_image(x, y, file_like, 'RR Mapa de retorno: %s' % channel.record.patient.full_name, format_=format_, line_style='.')
 
 
-def get_image(x, y, file_like, title=None, format_='png', xlabel=None, ylabel=None, mode='g-'):
+def get_image(x, y, file_like, title=None, format_='png', xlabel=None, ylabel=None, line_style='-'):
     plt.clf()
-    plt.plot(x, y, mode)
+    plt.plot(x, y, line_style)
     if title:
         plt.title(title)
     if xlabel:
