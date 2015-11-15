@@ -49,6 +49,18 @@ class Channel(models.Model):
             initial_time += interval
         return range(1, len(y) + 1), y
 
+    def get_return_map(self, initial_time, final_time):
+        points = [point.y for point in self.points.filter(x__gte=initial_time, x__lte=final_time).order_by('x')]
+        x = []
+        y = []
+
+        for index in xrange(len(points) - 1):
+            try:
+                y.append(points[index+1])
+                x.append(points[index])
+            except IndexError:
+                break
+        return x, y
 
 
 class Point(models.Model):

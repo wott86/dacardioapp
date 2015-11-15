@@ -24,9 +24,14 @@ def get_media_image(channel, file_like, initial_time, final_time, interval, form
     get_image(x, y, file_like, 'RR Media: %s' % channel.record.patient.full_name, format_=format_)
 
 
-def get_image(x, y, file_like, title=None, format_='png', xlabel=None, ylabel=None):
+def get_return_map_image(channel, file_like, initial_time, final_time, format_='png'):
+    x, y = channel.get_return_map(initial_time, final_time)
+    get_image(x, y, file_like, 'RR Mapa de retorno: %s' % channel.record.patient.full_name, format_=format_, mode='.')
+
+
+def get_image(x, y, file_like, title=None, format_='png', xlabel=None, ylabel=None, mode='g-'):
     plt.clf()
-    plt.plot(x, y, 'g-')
+    plt.plot(x, y, mode)
     if title:
         plt.title(title)
     if xlabel:
