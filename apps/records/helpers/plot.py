@@ -1,9 +1,7 @@
 import matplotlib.pyplot as plt
 
 
-def get_image(channel, file_like, format_='png', limit=None, offset=None):
-    #plt.plot([1,2,3,4])
-    plt.clf()
+def get_channel_image(channel, file_like, format_='png', limit=None, offset=None):
     x = []
     y = []
     points = channel.points.all().order_by('x')
@@ -18,11 +16,26 @@ def get_image(channel, file_like, format_='png', limit=None, offset=None):
     for point in points:
         x.append(point.x)
         y.append(point.y)
+    get_image(x, y, file_like, 'ECG: %s' % channel.record.patient.full_name, format_=format_)
+
+
+def get_media_image(channel, file_like, initial_time, final_time, interval, format_='png'):
+    x, y = channel.get_media_points(initial_time, final_time, interval)
+    get_image(x, y, file_like, 'RR Media: %s' % channel.record.patient.full_name, format_=format_)
+
+
+def get_image(x, y, file_like, title=None, format_='png', xlabel=None, ylabel=None):
+    plt.clf()
     plt.plot(x, y, 'g-')
-    #plt.ylabel('some numbers')
-    plt.title('ECG: %s' % channel.record.patient.full_name)
+    if title:
+        plt.title(title)
+    if xlabel:
+        plt.xlabel(xlabel)
+    if ylabel:
+        plt.ylabel(ylabel)
     plt.savefig(file_like, format=format_)
     plt.show()
 
+
 if __name__ == '__main__':
-    get_image(None, 'test.png')
+    get_channel_image(None, 'test.png')

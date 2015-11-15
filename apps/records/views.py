@@ -11,5 +11,6 @@ class GraphicView(View):
         record = get_object_or_404(Record, id=record_id)
         channel = record.channels.filter(pk=5)[0]
         response = HttpResponse(content_type='image/png')
-        plot.get_image(channel, response, limit=request.GET.get('samples', None))
+        #plot.get_channel_image(channel, response, limit=request.GET.get('samples', None))
+        plot.get_media_image(channel, response, 0, 5000, 40)
         return response

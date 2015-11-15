@@ -40,6 +40,16 @@ class Channel(models.Model):
     def __unicode__(self):
         return '%s - %s - %s' % (unicode(self.record), self.get_type_display(), self.name)
 
+    def get_media_points(self, initial_time, final_time, interval):
+        y = []
+        while initial_time < final_time:
+            points = self.points.filter(x__gte=initial_time, x__lte=initial_time+interval).order_by('x')
+            count = points.count()
+            y.append(sum([p.y for p in points])/count if count > 0 else 0)
+            initial_time += interval
+        return range(1, len(y) + 1), y
+
+
 
 class Point(models.Model):
     WAVES_TYPES = (
