@@ -57,7 +57,7 @@ class Channel(models.Model):
             std_dev = self.points.filter(x__gte=initial_time,
                                          x__lte=initial_time+interval).order_by('x').aggregate(std_dev=StdDev('y'))
 
-            y.append(std_dev['std_dev'] if std_dev['std_dev'] is not None else 0)
+            y.append(std_dev['std_dev'])
             initial_time += interval
         return range(1, len(y) + 1), y
 
