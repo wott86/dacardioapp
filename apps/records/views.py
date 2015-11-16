@@ -1,8 +1,9 @@
 from django.http.response import HttpResponse
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 from django.views.generic.base import View
 from apps.records.helpers import plot
 from apps.records.models import Record, Channel
+from django.template.context import RequestContext
 
 
 class GraphicView(View):
@@ -29,3 +30,18 @@ class GraphicView(View):
         elif graphic_type == self.GRAPHIC_TYPE_RETURN_MAP:
             plot.get_return_map_image(channel, response, 0, 5000)
         return response
+
+
+class RegisterView(View):
+
+    def get(self, request, record_id, channel_id):
+        record = get_object_or_404(Record, id=record_id)
+        channel = get_object_or_404(Channel, id=channel_id, record=record)
+        data = {
+            'record': record,
+            'channel': channel,
+            'type': request.GET.get('type', GraphicView.GRAPHIC_TYPE_NORMAL),
+            'constants': GraphicView
+        }
+
+        return HttpResponse(render(request, 'record_list.html', context=RequestContext(request, data)))

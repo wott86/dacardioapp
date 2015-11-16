@@ -78,7 +78,7 @@
                                     <a href="{% url 'patient_detail' forloop.counter %}" title="{% trans "Ficha del paciente" %}" data-toggle="tooltip"
                                        data-placement="left"><span class="glyphicon glyphicon-user"
                                                                    aria-hidden="true"></span></a>
-                                    <a href="{% url 'record_image' 1 5 %}?samples=3000" title="{% trans "Registros cardíacos del paciente" %}"
+                                    <a href="{% url 'view_channel' 1 2 %}" title="{% trans "Registros cardíacos del paciente" %}"
                                        data-toggle="tooltip" data-placement="bottom"><span
                                             class="glyphicon glyphicon-folder-open" aria-hidden="true"></span></a>
                                     <a href="{% url 'diagnosis_list' patient.id %}" title="{% trans "Diagnóstico del paciente" %}"
