@@ -54,7 +54,6 @@
                 <table class="table table-striped table-hover">
                     <thead>
                     <tr align="center">
-                        <th>{% trans "Código" %}</th>
                         <th>{% trans "Fecha" %}</th>
                         <th>{% trans "Realizado por" %}</th>
                         <th>{% trans "Anomalías" %}</th>
@@ -65,7 +64,6 @@
                     {% with ''|center:6 as range %}
                         {% for diagnosis in page.object_list %}
                             <tr>
-                                <td>{{ diagnosis.id }}</td>
                                 <td>{{ diagnosis.date|date }}</td>
                                 <td>{% if diagnosis.made_by.get_full_name != '' %}{{ diagnosis.made_by.get_full_name }}{% else %}{{ diagnosis.made_by.username }}{% endif %}</td>
                                 <td>
