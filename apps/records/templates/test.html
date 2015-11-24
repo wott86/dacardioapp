@@ -1,0 +1,20 @@
+{% load i18n %}
+{% load l10n %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+<p align="center">
+    <a href="{% url 'view_channel' record.id channel.id %}">{% trans 'Normal' %}</a>
+    <a href="{% url 'view_channel' record.id channel.id %}?type={{ constants.GRAPHIC_TYPE_MEDIA }}">{% trans 'Media' %}</a>
+    <a href="{% url 'view_channel' record.id channel.id %}?type={{ constants.GRAPHIC_TYPE_STANDARD_DEVIATION }}">{% trans 'Desviación estándar' %}</a>
+    <a href="{% url 'view_channel' record.id channel.id %}?type={{ constants.GRAPHIC_TYPE_RETURN_MAP }}">{% trans 'Mapa de retorno' %}</a>
+</p>
+<p align="center">
+    <img width="800px" height="600px" src="{% url 'record_image' record.id channel.id %}?type={{ type }}" alt="{% trans 'Gráfica' %}">
+</p>
+</body>
+</html>

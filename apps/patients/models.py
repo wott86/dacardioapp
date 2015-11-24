@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.db import models
+from django.db.models.aggregates import Max, Min
 from django.utils.translation import ugettext as _
 import os
 import uuid
@@ -127,6 +128,16 @@ class Patient(models.Model):
         ('d', _('Divorciado')),
     )
 
+    ORDERING = (
+        'name',
+        'id',
+        'age',
+        'creation',
+        'modification',
+        'id_card',
+        'gender'
+    )
+
     # Fields
     active = models.BooleanField(default=True)
     chart_number = models.CharField(max_length=50, verbose_name=_(u'número de historia'), null=True, blank=True)
@@ -134,7 +145,7 @@ class Patient(models.Model):
     last_name = models.CharField(max_length=256, verbose_name=_('apellido'))
     id_card_prefix = models.CharField(max_length=1, choices=ID_CARD_PREFIXES, default='V',
                                       verbose_name=_(u'prefijo de la cédula'))
-    id_card_number = models.CharField(max_length=32, verbose_name=_(u'cédula de identidad'))
+    id_card_number = models.IntegerField(verbose_name=_(u'cédula de identidad'), null=True)
     picture = models.ImageField(upload_to=get_upload_path, null=True, blank=True, verbose_name=_('foto'))
     birth_date = models.DateField(verbose_name=_('fecha de nacimiento'))
     birth_place = models.CharField(max_length=256, default='', blank=True, verbose_name=_('lugar de nacimiento'))
@@ -151,6 +162,34 @@ class Patient(models.Model):
     personal_record = models.TextField(default='', blank=True, verbose_name=_(u'antecedentes patológicos'))
     family_record = models.TextField(default='', blank=True, verbose_name=_('antecedentes familiares'))
     habits = models.ManyToManyField(Habit, related_name='patients', blank=True, verbose_name=_(u'hábitos personales'))
+
+    @classmethod
+    def get_ordered_items(cls, order):
+        if len(order) == 0:
+            order = '-id'
+
+        if order not in cls.ORDERING and (order[0] == '-' and order[1:] not in cls.ORDERING):
+            order = '-id'
+
+        asc = '-' if order[0] == '-' else ''
+
+        queryset = cls.objects.all()
+        if order in ('name', '-name'):
+            queryset = queryset.order_by(asc + 'last_name').order_by(asc + 'first_name')
+        elif order in ('age', '-age'):
+            queryset = queryset.order_by(('' if asc == '-' else '-') + 'birth_date')
+        elif order in ('creation', '-creation'):
+            queryset = queryset.annotate(creation=Min('history__id')).order_by(asc + 'creation')
+        elif order in ('modification', '-modification'):
+            queryset = queryset.annotate(modification=Max('history__id')).order_by(asc + 'modification')
+        elif order in ('id_card', '-id_card'):
+            queryset = queryset.order_by(asc + 'id_card_prefix').order_by(asc + 'id_card_number')
+        else:
+            queryset = queryset.order_by(order)
+
+        print str(queryset.query)
+
+        return queryset
 
     @property
     def full_name(self):
@@ -190,6 +229,7 @@ class Patient(models.Model):
     class Meta:
         unique_together = ('id_card_prefix', 'id_card_number')
         verbose_name = _('paciente')
+        ordering = ['-id']
 
 
 class History(models.Model):

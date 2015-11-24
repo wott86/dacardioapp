@@ -10,11 +10,9 @@ from django.contrib import messages
 from django.utils.translation import ugettext as _
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from faker import Factory
+from django.template.context import RequestContext
 
 fake = Factory.create()
-
-# Create your views here.
-from django.template.context import RequestContext
 
 
 class PatientList(View):
@@ -22,7 +20,9 @@ class PatientList(View):
     paginator_class = Paginator
 
     def get(self, request):
-        paginator = self.paginator_class(Patient.objects.all().order_by('-id'), 25)
+
+        order = request.GET.get('order', '-id')
+        paginator = self.paginator_class(Patient.get_ordered_items(order), 25)
         try:
             page = paginator.page(request.GET.get('page', 1))
         except PageNotAnInteger:
@@ -31,6 +31,7 @@ class PatientList(View):
             page = paginator.page(paginator.num_pages)
         data = {
             'page': page,
+            'order': order
         }
         return HttpResponse(render(request, 'patient_list.html',
                                    context=RequestContext(request, data)))
