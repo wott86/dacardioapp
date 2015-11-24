@@ -30,16 +30,9 @@
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-menubuilder"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>
             </button>
         </div>
-        <div class="collapse navbar-collapse navbar-menubuilder">
-            <ul class="nav navbar-nav navbar-left">
-                <li class="active"><a href="#">Home</a>
-                </li>
-                <li><a href="#">Products</a>
-                </li>
-                <li><a href="#">About Us</a>
-                </li>
-                <li><a href="#">Contact Us</a>
-                </li>
+        <div class="collapse navbar-collapse navbar-menubuilder row">
+            <ul class="nav navbar-nav navbar-right col-lg-1">
+                <li class="left"><a href="{% url 'logout_then_login' %}">{% trans 'Salir' %} <span class="glyphicon glyphicon-log-out" aria-hidden="true"></span></a></li>
             </ul>
         </div>
     </div>

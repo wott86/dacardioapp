@@ -2,6 +2,9 @@
 {% load i18n %}
 {% load l10n %}
 {% load static %}
+{% block title %}
+    {% trans 'Pacientes' %}
+{% endblock %}
 {% block extra_static %}
     <link rel="stylesheet" href="{% static "css/patient_list.css" %}"/>
 {% endblock %}
@@ -143,7 +146,7 @@
                                                                    aria-hidden="true"></span></a>
                                     <a href="{% url 'view_channel' 1 2 %}" title="{% trans "Registros cardíacos del paciente" %}"
                                        data-toggle="tooltip" data-placement="bottom"><span
-                                            class="glyphicon glyphicon-folder-open" aria-hidden="true"></span></a>
+                                            class="glyphicon glyphicon-stats" aria-hidden="true"></span></a>
                                     <a href="{% url 'diagnosis_list' patient.id %}" title="{% trans "Diagnóstico del paciente" %}"
                                        data-toggle="tooltip" data-placement="bottom"><span
                                             class="glyphicon glyphicon-th-list" aria-hidden="true"></span></a>
