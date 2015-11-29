@@ -167,6 +167,10 @@ CITIES_FILES = {
     },
 }
 
+
+# Pagination
+MAX_ELEMENTS_PER_PAGE = 25
+
 # Local settings
 try:
     from local_settings import *

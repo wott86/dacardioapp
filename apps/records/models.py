@@ -6,8 +6,8 @@ from django.utils.translation import ugettext as _
 
 # Create your models here.
 class Record(models.Model):
-    patient = models.ForeignKey('patients.Patient', verbose_name=_('paciente'))
-    taken_by = models.ForeignKey('users.User', verbose_name=_('registrado por'))
+    patient = models.ForeignKey('patients.Patient', verbose_name=_('paciente'), related_name='records')
+    taken_by = models.ForeignKey('users.User', verbose_name=_('registrado por'), related_name='records_loaded')
     created = models.DateTimeField(auto_now_add=True, verbose_name=_(u'fecha de creación'))
     modified = models.DateTimeField(auto_now=True, verbose_name=_(u'fecha de modificación'))
 

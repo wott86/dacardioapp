@@ -1,20 +1,29 @@
+{% extends "base.html" %}
 {% load i18n %}
 {% load l10n %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title></title>
-</head>
-<body>
+{% block breadcrumbs %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <ol class="breadcrumb">
+                    <li><a href="#">Inicio</a></li>
+                    <li><a href="{% url 'patient_list' %}">Pacientes</a></li>
+                    <li><a href="{% url 'patient_detail' patient.id %}">{{ patient.full_name|escape }}</a></li>
+                    <li><a href="{% url 'record_list' patient.id %}">{% trans 'Registros cardíacos' %}</a></li>
+                    <li class="active">{{ channel.name }}</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
 <p align="center">
-    <a href="{% url 'view_channel' record.id channel.id %}">{% trans 'Normal' %}</a>
-    <a href="{% url 'view_channel' record.id channel.id %}?type={{ constants.GRAPHIC_TYPE_MEDIA }}">{% trans 'Media' %}</a>
-    <a href="{% url 'view_channel' record.id channel.id %}?type={{ constants.GRAPHIC_TYPE_STANDARD_DEVIATION }}">{% trans 'Desviación estándar' %}</a>
-    <a href="{% url 'view_channel' record.id channel.id %}?type={{ constants.GRAPHIC_TYPE_RETURN_MAP }}">{% trans 'Mapa de retorno' %}</a>
+    <a href="{% url 'view_channel' patient.id record.id channel.id %}">{% trans 'Normal' %}</a>
+    <a href="{% url 'view_channel' patient.id record.id channel.id %}?type={{ constants.GRAPHIC_TYPE_MEDIA }}">{% trans 'Media' %}</a>
+    <a href="{% url 'view_channel' patient.id record.id channel.id %}?type={{ constants.GRAPHIC_TYPE_STANDARD_DEVIATION }}">{% trans 'Desviación estándar' %}</a>
+    <a href="{% url 'view_channel' patient.id record.id channel.id %}?type={{ constants.GRAPHIC_TYPE_RETURN_MAP }}">{% trans 'Mapa de retorno' %}</a>
 </p>
 <p align="center">
-    <img width="800px" height="600px" src="{% url 'record_image' record.id channel.id %}?type={{ type }}" alt="{% trans 'Gráfica' %}">
+    <img width="800" height="600" src="{% url 'record_image' patient.id record.id channel.id %}?type={{ type }}" alt="{% trans 'Gráfica' %}">
 </p>
-</body>
-</html>
+{% endblock %}

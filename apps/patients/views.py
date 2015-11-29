@@ -9,6 +9,7 @@ from django.views.generic.base import View
 from django.contrib import messages
 from django.utils.translation import ugettext as _
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.conf import settings
 from faker import Factory
 from django.template.context import RequestContext
 
@@ -22,7 +23,7 @@ class PatientList(View):
     def get(self, request):
 
         order = request.GET.get('order', '-id')
-        paginator = self.paginator_class(Patient.get_ordered_items(order), 25)
+        paginator = self.paginator_class(Patient.get_ordered_items(order), getattr(settings, 'MAX_ELEMENTS_PER_PAGE', 25))
         try:
             page = paginator.page(request.GET.get('page', 1))
         except PageNotAnInteger:

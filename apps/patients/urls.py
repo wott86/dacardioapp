@@ -3,7 +3,7 @@ from apps.patients.views import PatientList, PatientDetail, PatientEdit, Patient
 from django.contrib.auth.decorators import login_required
 
 __author__ = 'alvaro'
-from django.conf.urls import patterns, url
+from django.conf.urls import patterns, url, include
 
 urlpatterns = patterns(
     'apps.patients.views',
@@ -16,4 +16,5 @@ urlpatterns = patterns(
     url(r'^(\d+)/diagnosis/$', login_required(DiagnosisList.as_view()), name='diagnosis_list'),
     url(r'^(\d+)/diagnosis/new/$', login_required(DiagnosisNew.as_view()), name='diagnosis_new'),
     # url(r'^diagnosis/(\d+)/$', login_required(DiagnosisList.as_view()), name='diagnosis_detail')
+    url(r'^(?P<patient_id>\d+)/records/', include('apps.records.urls')),
 )

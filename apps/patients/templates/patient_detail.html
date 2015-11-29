@@ -82,7 +82,7 @@
                                 </div>
                             {% if not form %}
                                 <h4 id="actions" align="center">
-                                    <a href="#" title="{% trans "Registros cardíacos" %}" data-toggle="tooltip" data-placement="right"><span class="glyphicon glyphicon-stats" aria-hidden="true"></span></a>
+                                    <a href="{% url 'record_list' patient.id %}" title="{% trans "Registros cardíacos" %}" data-toggle="tooltip" data-placement="right"><span class="glyphicon glyphicon-stats" aria-hidden="true"></span></a>
                                     <a href="{% url 'diagnosis_list' patient.id %}" title="{% trans "Ver/Editar diagnóstico" %}" data-toggle="tooltip" data-placement="right"><span class="glyphicon glyphicon-th-list" aria-hidden="true"></span></a>
                                     <a href="{% url 'patient_edit' patient.id %}" title="{% trans "Editar paciente" %}" data-toggle="tooltip" data-placement="right"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
                                     <a href="{% url 'patient_delete' patient.id %}" title="{% trans "Desactivar paciente" %}" data-toggle="tooltip" data-placement="right"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a>
