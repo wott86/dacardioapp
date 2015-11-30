@@ -2,6 +2,11 @@
 {% load i18n %}
 {% load l10n %}
 {% load static %}
+{% block title %}
+    {% blocktrans with patient.full_name|escape as patient_name %}
+        Diagnósticos del paciente: {{ patient_name }}
+    {% endblocktrans %}
+{% endblock %}
 {% block extra_static %}
     <link rel="stylesheet" href="{% static "css/patient_list.css" %}"/>
 {% endblock %}

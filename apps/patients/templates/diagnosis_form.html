@@ -1,6 +1,11 @@
 {% extends "base.html" %}
 {% load i18n %}
 {% load static %}
+{% block title %}
+    {% blocktrans with patient.full_name|escape as patient_name %}
+        Nuevo diagnóstico para el paciente: {{ patient_name }}
+    {% endblocktrans %}
+{% endblock %}
 {% block extra_static %}
     <link rel="stylesheet" href="{% static "css/patient_detail.css" %}"/>
     <script src="{% static "js/patient_detail.js" %}"></script>

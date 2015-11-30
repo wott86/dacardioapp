@@ -5,6 +5,11 @@
 {% block extra_static %}
     <link rel="stylesheet" href="{% static "css/patient_list.css" %}"/>
 {% endblock %}
+{% block title %}
+    {% blocktrans with patient.full_name|escape as patient_name %}
+        Registros cardíacos de {{ patient_name }}
+    {% endblocktrans %}
+{% endblock %}
 {% block breadcrumbs %}
     <div class="container-fluid">
         <div class="row">
