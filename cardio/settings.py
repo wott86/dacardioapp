@@ -169,7 +169,7 @@ CITIES_FILES = {
 
 
 # Pagination
-MAX_ELEMENTS_PER_PAGE = 25
+MAX_ELEMENTS_PER_PAGE = 15
 
 # Local settings
 try:

@@ -51,6 +51,35 @@
                 </nav>
             </div>
         </div>
+        <div align="center">
+            <nav>
+                <ul class="pagination">
+                    <li class="{% if not page.has_previous %}disabled{% endif %}">
+                        {% if page.has_previous %}
+                        <a href="?page={{ page.previous_page_number }}&order={{ order }}" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                        {% else %}
+                            <span aria-hidden="true">&laquo;</span>
+                        {% endif %}
+                    </li>
+                    {% for i in page.paginator.page_range %}
+                        <li class="{% if page.number == i %}active{% endif %}"><a href="?page={{ i }}&order={{ order }}">{{ i }}</a></li>
+                    {% empty %}
+                        <li class="active"><a href="?page=1&order={{ order }}">1</a></li>
+                    {% endfor %}
+                    <li class="{% if not page.has_next %}disabled{% endif %}">
+                        {% if page.has_next %}
+                        <a href="?page={{ page.next_page_number }}&order={{ order }}" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                        {% else %}
+                            <span aria-hidden="true">&raquo;</span>
+                        {% endif %}
+                    </li>
+                </ul>
+            </nav>
+        </div>
         <!-- Patient list  -->
         <div class="row">
             <div class="col-lg-12">
@@ -175,8 +204,8 @@
                                     <span aria-hidden="true">&laquo;</span>
                                 {% endif %}
                             </li>
-                            {% for i in page.paginator.range_pages %}
-                                <li class="{% if page.number == i %}active{% endif %}"><a href="?page={{ i }}&order={{ order }}">1</a></li>
+                            {% for i in page.paginator.page_range %}
+                                <li class="{% if page.number == i %}active{% endif %}"><a href="?page={{ i }}&order={{ order }}">{{ i }}</a></li>
                             {% empty %}
                                 <li class="active"><a href="?page=1&order={{ order }}">1</a></li>
                             {% endfor %}
