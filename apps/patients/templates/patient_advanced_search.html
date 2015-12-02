@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load l10n %}
+{% load static %}
+{% block title %}
+    {% trans 'Búsqueda de pacientes' %}
+{% endblock %}
+
+{% block extra_static %}
+    <link rel="stylesheet" href="{% static "css/patient_detail.css" %}"/>
+    <script src="{% static "js/patient_detail.js" %}"></script>
+    <link rel="stylesheet" href="{% static "bower_components/bootstrap-select/dist/css/bootstrap-select.min.css" %}"/>
+    <link rel="stylesheet" href="{% static "css/diagnosis/form.css" %}"/>
+    <script src="{% static "bower_components/bootstrap-select/dist/js/bootstrap-select.min.js" %}"></script>
+    <script src="{% static 'bower_components/bootstrap-select/dist/js/i18n/defaults-es_CL.min.js' %}"></script>
+    <script>
+    language = "{{ request.LANGUAGE_CODE }}"
+    </script>
+{% endblock %}
+
+{% block breadcrumbs %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <ol class="breadcrumb">
+                    <li><a href="#">Inicio</a></li>
+                    <li><a href="{% url 'patient_list' %}">{% trans 'Pacientes' %}</a></li>
+                    <li class="active">{% trans 'Búsqueda' %}</li>
+                </ol>
+            </div>
+        </div>
+
+    </div>
+{% endblock %}
+
+
+{% block content %}
+    <div class="container-fluid">
+
+        <div class="row">
+            <div class="col-lg-offset-2 col-md-offset-2 col-sm-offset-2 col-xs-offset-2 col-lg-8 col-md-8 col-sm-8 col-sx-8">
+                <div class="panel panel-default">
+                    <div class="panel-heading">{% trans 'Búsqueda avanzada' %}</div>
+                    <div class="panel-body">
+                        <form action="{% url 'patient_list' %}" method="get" class="form-inline">
+                            <p class="row">
+                                <div class="col-lg-offset-2 col-md-offset-2 col-sm-offset-2 col-lg-2 col-md-2 col-sm-2">
+                                    <label for="id_gender"></label><b>{% trans 'Sexo' %}:</b>
+                                </div>
+                                <div class="col-lg-5 col-md-5 col-sm-5">
+                                    <select id="id_gender" name="gender" class="form-control">
+                                         <option value="" selected="selected">------</option>
+                                         <option value="M">Masculino</option>
+                                         <option value="F">Femenino</option>
+                                    </select>
+                                </div>
+                            </p>
+
+                            <p class="row">
+                                <div class="col-lg-offset-2 col-md-offset-2 col-sm-offset-2 col-lg-2 col-md-2 col-sm-2">
+                                    <label for="id_ages"></label><b>{% trans 'Rango de edad' %}:</b>
+                                </div>
+                                <div class="col-lg-5 col-md-5 col-sm-5">
+                                    <p>
+                                        <input class="form-control" name="age_init" type="number">
+                                    </p>
+                                    <p>
+                                        <input class="form-control" name="age_end" type="number">
+                                    </p>
+
+                                </div>
+                            </p>
+
+                            <p class="row">
+                                <div class="col-lg-9 col-md-9 col-sm-9" align="right">
+                                    <button id="btn_search" class="btn btn-primary" type="submit"><span class="glyphicon glyphicon-search"></span> {% trans 'Buscar' %}</button>
+                                </div>
+                            </p>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+{% endblock %}
