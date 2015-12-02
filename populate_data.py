@@ -14,7 +14,7 @@ if __name__ == "__main__":
     from apps.users.models import User
     from apps.patients.models import Patient, Ses, Occupation, Education, History
 
-    user = User.objects.get(username='admin')
+    user = User.objects.get(pk=1)
     number_patients = 3
     if len(sys.argv) == 2:
         try:
