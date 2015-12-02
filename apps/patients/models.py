@@ -187,8 +187,6 @@ class Patient(models.Model):
         else:
             queryset = queryset.order_by(order)
 
-        print str(queryset.query)
-
         return queryset
 
     @property

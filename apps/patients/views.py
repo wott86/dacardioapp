@@ -2,7 +2,7 @@
 from apps.patients.forms import PatientForm, DiagnosisForm
 from apps.patients.models import Patient, History, Diagnosis
 from django.core.urlresolvers import reverse
-from django.db.models import Model
+from django.db.models import Model, Q
 from django.http.response import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.views.generic.base import View
@@ -10,8 +10,10 @@ from django.contrib import messages
 from django.utils.translation import ugettext as _
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.conf import settings
-from faker import Factory
 from django.template.context import RequestContext
+from django.utils import timezone
+from faker import Factory
+import datetime
 
 fake = Factory.create()
 
@@ -23,7 +25,39 @@ class PatientList(View):
     def get(self, request):
 
         order = request.GET.get('order', '-id')
-        paginator = self.paginator_class(Patient.get_ordered_items(order), getattr(settings, 'MAX_ELEMENTS_PER_PAGE', 25))
+        query = request.GET.get('q')
+        patients = Patient.get_ordered_items(order)
+        # search
+        if query is not None:
+            queries = Q()
+            for q in query.split():
+                queries |= Q(first_name__icontains=q) |\
+                           Q(last_name__icontains=q) |\
+                           Q(id_card_number__contains=q)
+            patients = patients.filter(queries)
+
+        # Filters in advanced search
+        gender = request.GET.get('gender')
+        if gender not in ('', None):
+            patients = patients.filter(gender=gender)
+
+        age_init = request.GET.get('age_init')
+        age_end = request.GET.get('age_end')
+        if age_init not in ('', None):
+            now = timezone.now()
+            if age_end not in ('', None):
+                if age_end < age_init:
+                    age_init, age_end = age_end, age_init
+                date_init = now.year - int(age_end)
+                date_end = now.year - int(age_init)
+                patients = patients.filter(birth_date__range=(datetime.date(date_init, 1, 1),
+                                                              datetime.date(date_end+1, now.month, now.day)))
+            else:
+                date_init = now.year - int(age_init)
+                patients = patients.filter(birth_date__range=(datetime.date(date_init, 1, 1),
+                                                              datetime.date(date_init+1, now.month, now.day)))
+
+        paginator = self.paginator_class(patients, getattr(settings, 'MAX_ELEMENTS_PER_PAGE', 25))
         try:
             page = paginator.page(request.GET.get('page', 1))
         except PageNotAnInteger:
@@ -40,8 +74,8 @@ class PatientList(View):
     def post(self, request):
         """
         Process user creation
-        :param request:
-        :return:
+        :param request: well, the request object
+        :return: response
         """
         # processing form
         form = self.form_class(request.POST, request.FILES)
@@ -156,6 +190,13 @@ class PatientNew(View):
         return HttpResponse(render(request, 'patient_detail.html', context=RequestContext(request, data)))
 
 
+class PatientAdvanceSearch(View):
+
+    def get(self, request):
+        return HttpResponse(render(request, 'patient_advanced_search.html', context=RequestContext(request)))
+
+
+# Diagnosis
 class DiagnosisList(View):
     paginator_class = Paginator
 

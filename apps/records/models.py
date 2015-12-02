@@ -1,4 +1,5 @@
 # coding=utf-8
+from apps.patients.models import OrderManager
 from django.db import models
 from django.db.models.aggregates import Avg, StdDev
 from django.utils.translation import ugettext as _
@@ -100,6 +101,9 @@ class Point(models.Model):
 
 class Anomaly(models.Model):
     name = models.CharField(max_length=256, verbose_name=_('nombre'))
+    order = models.PositiveSmallIntegerField(default=0, verbose_name=_('orden'))
+
+    objects = OrderManager()
 
     def __unicode__(self):
         return self.name

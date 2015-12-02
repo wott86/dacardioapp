@@ -34,14 +34,15 @@
 
                         <!-- Collect the nav links, forms, and other content for toggling -->
                         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                            <form class="navbar-form navbar-right" role="search">
+                            <form class="navbar-form navbar-right" role="search" method="get">
                                 <div class="form-group">
-                                    <input type="text" class="form-control" placeholder="{% trans 'Buscar' %}">
+                                    <input type="text" class="form-control" placeholder="{% trans 'Buscar' %}" name="q">
                                 </div>
                                 <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
                             </form>
                             <ul class="nav navbar-nav navbar-right">
                                 <li><a href="{% url 'patient_create' %}"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> {% trans 'Agregar paciente' %}</a></li>
+                                <li><a href="{% url 'patient_advanced_search' %}"><span class="glyphicon glyphicon-search" aria-hidden="true"></span> {% trans 'Búsqueda avanzada' %}</a></li>
                             </ul>
                         </div>
                         <!-- /.navbar-collapse -->
