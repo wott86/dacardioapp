@@ -231,7 +231,7 @@ class DiagnosisNew(View):
     def post(self, request, patient_id):
         patient = get_object_or_404(Patient, id=patient_id)
 
-        form = self.form_class(request.POST)
+        form = self.form_class(request.POST, request.FILES)
         if not form.is_valid():
             data = {
                 'patient': patient,

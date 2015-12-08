@@ -43,7 +43,7 @@
             <div class="panel panel-default">
                 <div class="panel-heading">{% trans 'Nuevo diagnóstico' %}</div>
                 <div class="panel-body">
-                    <form action="{% url 'diagnosis_new' patient.id %}" method="post" class="form-inline">
+                    <form action="{% url 'diagnosis_new' patient.id %}" method="post" enctype="multipart/form-data" class="form-inline">
                         {% if form.errors %}
                             <div class="fade in alert alert-dismissible text-center alert-danger" id="fail_alert">
                                 <button type="button" class="close" data-dismiss="alert" aria-label="{% trans 'Cerrar' %}"><span aria-hidden="true">&times;</span></button>
@@ -66,6 +66,14 @@
                             </div>
                             <div class="col-lg-5 col-md-5 col-sm-5{% if form.anomalies.errors %} has-error{% endif %}">
                                 <textarea cols="40" class="form-control" id="id_description" name="description" rows="10"></textarea>
+                            </div>
+                        </p>
+                        <p class="row">
+                            <div class="col-lg-offset-2 col-md-offset-2 col-sm-offset-2 col-lg-2 col-md-2 col-sm-2">
+                                <label for="id_description"></label><b>{% trans 'Adjunto' %}:</b>
+                            </div>
+                            <div class="col-lg-5 col-md-5 col-sm-5{% if form.attachment.errors %} has-error{% endif %}">
+                                {{ form.attachment }}
                             </div>
                         </p>
                         <p class="row">

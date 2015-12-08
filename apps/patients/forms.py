@@ -45,5 +45,6 @@ class DiagnosisForm(forms.ModelForm):
         model = Diagnosis
         exclude = ['patient', 'made_by']
         widgets = {
-            'anomalies': forms.SelectMultiple(attrs={'class': 'selectpicker'})
+            'anomalies': forms.SelectMultiple(attrs={'class': 'selectpicker'}),
+            'attachment': forms.ClearableFileInput(attrs={'class': 'testing_class'})
         }

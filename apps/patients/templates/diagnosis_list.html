@@ -63,6 +63,7 @@
                         <th>{% trans "Realizado por" %}</th>
                         <th>{% trans "Anomalías" %}</th>
                         <th>{% trans "Descripción" %}</th>
+                        <th><span class="glyphicon glyphicon-paperclip"></span></th>
                     </tr>
                     </thead>
                     <tbody>
@@ -85,6 +86,11 @@
                                     {% endif %}
                                 </td>
                                 <td>{{ diagnosis.description }}</td>
+                                <td>
+                                    {% if diagnosis.attachment %}
+                                        <a target="_blank" href="{{ diagnosis.attachment.url }}"><span class="glyphicon glyphicon-cloud-download"></span></a>
+                                    {% endif %}
+                                </td>
                             </tr>
                         {% empty %}
                             <tr align="center">
