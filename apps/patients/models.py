@@ -257,3 +257,9 @@ class Diagnosis(models.Model):
     date = models.DateTimeField(auto_now_add=True, verbose_name=_(u'fecha de creación'), null=True)
     attachment = models.FileField(upload_to=get_upload_path, null=True, blank=True, verbose_name=_(u'Adjunto'))
 
+    def __unicode__(self):
+        return '%s - %s' % (self.patient, self.date)
+
+    class Meta:
+        verbose_name = _(u'diagnóstico')
+        verbose_name_plural = _(u'diagnósticos')
