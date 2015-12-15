@@ -2,6 +2,7 @@
 {% load i18n %}
 {% load l10n %}
 {% load static %}
+{% load search_parameters %}
 {% block title %}
     {% trans 'Pacientes' %}
 {% endblock %}
@@ -56,7 +57,7 @@
                 <ul class="pagination">
                     <li class="{% if not page.has_previous %}disabled{% endif %}">
                         {% if page.has_previous %}
-                        <a href="?page={{ page.previous_page_number }}&order={{ order }}" aria-label="Previous">
+                        <a href="?page={{ page.previous_page_number }}&order={{ order }}{% add_get_params %}" aria-label="Previous">
                             <span aria-hidden="true">&laquo;</span>
                         </a>
                         {% else %}
@@ -64,13 +65,13 @@
                         {% endif %}
                     </li>
                     {% for i in page.paginator.page_range %}
-                        <li class="{% if page.number == i %}active{% endif %}"><a href="?page={{ i }}&order={{ order }}">{{ i }}</a></li>
+                        <li class="{% if page.number == i %}active{% endif %}"><a href="?page={{ i }}&order={{ order }}{% add_get_params %}">{{ i }}</a></li>
                     {% empty %}
-                        <li class="active"><a href="?page=1&order={{ order }}">1</a></li>
+                        <li class="active"><a href="?page=1&order={{ order }}{% add_get_params %}">1</a></li>
                     {% endfor %}
                     <li class="{% if not page.has_next %}disabled{% endif %}">
                         {% if page.has_next %}
-                        <a href="?page={{ page.next_page_number }}&order={{ order }}" aria-label="Next">
+                        <a href="?page={{ page.next_page_number }}&order={{ order }}{% add_get_params %}" aria-label="Next">
                             <span aria-hidden="true">&raquo;</span>
                         </a>
                         {% else %}
@@ -197,7 +198,7 @@
                         <ul class="pagination">
                             <li class="{% if not page.has_previous %}disabled{% endif %}">
                                 {% if page.has_previous %}
-                                <a href="?page={{ page.previous_page_number }}&order={{ order }}" aria-label="Previous">
+                                <a href="?page={{ page.previous_page_number }}&order={{ order }}{% add_get_params %}" aria-label="Previous">
                                     <span aria-hidden="true">&laquo;</span>
                                 </a>
                                 {% else %}
@@ -205,13 +206,13 @@
                                 {% endif %}
                             </li>
                             {% for i in page.paginator.page_range %}
-                                <li class="{% if page.number == i %}active{% endif %}"><a href="?page={{ i }}&order={{ order }}">{{ i }}</a></li>
+                                <li class="{% if page.number == i %}active{% endif %}"><a href="?page={{ i }}&order={{ order }}{% add_get_params %}">{{ i }}</a></li>
                             {% empty %}
-                                <li class="active"><a href="?page=1&order={{ order }}">1</a></li>
+                                <li class="active"><a href="?page=1&order={{ order }}{% add_get_params %}">1</a></li>
                             {% endfor %}
                             <li class="{% if not page.has_next %}disabled{% endif %}">
                                 {% if page.has_next %}
-                                <a href="?page={{ page.next_page_number }}&order={{ order }}" aria-label="Next">
+                                <a href="?page={{ page.next_page_number }}&order={{ order }}{% add_get_params %}" aria-label="Next">
                                     <span aria-hidden="true">&raquo;</span>
                                 </a>
                                 {% else %}

@@ -1,6 +1,7 @@
 # coding=utf-8
 from apps.patients.forms import PatientForm, DiagnosisForm
 from apps.patients.models import Patient, History, Diagnosis
+from apps.records.models import Anomaly
 from django.core.urlresolvers import reverse
 from django.db.models import Model, Q
 from django.http.response import HttpResponse, HttpResponseRedirect
@@ -56,6 +57,11 @@ class PatientList(View):
                 date_init = now.year - int(age_init)
                 patients = patients.filter(birth_date__range=(datetime.date(date_init, 1, 1),
                                                               datetime.date(date_init+1, now.month, now.day)))
+
+        anomaly = request.GET.get('anomaly')
+
+        if anomaly not in ('', None):
+            patients = patients.filter(diagnosis__anomalies__id=anomaly).distinct('id')
 
         paginator = self.paginator_class(patients, getattr(settings, 'MAX_ELEMENTS_PER_PAGE', 25))
         try:
@@ -193,7 +199,10 @@ class PatientNew(View):
 class PatientAdvanceSearch(View):
 
     def get(self, request):
-        return HttpResponse(render(request, 'patient_advanced_search.html', context=RequestContext(request)))
+        data = {
+            'anomalies': Anomaly.objects.all()
+        }
+        return HttpResponse(render(request, 'patient_advanced_search.html', context=RequestContext(request, data)))
 
 
 # Diagnosis
