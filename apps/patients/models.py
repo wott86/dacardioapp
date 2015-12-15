@@ -259,7 +259,6 @@ class Diagnosis(models.Model):
 
     def __unicode__(self):
         return '%s - %s' % (self.patient, self.date)
-
     class Meta:
         verbose_name = _(u'diagnóstico')
         verbose_name_plural = _(u'diagnósticos')

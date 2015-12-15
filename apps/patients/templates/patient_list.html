@@ -88,7 +88,7 @@
                     <thead>
                     <tr>
                         <th>
-                            <a href="{% url 'patient_list'%}?order={% if order == 'id' %}-{% endif %}id">
+                            <a href="{% url 'patient_list'%}?order={% if order == 'id' %}-{% endif %}id{% add_get_params %}">
                                 {% trans "Código" %}
                                 {% if order == 'id' %}
                                     <span class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span>
@@ -98,7 +98,7 @@
                             </a>
                         </th>
                         <th>
-                            <a href="{% url 'patient_list'%}?order={% if order == 'id_card' %}-{% endif %}id_card">
+                            <a href="{% url 'patient_list'%}?order={% if order == 'id_card' %}-{% endif %}id_card{% add_get_params %}">
                                 {% trans "Cédula" %}
                                 {% if order == 'id_card' %}
                                     <span class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span>
@@ -108,7 +108,7 @@
                             </a>
                         </th>
                         <th>
-                            <a href="{% url 'patient_list'%}?order={% if order == 'name' %}-{% endif %}name">
+                            <a href="{% url 'patient_list'%}?order={% if order == 'name' %}-{% endif %}name{% add_get_params %}">
                                 {% trans "Nombre" %}
                                 {% if order == 'name' %}
                                     <span class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span>
@@ -118,7 +118,7 @@
                             </a>
                         </th>
                         <th>
-                            <a href="{% url 'patient_list'%}?order={% if order == 'age' %}-{% endif %}age">
+                            <a href="{% url 'patient_list'%}?order={% if order == 'age' %}-{% endif %}age{% add_get_params %}">
                                 {% trans "Edad" %}
                                 {% if order == 'age' %}
                                     <span class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span>
@@ -128,7 +128,7 @@
                             </a>
                         </th>
                         <th>
-                            <a href="{% url 'patient_list'%}?order={% if order == 'gender' %}-{% endif %}gender">
+                            <a href="{% url 'patient_list'%}?order={% if order == 'gender' %}-{% endif %}gender{% add_get_params %}">
                                 {% trans "Sexo" %}
                                 {% if order == 'gender' %}
                                     <span class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span>
@@ -138,7 +138,7 @@
                             </a>
                         </th>
                         <th>
-                            <a href="{% url 'patient_list'%}?order={% if order == 'creation' %}-{% endif %}creation">
+                            <a href="{% url 'patient_list'%}?order={% if order == 'creation' %}-{% endif %}creation{% add_get_params %}">
                                 {% trans "Fecha de registro" %}
                                 {% if order == 'creation' %}
                                     <span class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span>
@@ -148,7 +148,7 @@
                             </a>
                         </th>
                         <th>
-                            <a href="{% url 'patient_list'%}?order={% if order == 'modification' %}-{% endif %}modification">
+                            <a href="{% url 'patient_list'%}?order={% if order == 'modification' %}-{% endif %}modification{% add_get_params %}">
                                 {% trans "Última modificación" %}
                                 {% if order == 'modification' %}
                                     <span class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span>

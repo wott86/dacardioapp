@@ -3,7 +3,7 @@ from apps.patients.forms import PatientForm, DiagnosisForm
 from apps.patients.models import Patient, History, Diagnosis
 from apps.records.models import Anomaly
 from django.core.urlresolvers import reverse
-from django.db.models import Model, Q
+from django.db.models import Model, Q, F
 from django.http.response import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.views.generic.base import View
@@ -61,7 +61,7 @@ class PatientList(View):
         anomaly = request.GET.get('anomaly')
 
         if anomaly not in ('', None):
-            patients = patients.filter(diagnosis__anomalies__id=anomaly).distinct('id')
+            patients = patients.filter(diagnosis__anomalies__id=anomaly).distinct()
 
         paginator = self.paginator_class(patients, getattr(settings, 'MAX_ELEMENTS_PER_PAGE', 25))
         try:
