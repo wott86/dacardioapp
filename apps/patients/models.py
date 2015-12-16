@@ -162,6 +162,7 @@ class Patient(models.Model):
     personal_record = models.TextField(default='', blank=True, verbose_name=_(u'antecedentes patológicos'))
     family_record = models.TextField(default='', blank=True, verbose_name=_('antecedentes familiares'))
     habits = models.ManyToManyField(Habit, related_name='patients', blank=True, verbose_name=_(u'hábitos personales'))
+    physical_exam = models.TextField(default='', blank=True, verbose_name=_(u'examen físico'))
 
     @classmethod
     def get_ordered_items(cls, order):

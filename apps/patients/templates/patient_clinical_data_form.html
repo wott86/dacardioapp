@@ -5,7 +5,7 @@
     <div class="col-lg-7 col-sm-7 col-md-7 col-xs-6">
         <p class="row">
             <div class="col-lg-6 col-md-6 col-sm-6">
-                <b>{% trans 'Ocupaci&oacute;n' %}:</b>
+                <label for="id_occupation"><b>{% trans 'Ocupaci&oacute;n' %}:</b></label>
             </div>
             <div class="col-lg-6 col-md-6 col-sm-6{% if form.occupation.errors %} has-error{% endif %}">
                 <select id="id_occupation" name="occupation" class="form-control">
@@ -22,7 +22,7 @@
         </p>
         <p class="row">
             <div class="col-lg-offset-1 col-md-offset-1 col-sm-offset-1 col-lg-5 col-md-5 col-sm-5">
-                <i>{% trans 'H&aacute;bitos' %}:</i>
+            <label for="id_habits"><i>{% trans 'Hábitos' %}:</i></label>
             </div>
             <div class="col-lg-6 col-md-6 col-sm-6{% if form.habits.errors %} has-error{% endif %}">
                 {{ form.habits }}
@@ -30,7 +30,7 @@
         </p>
         <p class="row">
             <div class="col-lg-offset-1 col-md-offset-1 col-sm-offset-1 col-lg-5 col-md-5 col-sm-5">
-                <i>{% trans 'Patológicos' %}:</i>
+                <label for="id_personal_record"><i>{% trans 'Patológicos' %}:</i></label>
             </div>
             <div class="col-lg-6 col-md-6 col-sm-6{% if form.personal_record.errors %} has-error{% endif %}">
                 <textarea name="personal_record" class="form-control" id="id_personal_record" cols="30" rows="10">{{ form.personal_record.value }}</textarea>
@@ -38,10 +38,18 @@
         </p>
         <p class="row">
             <div class="col-lg-6 col-md-6 col-sm-6">
-                <b>{% trans 'Antecedentes familiares' %}:</b>
+                <label for="id_family_record"><b>{% trans 'Antecedentes familiares' %}:</b></label>
             </div>
             <div class="col-lg-6 col-md-6 col-sm-6{% if form.family_record.errors %} has-error{% endif %}">
                  <textarea name="family_record" class="form-control" id="id_family_record" cols="30" rows="10">{% if form.family_record.value %}{{ form.family_record.value }}{% endif %}</textarea>
+            </div>
+        </p>
+        <p class="row">
+            <div class="col-lg-6 col-md-6 col-sm-6">
+                <label for="id_physical_exam"><b>{% trans 'Examen físico' %}:</b></label>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-6{% if form.physical_exam.errors %} has-error{% endif %}">
+                 <textarea name="physical_exam" class="form-control" id="id_physical_exam" cols="30" rows="10">{% if form.physical_exam.value %}{{ form.physical_exam.value }}{% endif %}</textarea>
             </div>
         </p>
     </div>

@@ -54,7 +54,11 @@
                 <i>{% trans 'Patológicos' %}:</i>
             </div>
             <div class="col-lg-offset-1 col-lg-5 col-md-5 col-sm-5">
-            {{ patient.personal_record }}
+                {% if patient.personal_record != '' %}
+                    {{ patient.personal_record|escape }}
+                {% else %}
+                    {% trans 'No' %}
+                {% endif %}
             </div>
         </p>
         <p class="row">
@@ -62,7 +66,23 @@
                 <b>{% trans 'Antecedentes familiares' %}:</b>
             </div>
             <div class="col-lg-6 col-md-6 col-sm-6">
-            {{ patient.family_record|escape }}
+                {% if patient.family_record != '' %}
+                    {{ patient.family_record|escape }}
+                {% else %}
+                    {% trans 'No' %}
+                {% endif %}
+            </div>
+        </p>
+        <p class="row">
+            <div class="col-lg-3 col-md-3 col-sm-3">
+                <b>{% trans 'Examen físico' %}:</b>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-6">
+                {% if patient.physical_exam != '' %}
+                    {{ patient.physical_exam|escape }}
+                {% else %}
+                    {% trans 'N/A' %}
+                {% endif %}
             </div>
         </p>
     </div>
