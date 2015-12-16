@@ -13,3 +13,24 @@ def add_get_params(context):
         params.pop('page')
     params = '&%s' % params.urlencode()
     return params
+
+
+@register.simple_tag(takes_context=True)
+def add_get_params_hidden(context, *args):
+    """
+
+    Args:
+        context: template context
+        *args: list of exclude params
+
+    Returns:
+
+    """
+    request = Variable('request').resolve(context)
+    params = request.GET.copy()
+    hiddens = []
+    for param in params:
+        if param not in args:
+            hiddens.append('<input type="hidden" name="%s" value="%s" />' % (param, params[param]))
+
+    return ''.join(hiddens)

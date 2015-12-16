@@ -44,6 +44,21 @@
                             <ul class="nav navbar-nav navbar-right">
                                 <li><a href="{% url 'patient_create' %}"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> {% trans 'Agregar paciente' %}</a></li>
                                 <li><a href="{% url 'patient_advanced_search' %}"><span class="glyphicon glyphicon-search" aria-hidden="true"></span> {% trans 'Búsqueda avanzada' %}</a></li>
+                                <li>
+                                    <form class="navbar-form navbar-right text-muted" action="{{ request.path }}" role="form" method="get">
+                                        <div class="form-group">
+                                            <span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
+                                            {% trans 'Cantidad de pacientes' %}:
+                                            <select class="form-control" name="num_elements" id="id_num_elements" onchange="submit()">
+                                                <option{% if page.paginator.per_page == 25 %} selected="selected"{% endif %}>25</option>
+                                                <option{% if page.paginator.per_page == 50 %} selected="selected"{% endif %}>50</option>
+                                                <option{% if page.paginator.per_page == 100 %} selected="selected"{% endif %}>100</option>
+                                                <option{% if page.paginator.per_page == 200 %} selected="selected"{% endif %}>200</option>
+                                            </select>
+                                            {% add_get_params_hidden 'num_elements' %}
+                                        </div>
+                                    </form>
+                                </li>
                             </ul>
                         </div>
                         <!-- /.navbar-collapse -->

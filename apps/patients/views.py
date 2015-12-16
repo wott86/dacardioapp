@@ -63,7 +63,10 @@ class PatientList(View):
         if anomaly not in ('', None):
             patients = patients.filter(diagnosis__anomalies__id=anomaly).distinct()
 
-        paginator = self.paginator_class(patients, getattr(settings, 'MAX_ELEMENTS_PER_PAGE', 25))
+        paginator = self.paginator_class(
+            patients,
+            request.GET.get('num_elements', getattr(settings, 'MAX_ELEMENTS_PER_PAGE', 25))
+        )
         try:
             page = paginator.page(request.GET.get('page', 1))
         except PageNotAnInteger:
