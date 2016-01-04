@@ -8,6 +8,7 @@
 {% endblock %}
 {% block extra_static %}
     <link rel="stylesheet" href="{% static "css/patient_list.css" %}"/>
+    <script language="javascript" src="{% static "js/patient_list.js" %}"></script>
 {% endblock %}
 {% block breadcrumbs %}
     <div class="container-fluid">
@@ -26,7 +27,7 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-lg-12">
-                <nav class="navbar navbar-default">
+                <nav class="navbar navbar-inverse navbar-fixed-bottom">
                     <div class="container-fluid">
                         <!-- Brand and toggle get grouped for better mobile display -->
                         <div class="navbar-header">
@@ -97,147 +98,176 @@
             </nav>
         </div>
         <!-- Patient list  -->
-        <div class="row">
-            <div class="col-lg-12">
-                <table class="table table-striped table-hover">
-                    <thead>
-                    <tr>
-                        <th>
-                            <a href="{% url 'patient_list'%}?order={% if order == 'id' %}-{% endif %}id{% add_get_params %}">
-                                {% trans "Código" %}
-                                {% if order == 'id' %}
-                                    <span class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span>
-                                {% elif order == '-id' %}
-                                    <span class="glyphicon glyphicon-triangle-top" aria-hidden="true"></span>
-                                {% endif %}
-                            </a>
-                        </th>
-                        <th>
-                            <a href="{% url 'patient_list'%}?order={% if order == 'id_card' %}-{% endif %}id_card{% add_get_params %}">
-                                {% trans "Cédula" %}
-                                {% if order == 'id_card' %}
-                                    <span class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span>
-                                {% elif order == '-id_card' %}
-                                    <span class="glyphicon glyphicon-triangle-top" aria-hidden="true"></span>
-                                {% endif %}
-                            </a>
-                        </th>
-                        <th>
-                            <a href="{% url 'patient_list'%}?order={% if order == 'name' %}-{% endif %}name{% add_get_params %}">
-                                {% trans "Nombre" %}
-                                {% if order == 'name' %}
-                                    <span class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span>
-                                {% elif order == '-name' %}
-                                    <span class="glyphicon glyphicon-triangle-top" aria-hidden="true"></span>
-                                {% endif %}
-                            </a>
-                        </th>
-                        <th>
-                            <a href="{% url 'patient_list'%}?order={% if order == 'age' %}-{% endif %}age{% add_get_params %}">
-                                {% trans "Edad" %}
-                                {% if order == 'age' %}
-                                    <span class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span>
-                                {% elif order == '-age' %}
-                                    <span class="glyphicon glyphicon-triangle-top" aria-hidden="true"></span>
-                                {% endif %}
-                            </a>
-                        </th>
-                        <th>
-                            <a href="{% url 'patient_list'%}?order={% if order == 'gender' %}-{% endif %}gender{% add_get_params %}">
-                                {% trans "Sexo" %}
-                                {% if order == 'gender' %}
-                                    <span class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span>
-                                {% elif order == '-gender' %}
-                                    <span class="glyphicon glyphicon-triangle-top" aria-hidden="true"></span>
-                                {% endif %}
-                            </a>
-                        </th>
-                        <th>
-                            <a href="{% url 'patient_list'%}?order={% if order == 'creation' %}-{% endif %}creation{% add_get_params %}">
-                                {% trans "Fecha de registro" %}
-                                {% if order == 'creation' %}
-                                    <span class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span>
-                                {% elif order == '-creation' %}
-                                    <span class="glyphicon glyphicon-triangle-top" aria-hidden="true"></span>
-                                {% endif %}
-                            </a>
-                        </th>
-                        <th>
-                            <a href="{% url 'patient_list'%}?order={% if order == 'modification' %}-{% endif %}modification{% add_get_params %}">
-                                {% trans "Última modificación" %}
-                                {% if order == 'modification' %}
-                                    <span class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span>
-                                {% elif order == '-modification' %}
-                                    <span class="glyphicon glyphicon-triangle-top" aria-hidden="true"></span>
-                                {% endif %}
-                            </a>
-                        </th>
-                        <th>{% trans "Acciones" %}</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% with ''|center:6 as range %}
-                        {% for patient in page.object_list %}
-                            <tr>
-                                <td>{{ patient.id }}</td>
-                                <td>{{ patient.id_card }}</td>
-                                <td>{{ patient.full_name }}</td>
-                                <td>{{ patient.age }}</td>
-                                <td>{{ patient.get_gender_display }}</td>
-                                <td>{{ patient.first_history.date|date }}</td>
-                                <td>{{ patient.last_history.date|date }}</td>
-                                <td class="actions">
-                                    <a href="{% url 'patient_detail' patient.id %}" title="{% trans "Ficha del paciente" %}" data-toggle="tooltip"
-                                       data-placement="left"><span class="glyphicon glyphicon-user"
-                                                                   aria-hidden="true"></span></a>
-                                    <a href="{% url 'record_list' patient.id %}" title="{% trans "Registros cardíacos del paciente" %}"
-                                       data-toggle="tooltip" data-placement="bottom"><span
-                                            class="glyphicon glyphicon-stats" aria-hidden="true"></span></a>
-                                    <a href="{% url 'diagnosis_list' patient.id %}" title="{% trans "Diagnóstico del paciente" %}"
-                                       data-toggle="tooltip" data-placement="bottom"><span
-                                            class="glyphicon glyphicon-th-list" aria-hidden="true"></span></a>
-                                    <a href="{% url 'patient_edit' patient.id %}" title="{% trans "Editar paciente" %}"
-                                       data-toggle="tooltip" data-placement="bottom"><span
-                                            class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
-                                    <a href="{% url 'patient_delete' patient.id %}" title="{% trans "Desactivar paciente" %}" data-toggle="tooltip"
-                                       data-placement="bottom"><span class="glyphicon glyphicon-remove"
-                                                                    aria-hidden="true"></span></a>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    {% endwith %}
-                    </tbody>
-                </table>
-                <div align="center">
-                    <nav>
-                        <ul class="pagination">
-                            <li class="{% if not page.has_previous %}disabled{% endif %}">
-                                {% if page.has_previous %}
-                                <a href="?page={{ page.previous_page_number }}&order={{ order }}{% add_get_params %}" aria-label="Previous">
-                                    <span aria-hidden="true">&laquo;</span>
-                                </a>
-                                {% else %}
-                                    <span aria-hidden="true">&laquo;</span>
-                                {% endif %}
-                            </li>
-                            {% for i in page.paginator.page_range %}
-                                <li class="{% if page.number == i %}active{% endif %}"><a href="?page={{ i }}&order={{ order }}{% add_get_params %}">{{ i }}</a></li>
-                            {% empty %}
-                                <li class="active"><a href="?page=1&order={{ order }}{% add_get_params %}">1</a></li>
-                            {% endfor %}
-                            <li class="{% if not page.has_next %}disabled{% endif %}">
-                                {% if page.has_next %}
-                                <a href="?page={{ page.next_page_number }}&order={{ order }}{% add_get_params %}" aria-label="Next">
-                                    <span aria-hidden="true">&raquo;</span>
-                                </a>
-                                {% else %}
-                                    <span aria-hidden="true">&raquo;</span>
-                                {% endif %}
-                            </li>
-                        </ul>
-                    </nav>
+        <form class="navbar-form navbar-right text-muted" action="{{ request.path }}" role="form" method="post">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+                                <div class="form-group">
+                                    <span class="glyphicon glyphicon-flash" aria-hidden="true"></span>
+                                    {% trans 'Acciones' %}:
+                                    <select class="form-control" name="num_elements" id="id_num_elements" onchange="submit()">
+                                        <option{% if page.paginator.per_page == 25 %} selected="selected"{% endif %}>25</option>
+                                        <option{% if page.paginator.per_page == 50 %} selected="selected"{% endif %}>50</option>
+                                        <option{% if page.paginator.per_page == 100 %} selected="selected"{% endif %}>100</option>
+                                        <option{% if page.paginator.per_page == 200 %} selected="selected"{% endif %}>200</option>
+                                    </select>
+                                    {% add_get_params_hidden 'num_elements' %}
+                                </div>
+                            </div>
+                            <table class="table table-striped table-hover">
+                                <thead>
+                                <tr>
+                                    <th id="check-all">
+                                        <span class="glyphicon glyphicon-unchecked"></span>
+                                    </th>
+                                    <th>
+                                        <a href="{% url 'patient_list'%}?order={% if order == 'id' %}-{% endif %}id{% add_get_params %}">
+                                            {% trans "Código" %}
+                                            {% if order == 'id' %}
+                                                <span class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span>
+                                            {% elif order == '-id' %}
+                                                <span class="glyphicon glyphicon-triangle-top" aria-hidden="true"></span>
+                                            {% endif %}
+                                        </a>
+                                    </th>
+                                    <th>
+                                        <a href="{% url 'patient_list'%}?order={% if order == 'id_card' %}-{% endif %}id_card{% add_get_params %}">
+                                            {% trans "Cédula" %}
+                                            {% if order == 'id_card' %}
+                                                <span class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span>
+                                            {% elif order == '-id_card' %}
+                                                <span class="glyphicon glyphicon-triangle-top" aria-hidden="true"></span>
+                                            {% endif %}
+                                        </a>
+                                    </th>
+                                    <th>
+                                        <a href="{% url 'patient_list'%}?order={% if order == 'name' %}-{% endif %}name{% add_get_params %}">
+                                            {% trans "Nombre" %}
+                                            {% if order == 'name' %}
+                                                <span class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span>
+                                            {% elif order == '-name' %}
+                                                <span class="glyphicon glyphicon-triangle-top" aria-hidden="true"></span>
+                                            {% endif %}
+                                        </a>
+                                    </th>
+                                    <th>
+                                        <a href="{% url 'patient_list'%}?order={% if order == 'age' %}-{% endif %}age{% add_get_params %}">
+                                            {% trans "Edad" %}
+                                            {% if order == 'age' %}
+                                                <span class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span>
+                                            {% elif order == '-age' %}
+                                                <span class="glyphicon glyphicon-triangle-top" aria-hidden="true"></span>
+                                            {% endif %}
+                                        </a>
+                                    </th>
+                                    <th>
+                                        <a href="{% url 'patient_list'%}?order={% if order == 'gender' %}-{% endif %}gender{% add_get_params %}">
+                                            {% trans "Sexo" %}
+                                            {% if order == 'gender' %}
+                                                <span class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span>
+                                            {% elif order == '-gender' %}
+                                                <span class="glyphicon glyphicon-triangle-top" aria-hidden="true"></span>
+                                            {% endif %}
+                                        </a>
+                                    </th>
+                                    <th>
+                                        <a href="{% url 'patient_list'%}?order={% if order == 'creation' %}-{% endif %}creation{% add_get_params %}">
+                                            {% trans "Fecha de registro" %}
+                                            {% if order == 'creation' %}
+                                                <span class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span>
+                                            {% elif order == '-creation' %}
+                                                <span class="glyphicon glyphicon-triangle-top" aria-hidden="true"></span>
+                                            {% endif %}
+                                        </a>
+                                    </th>
+                                    <th>
+                                        <a href="{% url 'patient_list'%}?order={% if order == 'modification' %}-{% endif %}modification{% add_get_params %}">
+                                            {% trans "Última modificación" %}
+                                            {% if order == 'modification' %}
+                                                <span class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span>
+                                            {% elif order == '-modification' %}
+                                                <span class="glyphicon glyphicon-triangle-top" aria-hidden="true"></span>
+                                            {% endif %}
+                                        </a>
+                                    </th>
+                                    <th>{% trans "Acciones" %}</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% with ''|center:6 as range %}
+                                    {% for patient in page.object_list %}
+                                        <tr>
+                                            <td><input title="{{ patient.full_name }}" type="checkbox" class="patient_check" name="patient_{{ patient.id }}" /></td>
+                                            <td>{{ patient.id }}</td>
+                                            <td>{{ patient.id_card }}</td>
+                                            <td>{{ patient.full_name }}</td>
+                                            <td>{{ patient.age }}</td>
+                                            <td>{{ patient.get_gender_display }}</td>
+                                            <td>{{ patient.first_history.date|date }}</td>
+                                            <td>{{ patient.last_history.date|date }}</td>
+                                            <td class="actions">
+                                                <a href="{% url 'patient_detail' patient.id %}" title="{% trans "Ficha del paciente" %}" data-toggle="tooltip"
+                                                   data-placement="left"><span class="glyphicon glyphicon-user"
+                                                                               aria-hidden="true"></span></a>
+                                                <a href="{% url 'record_list' patient.id %}" title="{% trans "Registros cardíacos del paciente" %}"
+                                                   data-toggle="tooltip" data-placement="bottom"><span
+                                                        class="glyphicon glyphicon-stats" aria-hidden="true"></span></a>
+                                                <a href="{% url 'diagnosis_list' patient.id %}" title="{% trans "Diagnóstico del paciente" %}"
+                                                   data-toggle="tooltip" data-placement="bottom"><span
+                                                        class="glyphicon glyphicon-th-list" aria-hidden="true"></span></a>
+                                                <a href="{% url 'patient_edit' patient.id %}" title="{% trans "Editar paciente" %}"
+                                                   data-toggle="tooltip" data-placement="bottom"><span
+                                                        class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
+                                                <a href="{% url 'patient_delete' patient.id %}" title="{% trans "Desactivar paciente" %}" data-toggle="tooltip"
+                                                   data-placement="bottom"><span class="glyphicon glyphicon-remove"
+                                                                                aria-hidden="true"></span></a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                {% endwith %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
+
+            <div class="row">
+                <div class="col-lg-12">
+
+                    <div align="center">
+                        <nav>
+                            <ul class="pagination">
+                                <li class="{% if not page.has_previous %}disabled{% endif %}">
+                                    {% if page.has_previous %}
+                                    <a href="?page={{ page.previous_page_number }}&order={{ order }}{% add_get_params %}" aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                    {% else %}
+                                        <span aria-hidden="true">&laquo;</span>
+                                    {% endif %}
+                                </li>
+                                {% for i in page.paginator.page_range %}
+                                    <li class="{% if page.number == i %}active{% endif %}"><a href="?page={{ i }}&order={{ order }}{% add_get_params %}">{{ i }}</a></li>
+                                {% empty %}
+                                    <li class="active"><a href="?page=1&order={{ order }}{% add_get_params %}">1</a></li>
+                                {% endfor %}
+                                <li class="{% if not page.has_next %}disabled{% endif %}">
+                                    {% if page.has_next %}
+                                    <a href="?page={{ page.next_page_number }}&order={{ order }}{% add_get_params %}" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                    {% else %}
+                                        <span aria-hidden="true">&raquo;</span>
+                                    {% endif %}
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </form>
     </div>
 {% endblock %}
