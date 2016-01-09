@@ -34,3 +34,24 @@ def add_get_params_hidden(context, *args):
             hiddens.append('<input type="hidden" name="%s" value="%s" />' % (param, params[param]))
 
     return ''.join(hiddens)
+
+
+@register.simple_tag(takes_context=True)
+def add_post_params_hidden(context, *args):
+    """
+
+    Args:
+        context: template context
+        *args: list of exclude params
+
+    Returns:
+
+    """
+    request = Variable('request').resolve(context)
+    params = request.POST.copy()
+    hiddens = []
+    for param in params:
+        if param not in args:
+            hiddens.append('<input type="hidden" name="%s" value="%s" />' % (param, params[param]))
+
+    return ''.join(hiddens)

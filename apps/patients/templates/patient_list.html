@@ -98,7 +98,7 @@
             </nav>
         </div>
         <!-- Patient list  -->
-        <form class="navbar-form navbar-right text-muted" action="{{ request.path }}" role="form" method="post">
+        <form class="navbar-form navbar-right text-muted" action="{% url 'patients_action' %}" role="form" method="post">
             <div class="container">
                 <div class="row">
                     <div class="col-lg-12">
@@ -106,14 +106,14 @@
                             <div class="panel-body">
                                 <div class="form-group">
                                     <span class="glyphicon glyphicon-flash" aria-hidden="true"></span>
-                                    {% trans 'Acciones' %}:
-                                    <select class="form-control" name="num_elements" id="id_num_elements" onchange="submit()">
-                                        <option{% if page.paginator.per_page == 25 %} selected="selected"{% endif %}>25</option>
-                                        <option{% if page.paginator.per_page == 50 %} selected="selected"{% endif %}>50</option>
-                                        <option{% if page.paginator.per_page == 100 %} selected="selected"{% endif %}>100</option>
-                                        <option{% if page.paginator.per_page == 200 %} selected="selected"{% endif %}>200</option>
+                                    <label for="id_actions">{% trans 'Acciones' %}: </label>
+                                    <select class="form-control" name="action" id="id_actions" onchange="submit()">
+                                        <option value="">--</option>
+                                        <option value="deactivate">{% trans 'Desactivar' %}</option>
+                                        <option value="stats">{% trans 'Estadísticas' %}</option>
                                     </select>
-                                    {% add_get_params_hidden 'num_elements' %}
+                                    {% csrf_token %}
+                                    {% add_get_params_hidden 'actions' %}
                                 </div>
                             </div>
                             <table class="table table-striped table-hover">
@@ -198,7 +198,7 @@
                                 <tbody>
                                 {% with ''|center:6 as range %}
                                     {% for patient in page.object_list %}
-                                        <tr>
+                                        <tr{% if not patient.active %} class="danger"{% endif %}>
                                             <td><input title="{{ patient.full_name }}" type="checkbox" class="patient_check" name="patient_{{ patient.id }}" /></td>
                                             <td>{{ patient.id }}</td>
                                             <td>{{ patient.id_card }}</td>

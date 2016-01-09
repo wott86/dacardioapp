@@ -1,5 +1,6 @@
 # coding=utf-8
 from apps.patients.forms import PatientForm, DiagnosisForm
+from apps.patients.helpers import get_patient_ids
 from apps.patients.models import Patient, History, Diagnosis
 from apps.records.models import Anomaly
 from django.core.urlresolvers import reverse
@@ -27,6 +28,7 @@ class PatientList(View):
 
         order = request.GET.get('order', '-id')
         query = request.GET.get('q')
+        deactivated_patients = 'deactivated' in request.GET
         patients = Patient.get_ordered_items(order)
         # search
         if query is not None:
@@ -63,6 +65,8 @@ class PatientList(View):
         if anomaly not in ('', None):
             patients = patients.filter(diagnosis__anomalies__id=anomaly).distinct()
 
+        if not deactivated_patients:
+            patients = patients.filter(active=True)
         paginator = self.paginator_class(
             patients,
             request.GET.get('num_elements', getattr(settings, 'MAX_ELEMENTS_PER_PAGE', 25))
@@ -271,3 +275,53 @@ class DiagnosisDetail(View):
         data = {
             'diagnosis': diagnosis
         }
+
+
+class PatientsActionView(View):
+
+    TEMPLATES = {
+        'deactivate': 'patient_deactivate_bulk.html',
+        'stats': 'patient_stats_form.html'
+    }
+
+    def post(self, request):
+        ids = get_patient_ids(request.POST)
+        action = request.POST.get('action')
+        if action in ('', None):
+            return HttpResponseRedirect(reverse('patient_list'))
+
+        if len(ids) == 0:
+            messages.error(
+                request,
+                _(u'Por favor seleccione uno o varios pacientes')
+            )
+            return HttpResponseRedirect(reverse('patient_list'))
+
+        patients = Patient.objects.filter(id__in=ids)
+
+        try:
+            template = self.TEMPLATES[action]
+        except KeyError:
+            messages.error(
+                request,
+                _(u'Por favor escoja una opción válida')
+            )
+            return HttpResponseRedirect(reverse('patient_list'))
+
+        data = {
+            'patients': patients
+        }
+
+        return HttpResponse(render(request, template, context=RequestContext(request, data)))
+
+
+class PatientActionDeactivate(View):
+
+    def post(self, request):
+        ids = get_patient_ids(request.POST)
+        Patient.objects.filter(id__in=ids).update(active=False)
+        messages.info(
+            request,
+            _(u'Pacientes desactivados éxitosamente')
+        )
+        return HttpResponseRedirect(reverse('patient_list'))
