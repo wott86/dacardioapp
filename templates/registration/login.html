@@ -1,6 +1,13 @@
 {% extends "base.html" %}
+{% load i18n %}
 {% block title %}Login{% endblock %}
 {% block menu %}{% endblock %}
+{% block breadcrumbs %}
+<ol class="breadcrumb">
+  <li><a href="#">{% trans 'Inicio' %}</a></li>
+  <li class="active">{% trans 'Ingresar al sistema' %}</li>
+</ol>
+{% endblock %}
 {% block content %}
 <div class="container-fluid">
     <div class="row">
@@ -13,14 +20,14 @@
             <form method="post">
                 <div class="form-group">
                     {% csrf_token %}
-                    <label for="username">Usuario</label>
-                    <input type="text" class="form-control" id="username" name="username" placeholder="Ingrese su usuario">
+                    <label for="username">{% trans 'Usuario' %}</label>
+                    <input type="text" class="form-control" id="username" name="username" placeholder="{% trans 'Ingrese su usuario' %}">
                 </div>
                 <div class="form-group">
-                    <label for="password">Contrase&ntilde;a</label>
-                    <input type="password" class="form-control" id="password" name="password" placeholder="Ingrese su contrase&ntilde;a">
+                    <label for="password">{% trans 'Contrase&ntilde;a' %}</label>
+                    <input type="password" class="form-control" id="password" name="password" placeholder="{% trans 'Ingrese su contrase&ntilde;a' %}">
                 </div>
-                <button type="submit" class="btn btn-default">Ingresar</button>
+                <button type="submit" class="btn btn-default">{% trans 'Ingresar' %}</button>
             </form>
         </div>
     </div>
