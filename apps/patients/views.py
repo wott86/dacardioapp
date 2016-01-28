@@ -187,6 +187,19 @@ class PatientDelete(View):
         return HttpResponseRedirect(reverse('patient_list'))
 
 
+class PatientActivate(View):
+
+    def get(self, request, patient_id):
+        patient = get_object_or_404(Patient, id=patient_id)
+
+        patient.active = True
+        patient.save()
+        messages.success(
+                         request,
+                         _(u'El paciente %(name)s han activado éxitosamente') % {'name': patient.full_name})
+        return HttpResponseRedirect(reverse('patient_list'))
+
+
 class PatientNew(View):
     form_class = PatientForm
 
@@ -280,8 +293,9 @@ class DiagnosisDetail(View):
 class PatientsActionView(View):
 
     TEMPLATES = {
-        'deactivate': 'patient_deactivate_bulk.html',
-        'stats': 'patient_stats_form.html'
+        'deactivate': 'actions/patient_deactivate_bulk.html',
+        'activate': 'actions/patient_activate_bulk.html',
+        'stats': 'actions/patient_stats_form.html'
     }
 
     def post(self, request):
@@ -325,3 +339,28 @@ class PatientActionDeactivate(View):
             _(u'Pacientes desactivados éxitosamente')
         )
         return HttpResponseRedirect(reverse('patient_list'))
+
+
+class PatientActionActivate(View):
+
+    def post(self, request):
+        ids = get_patient_ids(request.POST)
+        Patient.objects.filter(id__in=ids).update(active=True)
+        messages.info(
+            request,
+            _(u'Pacientes activados éxitosamente')
+        )
+        return HttpResponseRedirect(reverse('patient_list'))
+
+
+class PatientActionStats(View):
+
+    def post(self, request):
+        ids = get_patient_ids(request.POST)
+
+        patients = Patient.objects.filter(id__in=ids)
+
+        for patient in patients:
+            patient.get_last_channel()
+
+        return HttpResponse('cucu')

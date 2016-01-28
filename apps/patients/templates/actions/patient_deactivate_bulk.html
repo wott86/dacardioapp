@@ -1,0 +1,37 @@
+{% extends "actions/patient_action_bulk_base.html" %}
+{% load i18n %}
+{% load l10n %}
+{% load static %}
+{% load search_parameters %}
+{% block title %}
+    {% trans 'Desactivar pacientes' %}
+{% endblock %}
+
+{% block breadcrumbs %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <ol class="breadcrumb">
+                    <li><a href="#">Inicio</a></li>
+                    <li><a href="{% url 'patient_list' %}">{% trans 'Pacientes' %}</a></li>
+                    <li class="active">{% trans 'Desactivar pacientes' %}</li>
+                </ol>
+            </div>
+        </div>
+
+    </div>
+{% endblock %}
+{% block question_block %}
+    <h3 align="center" class="panel-title">{% trans '¿Está seguro que desea desactivar estos pacientes?' %}</h3>
+{% endblock %}
+
+{% block action_form %}
+    <form action="{% url 'patients_action_deactivate' %}" method="post">
+        <p align="center">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-primary">{% trans 'Sí' %}</button>
+                <button type="button" onclick="history.back();" class="btn btn-danger">{% trans 'No' %}</button>
+                {% add_post_params_hidden 'csrfmiddlewaretoken' 'action' %}
+        </p>
+    </form>
+{% endblock %}

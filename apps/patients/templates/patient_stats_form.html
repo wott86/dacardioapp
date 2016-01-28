@@ -1,22 +1,9 @@
-{% extends "base.html" %}
+{% extends "actions/patient_action_bulk_base.html" %}
 {% load i18n %}
 {% load l10n %}
-{% load static %}
 {% load search_parameters %}
 {% block title %}
-    {% trans 'Búsqueda de pacientes' %}
-{% endblock %}
-
-{% block extra_static %}
-    <link rel="stylesheet" href="{% static "css/patient_detail.css" %}"/>
-    <script src="{% static "js/patient_detail.js" %}"></script>
-    <link rel="stylesheet" href="{% static "bower_components/bootstrap-select/dist/css/bootstrap-select.min.css" %}"/>
-    <link rel="stylesheet" href="{% static "css/diagnosis/form.css" %}"/>
-    <script src="{% static "bower_components/bootstrap-select/dist/js/bootstrap-select.min.js" %}"></script>
-    <script src="{% static 'bower_components/bootstrap-select/dist/js/i18n/defaults-es_CL.min.js' %}"></script>
-    <script>
-    language = "{{ request.LANGUAGE_CODE }}"
-    </script>
+    {% trans 'Estadísticas de pacientes' %}
 {% endblock %}
 
 {% block breadcrumbs %}
@@ -26,7 +13,7 @@
                 <ol class="breadcrumb">
                     <li><a href="#">Inicio</a></li>
                     <li><a href="{% url 'patient_list' %}">{% trans 'Pacientes' %}</a></li>
-                    <li class="active">{% trans 'Búsqueda' %}</li>
+                    <li class="active">{% trans 'Estadísticas' %}</li>
                 </ol>
             </div>
         </div>
@@ -35,30 +22,21 @@
 {% endblock %}
 
 
-{% block content %}
-<div class="container-fluid">
+{% block question_block %}
+    <h3 align="center" class="panel-title">{% trans 'Parámetros' %}</h3>
+{% endblock %}
 
-    <div class="row">
-        <div class="col-lg-offset-1 col-md-offset-1 col-sm-offset-1 col-xs-offset-1 col-lg-3 col-md-3 col-sm-3 col-sx-3 well well-lg">
-            {% include 'snippets/patient_list.html' %}
-        </div>
-        <div class="col-lg-7 col-md-7 col-sm-7 col-sx-7">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 align="center" class="panel-title">{% trans '¿Está seguro que desea desactivar estos pacientes?' %}</h3>
-                </div>
-                <div class="panel-body" align="center">
-                    <form action="{% url 'patients_action_deactivate' %}" method="post">
-                        <p align="center">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-primary">{% trans 'Sí' %}</button>
-                                <button type="button" onclick="history.back();" class="btn btn-danger">{% trans 'No' %}</button>
-                                {% add_post_params_hidden 'csrfmiddlewaretoken' 'action' %}
-                        </p>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+{% block action_form %}
+    <form action="{% url 'patients_action_stats' %}" method="post" class="form-inline">
+        <p align="center">
+            {% csrf_token %}
+            <label for="id_stat_type">{% trans 'Tipo de estadística' %}</label>
+            <select name="stat_type" id="id_stat_type" class="form-control">
+                <option value="media">{% trans 'Media' %}</option>
+                <option value="std_dvt">{% trans 'Desviación Estándar' %}</option>
+            </select>
+            <button type="submit" class="btn btn-danger">{% trans 'Generar' %}</button>
+            {% add_post_params_hidden 'csrfmiddlewaretoken' 'action' %}
+        </p>
+    </form>
 {% endblock %}

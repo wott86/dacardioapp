@@ -1,5 +1,6 @@
 from apps.patients.views import PatientList, PatientDetail, PatientEdit, PatientNew, DiagnosisList, DiagnosisNew, \
-    PatientDelete, PatientAdvanceSearch, PatientsActionView, PatientActionDeactivate
+    PatientDelete, PatientAdvanceSearch, PatientsActionView, PatientActionDeactivate, PatientActionStats, \
+    PatientActionActivate, PatientActivate
 from django.contrib.auth.decorators import login_required
 from django.conf.urls import patterns, url, include
 
@@ -9,9 +10,12 @@ urlpatterns = patterns(
     url(r'^new/$', login_required(PatientNew.as_view()), name='patient_create'),
     url(r'^action/$', login_required(PatientsActionView.as_view()), name='patients_action'),
     url(r'^action/deactivate/$', login_required(PatientActionDeactivate.as_view()), name='patients_action_deactivate'),
+    url(r'^action/activate/$', login_required(PatientActionActivate.as_view()), name='patients_action_activate'),
+    url(r'^action/stats/$', login_required(PatientActionStats.as_view()), name='patients_action_stats'),
     url(r'^(\d+)/$', login_required(PatientDetail.as_view()), name='patient_detail'),
     url(r'^(\d+)/edit/$', login_required(PatientEdit.as_view()), name='patient_edit'),
     url(r'^(\d+)/delete/$', login_required(PatientDelete.as_view()), name='patient_delete'),
+    url(r'^(\d+)/activate/$', login_required(PatientActivate.as_view()), name='patient_activate'),
 
     url(r'^search/$', login_required(PatientAdvanceSearch.as_view()), name='patient_advanced_search'),
 

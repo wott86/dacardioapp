@@ -109,6 +109,7 @@
                                     <label for="id_actions">{% trans 'Acciones' %}: </label>
                                     <select class="form-control" name="action" id="id_actions" onchange="submit()">
                                         <option value="">--</option>
+                                        <option value="activate">{% trans 'Activar' %}</option>
                                         <option value="deactivate">{% trans 'Desactivar' %}</option>
                                         <option value="stats">{% trans 'Estadísticas' %}</option>
                                     </select>
@@ -220,8 +221,8 @@
                                                 <a href="{% url 'patient_edit' patient.id %}" title="{% trans "Editar paciente" %}"
                                                    data-toggle="tooltip" data-placement="bottom"><span
                                                         class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
-                                                <a href="{% url 'patient_delete' patient.id %}" title="{% trans "Desactivar paciente" %}" data-toggle="tooltip"
-                                                   data-placement="bottom"><span class="glyphicon glyphicon-remove"
+                                                <a href="{% if patient.active %}{% url 'patient_delete' patient.id %}{% else %}{% url 'patient_activate' patient.id %}{% endif %}" title="{% if patient.active %}{% trans "Desactivar paciente" %}{% else %}{% trans "Activar paciente" %}{% endif %}" data-toggle="tooltip"
+                                                   data-placement="bottom"><span class="glyphicon glyphicon-{% if patient.active %}remove{% else %}ok{% endif %}"
                                                                                 aria-hidden="true"></span></a>
                                             </td>
                                         </tr>

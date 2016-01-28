@@ -225,6 +225,19 @@ class Patient(models.Model):
     def __unicode__(self):
         return self.full_name
 
+    def get_last_channel(self, channel_type='r'):
+        """
+        Gets last Channel, by default it will returns last RR
+        :rtype: apps.records.Channel
+        :param channel_type: indicates what channel type is requesting, according to values specified in
+          apps.records.Channel class
+        :return: Channel
+        """
+        try:
+            return self.records.order_by('id').last().channels.filter(type=channel_type).order_by('id').last()
+        except AttributeError:
+            return None
+
     class Meta:
         unique_together = ('id_card_prefix', 'id_card_number')
         verbose_name = _('paciente')

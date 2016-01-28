@@ -26,7 +26,7 @@
                 <ol class="breadcrumb">
                     <li><a href="#">Inicio</a></li>
                     <li><a href="{% url 'patient_list' %}">{% trans 'Pacientes' %}</a></li>
-                    <li class="active">{% trans 'Desactivar pacientes' %}</li>
+                    <li class="active">{% trans 'Acciones' %}</li>
                 </ol>
             </div>
         </div>
@@ -45,17 +45,22 @@
         <div class="col-lg-7 col-md-7 col-sm-7 col-sx-7">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h3 align="center" class="panel-title">{% trans '¿Está seguro que desea desactivar estos pacientes?' %}</h3>
+                    {% block question_block %}
+                        <h3 align="center" class="panel-title">Example</h3>
+                    {% endblock %}
                 </div>
                 <div class="panel-body" align="center">
-                    <form action="{% url 'patients_action_deactivate' %}" method="post">
-                        <p align="center">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-primary">{% trans 'Sí' %}</button>
-                                <button type="button" onclick="history.back();" class="btn btn-danger">{% trans 'No' %}</button>
-                                {% add_post_params_hidden 'csrfmiddlewaretoken' 'action' %}
-                        </p>
-                    </form>
+                    {% block action_form %}
+                        Example
+                        <form action="" method="post">
+                            <p align="center">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-primary">{% trans 'Sí' %}</button>
+                                    <button type="button" onclick="history.back();" class="btn btn-danger">{% trans 'No' %}</button>
+                                    {% add_post_params_hidden 'csrfmiddlewaretoken' 'action' %}
+                            </p>
+                        </form>
+                    {% endblock %}
                 </div>
             </div>
         </div>
