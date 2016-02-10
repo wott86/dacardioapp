@@ -74,4 +74,4 @@ class RegisterViewDetail(View):
             'constants': GraphicView
         }
 
-        return HttpResponse(render(request, 'test.html', context=RequestContext(request, data)))
+        return HttpResponse(render(request, 'graphic.html', context=RequestContext(request, data)))

@@ -206,10 +206,18 @@ class Patient(models.Model):
 
     @property
     def address(self):
+        """
+        :rtype: str
+        :return:
+        """
         return self.street
 
     @property
     def first_history(self):
+        """
+        :rtype apps.patients.models.History
+        :return: first modification history object
+        """
         if self.history.all().exists():
             return self.history.all().order_by('id')[0]
         else:
@@ -217,6 +225,10 @@ class Patient(models.Model):
 
     @property
     def last_history(self):
+        """
+        :rtype apps.patients.models.History
+        :return: last modification history object
+        """
         if self.history.all().exists():
             return self.history.all().order_by('-id')[0]
         else:
@@ -228,9 +240,9 @@ class Patient(models.Model):
     def get_last_channel(self, channel_type='r'):
         """
         Gets last Channel, by default it will returns last RR
-        :rtype: apps.records.Channel
+        :rtype: apps.records.models.Channel
         :param channel_type: indicates what channel type is requesting, according to values specified in
-          apps.records.Channel class
+          apps.records.models.Channel class
         :return: Channel
         """
         try:

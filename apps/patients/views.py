@@ -4,7 +4,8 @@ from apps.patients.helpers import get_patient_ids
 from apps.patients.models import Patient, History, Diagnosis
 from apps.records.models import Anomaly
 from django.core.urlresolvers import reverse
-from django.db.models import Model, Q, F
+from django.db.models import Model, Q
+from django.db.models.aggregates import Avg, StdDev
 from django.http.response import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.views.generic.base import View
@@ -16,6 +17,7 @@ from django.template.context import RequestContext
 from django.utils import timezone
 from faker import Factory
 import datetime
+from apps.records.helpers import plot
 
 fake = Factory.create()
 
@@ -356,11 +358,48 @@ class PatientActionActivate(View):
 class PatientActionStats(View):
 
     def post(self, request):
-        ids = get_patient_ids(request.POST)
+        request.GET = request.POST
+        return HttpResponse(render(request, 'stats/bulk_graphic.html', context=RequestContext(request)))
+
+
+class PatientActionStatsGraphic(View):
+    MEDIA = 'media'
+    STD_DEV = 'std_dev'
+
+    STAT_TYPES = [MEDIA, STD_DEV]
+
+    def get(self, request):
+        ids = get_patient_ids(request.GET)
 
         patients = Patient.objects.filter(id__in=ids)
 
-        for patient in patients:
-            patient.get_last_channel()
+        ys = []
+        xs = []
+        stat_type = request.GET.get('stat_type', 'media')
+        title = None
 
-        return HttpResponse('cucu')
+        if stat_type not in self.STAT_TYPES:
+            return HttpResponse(status=400)
+
+        if stat_type == self.MEDIA:
+            title = _('Promedio de los RR de los pacientes')
+            for patient in patients:
+                channel = patient.get_last_channel()
+                if channel is not None:
+                    ys.append(channel.points.all().aggregate(average=Avg('y'))['average'])
+                else:
+                    ys.append(0)
+        elif stat_type == self.STD_DEV:
+            title = _(u'Desviación estándar de los RR de los pacientes')
+            for patient in patients:
+                channel = patient.get_last_channel()
+                if channel is not None:
+                    ys.append(channel.points.all().aggregate(std_dev=StdDev('y'))['std_dev'])
+                else:
+                    ys.append(0)
+
+        xs = xrange(len(ys))
+        response = HttpResponse(content_type='image/png')
+        plot.get_image(xs, ys, response, title=title)
+
+        return response

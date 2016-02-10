@@ -33,7 +33,7 @@
             <label for="id_stat_type">{% trans 'Tipo de estadística' %}</label>
             <select name="stat_type" id="id_stat_type" class="form-control">
                 <option value="media">{% trans 'Media' %}</option>
-                <option value="std_dvt">{% trans 'Desviación Estándar' %}</option>
+                <option value="std_dev">{% trans 'Desviación Estándar' %}</option>
             </select>
             <button type="submit" class="btn btn-danger">{% trans 'Generar' %}</button>
             {% add_post_params_hidden 'csrfmiddlewaretoken' 'action' %}

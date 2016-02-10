@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load l10n %}
+{% load search_parameters %}
+{% block breadcrumbs %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <ol class="breadcrumb">
+                    <li><a href="#">Inicio</a></li>
+                    <li><a href="{% url 'patient_list' %}">Pacientes</a></li>
+                    <li class="active">{% trans 'Estadísticas' %}</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+<p align="center">
+    <img width="800" height="600" src="{% url 'patients_action_stats_graphic' %}?{% add_get_params %}" alt="{% trans 'Gráfica' %}">
+</p>
+{% endblock %}
