@@ -34,6 +34,9 @@ class Channel(models.Model):
     type = models.CharField(max_length=2, default='n', choices=CHANNEL_TYPES, verbose_name=_('tipo'))
     name = models.CharField(max_length=50, blank=True, default='', verbose_name=_('nombre'))
     description = models.TextField(blank=True, default='', verbose_name=_(u'descripción'))
+    start_date = models.DateTimeField(null=True, Blank=True, verbose_name=_('Fecha de inicio'))
+    sampling_rate = models.IntegerField(default=500, verbose_name=_('Tasa de muestreo'))
+
 
     class Meta:
         verbose_name = _('canal')
