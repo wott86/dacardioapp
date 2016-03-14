@@ -85,6 +85,11 @@ class Channel(models.Model):
             initial_time += interval
         return range(1, len(y) + 1), y
 
+    def get_standard_deviation(self, initial_time, final_time):
+        return \
+            self.points.filter(x__gte=initial_time, x__lte=final_time).order_by('x').aggregate(std_dev=StdDev('y'))[
+                'std_dev']
+
     def get_return_map(self, initial_time, final_time):
         points = [point.y for point in self.points.filter(x__gte=initial_time, x__lte=final_time).order_by('x')]
         x = []
@@ -97,6 +102,10 @@ class Channel(models.Model):
             except IndexError:
                 break
         return x, y
+
+    @property
+    def SDNN(self):
+        return self.points.all().order_by('x').aggregate(std_dev=StdDev('y'))['std_dev']
 
 
 class Point(models.Model):

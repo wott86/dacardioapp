@@ -2,7 +2,7 @@
 {% load i18n %}
 {% load l10n %}
 {% load static %}
-{% load search_parameters %}
+{% load stats %}
 {% block title %}
     {% trans 'Calcular estadísticas' %}
 {% endblock %}
@@ -41,54 +41,7 @@
 
     <div class="row">
         <div class="col-lg-offset-1 col-md-offset-1 col-sm-offset-1 col-xs-offset-1 col-lg-3 col-md-3 col-sm-3 col-sx-3 well well-lg">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-1 col-md-1 col-sm-1 col-sx-1"><b>{% trans 'Paciente' %}:</b></div>
-                    <div class="col-lg-2 col-md-2 col-sm-2 col-sx-2">{{ patient.full_name }}</div>
-                </div>
-            </div>
-            <br>
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-1 col-md-1 col-sm-1 col-sx-1"><b>{% trans 'Fecha del registro' %}:</b></div>
-                    <div class="col-lg-2 col-md-2 col-sm-2 col-sx-2">{{ record.created }}</div>
-                </div>
-            </div>
-            <br>
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-1 col-md-1 col-sm-1 col-sx-1"><b>{% trans 'Tipo de registro' %}:</b></div>
-                    <div class="col-lg-2 col-md-2 col-sm-2 col-sx-2">{{ channel.get_type_display }}</div>
-                </div>
-            </div>
-            <br>
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-1 col-md-1 col-sm-1 col-sx-1"><b>{% trans 'Tasa de muestreo' %}:</b></div>
-                    <div class="col-lg-2 col-md-2 col-sm-2 col-sx-2">{% blocktrans with channel.sampling_rate as sampling_rate %}{{ sampling_rate }} muestras por segundo{% endblocktrans %}</div>
-                </div>
-            </div>
-            <br>
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-1 col-md-1 col-sm-1 col-sx-1"><b>{% trans 'Duración' %}:</b></div>
-                    <div class="col-lg-2 col-md-2 col-sm-2 col-sx-2">{{ channel.duration_str }}</div>
-                </div>
-            </div>
-            <br>
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-1 col-md-1 col-sm-1 col-sx-1"><b>{% trans 'Hora de inicio' %}:</b></div>
-                    <div class="col-lg-2 col-md-2 col-sm-2 col-sx-2">{% if channel.start_date %}{{ channel.start_date }}{% else %}No disponible{% endif %}</div>
-                </div>
-            </div>
-            <br>
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-1 col-md-1 col-sm-1 col-sx-1"><b>{% trans 'Hora de finalización' %}:</b></div>
-                    <div class="col-lg-2 col-md-2 col-sm-2 col-sx-2">{% if channel.end_date %}{{ channel.end_date }}{% else %}No disponible{% endif %}</div>
-                </div>
-            </div>
+            {% include 'snippets/channel_data.html' %}
         </div>
         <div class="col-lg-7 col-md-7 col-sm-7 col-sx-7">
             <div class="panel panel-default">
@@ -100,6 +53,20 @@
                 <div class="panel-body" align="center">
                     <p align="center">
                         <img width="600" height="450" src="{% url 'record_image' patient.id record.id channel.id %}?type={{ type }}" alt="{% trans 'Gráfica' %}">
+                    </p>
+                    <hr>
+                    <p align="left">
+                        <h4>Otros indicadores</h4>
+                        <p align="center">
+                            <b>{% trans 'SDNN' %}</b>
+                            {{ channel.SDNN|floatformat:2 }}
+                        </p>
+                        <p align="center">
+                            <b>{% trans 'Desviación estándar' %}</b>
+                            {% standard_deviation channel %}
+                        </p>
+
+
                     </p>
                 </div>
             </div>
