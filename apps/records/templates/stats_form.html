@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load l10n %}
+{% load static %}
+{% load search_parameters %}
+{% block title %}
+    {% trans 'Desactivar pacientes' %}
+{% endblock %}
+
+{% block extra_static %}
+    <link rel="stylesheet" href="{% static "css/patient_detail.css" %}"/>
+    <script src="{% static "js/patient_detail.js" %}"></script>
+    <link rel="stylesheet" href="{% static "bower_components/bootstrap-select/dist/css/bootstrap-select.min.css" %}"/>
+    <link rel="stylesheet" href="{% static "css/diagnosis/form.css" %}"/>
+    <script src="{% static "bower_components/bootstrap-select/dist/js/bootstrap-select.min.js" %}"></script>
+    <script src="{% static 'bower_components/bootstrap-select/dist/js/i18n/defaults-es_CL.min.js' %}"></script>
+    <script>
+    language = "{{ request.LANGUAGE_CODE }}"
+    </script>
+{% endblock %}
+
+{% block breadcrumbs %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <ol class="breadcrumb">
+                    <li><a href="#">Inicio</a></li>
+                    <li><a href="{% url 'patient_list' %}">Pacientes</a></li>
+                    <li><a href="{% url 'patient_detail' patient.id %}">{{ patient.full_name|escape }}</a></li>
+                    <li><a href="{% url 'record_list' patient.id %}">{% trans 'Registros cardíacos' %}</a></li>
+                    <li class="active">{{ channel.name }}</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block content %}
+<div class="container-fluid">
+
+    <div class="row">
+        <div class="col-lg-offset-1 col-md-offset-1 col-sm-offset-1 col-xs-offset-1 col-lg-3 col-md-3 col-sm-3 col-sx-3 well well-lg">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-1 col-md-1 col-sm-1 col-sx-1"><b>{% trans 'Paciente' %}:</b></div>
+                    <div class="col-lg-2 col-md-2 col-sm-2 col-sx-2">{{ patient.full_name }}</div>
+                </div>
+            </div>
+            <br>
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-1 col-md-1 col-sm-1 col-sx-1"><b>{% trans 'Fecha del registro' %}:</b></div>
+                    <div class="col-lg-2 col-md-2 col-sm-2 col-sx-2">{{ record.created }}</div>
+                </div>
+            </div>
+            <br>
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-1 col-md-1 col-sm-1 col-sx-1"><b>{% trans 'Tipo de registro' %}:</b></div>
+                    <div class="col-lg-2 col-md-2 col-sm-2 col-sx-2">{{ channel.get_type_display }}</div>
+                </div>
+            </div>
+            <br>
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-1 col-md-1 col-sm-1 col-sx-1"><b>{% trans 'Tasa de muestreo' %}:</b></div>
+                    <div class="col-lg-2 col-md-2 col-sm-2 col-sx-2">{% blocktrans with channel.sampling_rate as sampling_rate %}{{ sampling_rate }} muestras por segundo{% endblocktrans %}</div>
+                </div>
+            </div>
+            <br>
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-1 col-md-1 col-sm-1 col-sx-1"><b>{% trans 'Hora de inicio' %}:</b></div>
+                    <div class="col-lg-2 col-md-2 col-sm-2 col-sx-2">{% if channel.start_date %}{{ channel.start_date }}{% else %}No disponible{% endif %}</div>
+                </div>
+            </div>
+            <br>
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-1 col-md-1 col-sm-1 col-sx-1"><b>{% trans 'Hora de finalización' %}:</b></div>
+                    <div class="col-lg-2 col-md-2 col-sm-2 col-sx-2">{% if channel.end_date %}{{ channel.end_date }}{% else %}No disponible{% endif %}</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-7 col-md-7 col-sm-7 col-sx-7">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    {% block question_block %}
+                        <h3 align="center" class="panel-title">Indicadores</h3>
+                    {% endblock %}
+                </div>
+                <div class="panel-body" align="center">
+                    <form action="{% url 'view_channel_form' patient.id record.id channel.id %}" method="post" class="form-inline">
+                        {% csrf_token %}
+                        <p align="center">
+                            <label for="id_stat_type">{% trans 'Tipo de estadística' %}</label>
+                            <select name="stat_type" id="id_stat_type" class="form-control">
+                                <option value="media">{% trans 'Media' %}</option>
+                                <option value="std_dev">{% trans 'Desviación Estándar' %}</option>
+                            </select>
+                            <button type="submit" class="btn btn-danger">{% trans 'Generar' %}</button>
+                            {% add_post_params_hidden 'csrfmiddlewaretoken' 'action' %}
+                        </p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

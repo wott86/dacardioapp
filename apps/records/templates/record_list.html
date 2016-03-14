@@ -74,7 +74,7 @@
                                     {% if record.channels.count != 0 %}
                                     <ul class="list-group">
                                         {% for channel in record.channels.all %}
-                                            <li class="list-group-item"><a href="{% url 'view_channel' patient.id record.id channel.id %}">{{ channel.name }}</a></li>
+                                            <li class="list-group-item"><a href="{% url 'view_channel_form' patient.id record.id channel.id %}">{{ channel.name }}</a></li>
                                         {% endfor %}
                                     </ul>
                                     {% else %}

@@ -9,6 +9,24 @@ from apps.records.models import Record, Channel
 from django.template.context import RequestContext
 
 
+class GraphicStatFormView(View):
+    form_class = None
+
+    def get(self, request, record_id, channel_id, patient_id):
+        patient = get_object_or_404(Patient, id=patient_id)
+        record = get_object_or_404(Record, id=record_id, patient=patient)
+        channel = get_object_or_404(Channel, id=channel_id, record=record)
+        data = {
+            'record': record,
+            'patient': patient,
+            'channel': channel
+        }
+        return HttpResponse(render(request, 'stats_form.html', context_instance=RequestContext(request, data)))
+
+    def post(self, request):
+        pass
+
+
 class GraphicView(View):
     GRAPHIC_TYPE_NORMAL = 'normal'
     GRAPHIC_TYPE_MEDIA = 'media'

@@ -21,6 +21,7 @@
     "normalize.css": "~3.0.3",
     "bootstrap-datepicker": "~1.4.0",
     "bootstrap-select": "~1.7.2",
-    "bootstrap-fileinput": "~4.2.1"
+    "bootstrap-fileinput": "~4.2.1",
+    "bs-typeahead": "~0.0.5"
   }
 }
