@@ -13,7 +13,7 @@
 {% block breadcrumbs %}
     <div class="container-fluid">
         <div class="row">
-            <div class="col-lg-12">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <ol class="breadcrumb">
                     <li><a href="#">Inicio</a></li>
                     <li class="active">Pacientes</li>
@@ -26,7 +26,7 @@
 {% block content %}
     <div class="container-fluid">
         <div class="row">
-            <div class="col-lg-12">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <nav class="navbar navbar-inverse navbar-fixed-bottom">
                     <div class="container-fluid">
                         <!-- Brand and toggle get grouped for better mobile display -->
@@ -98,10 +98,10 @@
             </nav>
         </div>
         <!-- Patient list  -->
-        <form class="navbar-form navbar-right text-muted" action="{% url 'patients_action' %}" role="form" method="post">
+        <form class="navbar-form text-muted" action="{% url 'patients_action' %}" role="form" method="post">
             <div class="container">
                 <div class="row">
-                    <div class="col-lg-12">
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                         <div class="panel panel-default">
                             <div class="panel-body">
                                 <div class="form-group">
