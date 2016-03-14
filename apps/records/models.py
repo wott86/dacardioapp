@@ -53,13 +53,6 @@ class Channel(models.Model):
     def duration_str(self):
         return str(timedelta(milliseconds=self.duration))[:-4]
 
-        millis = self.duration
-        hours = millis / 3600000
-        mins = (millis - hours * 3600000) / 60000
-        secs = (millis - hours * 3600000 - mins * 60000) / 1000
-        millis = millis - hours * 3600000 - mins * 60000 - secs * 1000
-        return "%(hours)02d:%(mins)02d:%(secs)02d,%(millis)03d" % locals()
-
     class Meta:
         verbose_name = _('canal')
         verbose_name_plural = _('canales')
