@@ -42,8 +42,8 @@ class Channel(models.Model):
 
     @property
     def end_date(self):
-        microseconds = self.duration
-        return (self.start_date + timedelta(microseconds=microseconds)) if self.start_date else None
+        milliseconds = self.duration
+        return (self.start_date + timedelta(milliseconds=milliseconds)) if self.start_date else None
 
     @property
     def duration(self):
@@ -51,6 +51,8 @@ class Channel(models.Model):
 
     @property
     def duration_str(self):
+        return str(timedelta(milliseconds=self.duration))[:-4]
+
         millis = self.duration
         hours = millis / 3600000
         mins = (millis - hours * 3600000) / 60000
@@ -89,6 +91,11 @@ class Channel(models.Model):
         return \
             self.points.filter(x__gte=initial_time, x__lte=final_time).order_by('x').aggregate(std_dev=StdDev('y'))[
                 'std_dev']
+
+    def get_media(self, initial_time, final_time):
+        return \
+            self.points.filter(x__gte=initial_time, x__lte=final_time).order_by('x').aggregate(avg=Avg('y'))[
+                'avg']
 
     def get_return_map(self, initial_time, final_time):
         points = [point.y for point in self.points.filter(x__gte=initial_time, x__lte=final_time).order_by('x')]

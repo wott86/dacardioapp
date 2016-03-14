@@ -54,19 +54,21 @@
                     <p align="center">
                         <img width="600" height="450" src="{% url 'record_image' patient.id record.id channel.id %}?type={{ type }}" alt="{% trans 'Gráfica' %}">
                     </p>
-                    <hr>
+                    <hr />
                     <p align="left">
                         <h4>Otros indicadores</h4>
                         <p align="center">
-                            <b>{% trans 'SDNN' %}</b>
-                            {{ channel.SDNN|floatformat:2 }}
+                            <b>{% trans 'Media' %}</b>
+                            {% media channel %}
                         </p>
                         <p align="center">
                             <b>{% trans 'Desviación estándar' %}</b>
                             {% standard_deviation channel %}
                         </p>
-
-
+                        <p align="center">
+                            <b>{% trans 'SDNN' %}</b>
+                            {{ channel.SDNN|floatformat:2 }}
+                        </p>
                     </p>
                 </div>
             </div>

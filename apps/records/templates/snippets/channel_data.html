@@ -37,14 +37,14 @@
 <div class="container">
     <div class="row">
         <div class="col-lg-1 col-md-1 col-sm-1 col-sx-1"><b>{% trans 'Hora de inicio' %}:</b></div>
-        <div class="col-lg-2 col-md-2 col-sm-2 col-sx-2">{% if channel.start_date %}{{ channel.start_date }}{% else %}No disponible{% endif %}</div>
+        <div class="col-lg-2 col-md-2 col-sm-2 col-sx-2">{% if channel.start_date %}{{ channel.start_date }}{% else %}{% trans 'No disponible' %}{% endif %}</div>
     </div>
 </div>
 <br>
 <div class="container">
     <div class="row">
         <div class="col-lg-1 col-md-1 col-sm-1 col-sx-1"><b>{% trans 'Hora de finalización' %}:</b></div>
-        <div class="col-lg-2 col-md-2 col-sm-2 col-sx-2">{% if channel.end_date %}{{ channel.end_date }}{% else %}No disponible{% endif %}</div>
+        <div class="col-lg-2 col-md-2 col-sm-2 col-sx-2">{% if channel.start_date %}{{ channel.end_date }}{% else %}{% trans 'No disponible' %}{% endif %}</div>
     </div>
 </div>
 <hr />
