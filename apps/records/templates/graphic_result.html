@@ -98,28 +98,9 @@
                     {% endblock %}
                 </div>
                 <div class="panel-body" align="center">
-                    <form action="{% url 'view_channel_form' patient.id record.id channel.id %}" method="post" class="form-inline">
-                        {% csrf_token %}
-                        <p align="center">
-                            <label for="id_interval_start">{% trans 'Inicio' %}</label>
-                            <input type="number" id="id_interval_start" name="interval_start"/>
-                            <label for="id_interval_end">{% trans 'Fin' %}</label>
-                            <input type="number" id="id_interval_end" name="interval_end"/>
-                        </p>
-                        <p align="center">
-                            <label for="id_segment_size">{% trans 'Tamaño del segmento' %}</label>
-                            <input type="number" id="id_segment_size" name="segment_size"/>
-                        </p>
-                        <p align="center">
-                            <label for="id_stat_type">{% trans 'Tipo de estadística' %}</label>
-                            <select name="stat_type" id="id_stat_type" class="form-control">
-                                <option value="media">{% trans 'Media' %}</option>
-                                <option value="std_dev">{% trans 'Desviación Estándar' %}</option>
-                            </select>
-                            <button type="submit" class="btn btn-danger">{% trans 'Generar' %}</button>
-                            {% add_post_params_hidden 'csrfmiddlewaretoken' 'action' %}
-                        </p>
-                    </form>
+                    <p align="center">
+                        <img width="600" height="450" src="{% url 'record_image' patient.id record.id channel.id %}?type={{ type }}" alt="{% trans 'Gráfica' %}">
+                    </p>
                 </div>
             </div>
         </div>

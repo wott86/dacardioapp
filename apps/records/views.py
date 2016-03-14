@@ -12,10 +12,15 @@ from django.template.context import RequestContext
 class GraphicStatFormView(View):
     form_class = None
 
-    def get(self, request, record_id, channel_id, patient_id):
+    @staticmethod
+    def validate_objects(record_id, channel_id, patient_id):
         patient = get_object_or_404(Patient, id=patient_id)
         record = get_object_or_404(Record, id=record_id, patient=patient)
         channel = get_object_or_404(Channel, id=channel_id, record=record)
+        return patient, record, channel
+
+    def get(self, request, record_id, channel_id, patient_id):
+        patient, record, channel = self.validate_objects(record_id, channel_id, patient_id)
         data = {
             'record': record,
             'patient': patient,
@@ -23,9 +28,16 @@ class GraphicStatFormView(View):
         }
         return HttpResponse(render(request, 'stats_form.html', context_instance=RequestContext(request, data)))
 
-    def post(self, request):
-        pass
+    def post(self, request, record_id, channel_id, patient_id):
+        patient, record, channel = self.validate_objects(record_id, channel_id, patient_id)
 
+        data = {
+            'record': record,
+            'patient': patient,
+            'channel': channel,
+            'type': GraphicView.GRAPHIC_TYPE_NORMAL
+        }
+        return HttpResponse(render(request, 'graphic_result.html', context_instance=RequestContext(request, data)))
 
 class GraphicView(View):
     GRAPHIC_TYPE_NORMAL = 'normal'

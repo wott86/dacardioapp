@@ -1,4 +1,6 @@
 # coding=utf-8
+from datetime import timedelta
+
 from apps.patients.models import OrderManager
 from django.db import models
 from django.db.models.aggregates import Avg, StdDev
@@ -35,8 +37,26 @@ class Channel(models.Model):
     name = models.CharField(max_length=50, blank=True, default='', verbose_name=_('nombre'))
     description = models.TextField(blank=True, default='', verbose_name=_(u'descripción'))
     start_date = models.DateTimeField(null=True, blank=True, verbose_name=_('Fecha de inicio'))
-    end_date = models.DateTimeField(null=True, blank=True, verbose_name=_(u'Fecha de finalización'))
+    #end_date = models.DateTimeField(null=True, blank=True, verbose_name=_(u'Fecha de finalización'))
     sampling_rate = models.IntegerField(default=500, verbose_name=_('Tasa de muestreo'))
+
+    @property
+    def end_date(self):
+        microseconds = self.duration
+        return (self.start_date + timedelta(microseconds=microseconds)) if self.start_date else None
+
+    @property
+    def duration(self):
+        return self.points.all().count() * self.sampling_rate
+
+    @property
+    def duration_str(self):
+        millis = self.duration
+        hours = millis / 3600000
+        mins = (millis - hours * 3600000) / 60000
+        secs = (millis - hours * 3600000 - mins * 60000) / 1000
+        millis = millis - hours * 3600000 - mins * 60000 - secs * 1000
+        return "%(hours)02d:%(mins)02d:%(secs)02d,%(millis)03d" % locals()
 
     class Meta:
         verbose_name = _('canal')
