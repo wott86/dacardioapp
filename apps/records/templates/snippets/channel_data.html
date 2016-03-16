@@ -1,56 +1,66 @@
 {% load i18n %}
-<div class="container">
+<div class="container-fluid">
     <div class="row">
-        <div class="col-lg-1 col-md-1 col-sm-1 col-sx-1"><b>{% trans 'Paciente' %}:</b></div>
-        <div class="col-lg-2 col-md-2 col-sm-2 col-sx-2">{{ patient.full_name }}</div>
+        <div class="col-lg-5 col-md-5 col-sm-5 col-sx-5"><b>{% trans 'Paciente' %}:</b></div>
+        <div class="col-lg-7 col-md-7 col-sm-7 col-sx-7">{{ patient.full_name }}</div>
     </div>
 </div>
 <br>
-<div class="container">
+<div class="container-fluid">
     <div class="row">
-        <div class="col-lg-1 col-md-1 col-sm-1 col-sx-1"><b>{% trans 'Fecha del registro' %}:</b></div>
-        <div class="col-lg-2 col-md-2 col-sm-2 col-sx-2">{{ record.created }}</div>
+        <div class="col-lg-5 col-md-5 col-sm-5 col-sx-5"><b>{% trans 'Agregado' %}:</b></div>
+        <div class="col-lg-7 col-md-7 col-sm-7 col-sx-7">{{ record.created }}</div>
     </div>
 </div>
 <br>
-<div class="container">
+<div class="container-fluid">
     <div class="row">
-        <div class="col-lg-1 col-md-1 col-sm-1 col-sx-1"><b>{% trans 'Tipo de registro' %}:</b></div>
-        <div class="col-lg-2 col-md-2 col-sm-2 col-sx-2">{{ channel.get_type_display }}</div>
+        <div class="col-lg-5 col-md-5 col-sm-5 col-sx-5"><b>{% trans 'Tipo de registro' %}:</b></div>
+        <div class="col-lg-7 col-md-7 col-sm-7 col-sx-7">{{ channel.get_type_display }}</div>
     </div>
 </div>
 <br>
-<div class="container">
+<div class="container-fluid">
     <div class="row">
-        <div class="col-lg-1 col-md-1 col-sm-1 col-sx-1"><b>{% trans 'Tasa de muestreo' %}:</b></div>
-        <div class="col-lg-2 col-md-2 col-sm-2 col-sx-2">{% blocktrans with channel.sampling_rate as sampling_rate %}{{ sampling_rate }} muestras por segundo{% endblocktrans %}</div>
+        <div class="col-lg-5 col-md-5 col-sm-5 col-sx-5"><b>{% trans 'Tasa de muestreo' %}:</b></div>
+        <div class="col-lg-7 col-md-7 col-sm-7 col-sx-7">{% blocktrans with channel.sampling_rate as sampling_rate %}{{ sampling_rate }} muestras por segundo{% endblocktrans %}</div>
     </div>
 </div>
 <br>
-<div class="container">
+<div class="container-fluid">
     <div class="row">
-        <div class="col-lg-1 col-md-1 col-sm-1 col-sx-1"><b>{% trans 'Duración' %}:</b></div>
-        <div class="col-lg-2 col-md-2 col-sm-2 col-sx-2">{{ channel.duration_str }}</div>
+        <div class="col-lg-5 col-md-5 col-sm-5 col-sx-5"><b>{% trans 'Duración' %}:</b></div>
+        <div class="col-lg-7 col-md-7 col-sm-7 col-sx-7">{{ channel.duration_str }}</div>
     </div>
 </div>
 <br>
-<div class="container">
+<div class="container-fluid">
     <div class="row">
-        <div class="col-lg-1 col-md-1 col-sm-1 col-sx-1"><b>{% trans 'Hora de inicio' %}:</b></div>
-        <div class="col-lg-2 col-md-2 col-sm-2 col-sx-2">{% if channel.start_date %}{{ channel.start_date }}{% else %}{% trans 'No disponible' %}{% endif %}</div>
+        <div class="col-lg-5 col-md-5 col-sm-5 col-sx-5"><b>{% trans 'Hora de inicio' %}:</b></div>
+        <div class="col-lg-7 col-md-7 col-sm-7 col-sx-7">{% if channel.start_date %}{{ channel.start_date }}{% else %}{% trans 'No disponible' %}{% endif %}</div>
     </div>
 </div>
 <br>
-<div class="container">
+<div class="container-fluid">
     <div class="row">
-        <div class="col-lg-1 col-md-1 col-sm-1 col-sx-1"><b>{% trans 'Hora de finalización' %}:</b></div>
-        <div class="col-lg-2 col-md-2 col-sm-2 col-sx-2">{% if channel.start_date %}{{ channel.end_date }}{% else %}{% trans 'No disponible' %}{% endif %}</div>
+        <div class="col-lg-5 col-md-5 col-sm-5 col-sx-5"><b>{% trans 'Hora de finalización' %}:</b></div>
+        <div class="col-lg-7 col-md-7 col-sm-7 col-sx-7">{% if channel.start_date %}{{ channel.end_date }}{% else %}{% trans 'No disponible' %}{% endif %}</div>
     </div>
 </div>
 <hr />
-<div class="container">
+<h4>{% trans 'Valores sobre el total del registro' %}</h4>
+<div class="container-fluid">
     <div class="row">
-        <div class="col-lg-1 col-md-1 col-sm-1 col-sx-1"><b>{% trans 'SDNN' %}:</b></div>
-        <div class="col-lg-2 col-md-2 col-sm-2 col-sx-2">{{ channel.SDNN|floatformat:2 }}</div>
+        <div class="col-lg-5 col-md-5 col-sm-5 col-sx-5"><b>{% trans 'STD (SDNN)' %}:</b></div>
+        <div class="col-lg-4 col-md-4 col-sm-4 col-sx-4">{{ channel.SDNN|floatformat:2 }}</div>
+        <div class="col-lg-3 col-md-3 col-sm-3 col-sx-3"><i>{% trans '(s)' %}</i></div>
+    </div>
+</div>
+<br />
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-5 col-md-5 col-sm-5 col-sx-5"><b>{% trans 'Media' %}:</b></div>
+        <div class="col-lg-4 col-md-4 col-sm-4 col-sx-4">{{ channel.average|floatformat:2 }}</div>
+        <div class="col-lg-3 col-md-3 col-sm-3 col-sx-3"><i>{% trans '(s)' %}</i></div>
     </div>
 </div>

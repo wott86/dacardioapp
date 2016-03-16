@@ -8,14 +8,67 @@
 {% endblock %}
 
 {% block extra_static %}
-    <link rel="stylesheet" href="{% static "css/patient_detail.css" %}"/>
-    <script src="{% static "js/patient_detail.js" %}"></script>
     <link rel="stylesheet" href="{% static "bower_components/bootstrap-select/dist/css/bootstrap-select.min.css" %}"/>
-    <link rel="stylesheet" href="{% static "css/diagnosis/form.css" %}"/>
-    <script src="{% static "bower_components/bootstrap-select/dist/js/bootstrap-select.min.js" %}"></script>
-    <script src="{% static 'bower_components/bootstrap-select/dist/js/i18n/defaults-es_CL.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static "css/records/stat_form.css" %}"/>
     <script>
     language = "{{ request.LANGUAGE_CODE }}"
+    </script>
+    <script type="application/javascript" src="{% static 'bower_components/moment/moment.js' %}"></script>
+    {% with 'bower_components/moment/locale/'|add:request.LANGUAGE_CODE|add:'.js' as inputfile_lang %}
+        <script src="{% static inputfile_lang %}"></script>
+    {% endwith %}
+    <script type="application/javascript" src="{% static 'bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css' %}">
+    <script type="text/javascript">
+        $(function () {
+            var datepicker1 = $('#datetimepicker1');
+            var datepicker2 = $('#datetimepicker2');
+            var input1 = datepicker1.find('input');
+            var input2 = datepicker2.find('input');
+            var segment_size = $("#id_segment_size");
+            var segment_unit = $("#id_segment_unit");
+            datepicker1.datetimepicker({
+                    locale: language,
+                    minDate: moment("{{ channel.start_date|date:"Ymd H:i" }}", "YYYYMMDD HH:mm"),
+                    maxDate: moment("{{ channel.end_date|date:"Ymd H:i" }}", "YYYYMMDD HH:mm").subtract(1, 'minutes'),
+                    sideBySide: true,
+                    allowInputToggle: true,
+                    useCurrent: false,
+                    defaultDate: moment("{{ channel.start_date|date:"Ymd H:i" }}", "YYYYMMDD HH:mm")
+                }
+            ).on("dp.change", function(e){
+                var newDate = e.date;
+                if (newDate.diff(datepicker2.data("DateTimePicker").date()) >= 0){
+                    datepicker2.data("DateTimePicker").date(newDate.add(1, 'minutes'));
+                }
+            });
+            datepicker2.datetimepicker({
+                locale: language,
+                minDate: moment("{{ channel.start_date|date:"Ymd H:i" }}", "YYYYMMDD HH:mm").add(1, 'minutes'),
+                maxDate: moment("{{ channel.end_date|date:"Ymd H:i" }}", "YYYYMMDD HH:mm"),
+                sideBySide: true,
+                allowInputToggle: true,
+                useCurrent: false,
+                defaultDate: moment("{{ channel.start_date|date:"Ymd H:i" }}", "YYYYMMDD HH:mm").add(1, 'minutes')
+            }).on("dp.change", function(e){
+                var newDate = e.date;
+                if (newDate.diff(datepicker1.data("DateTimePicker").date()) <= 0){
+                    datepicker1.data("DateTimePicker").date(newDate.subtract(1, 'minutes'));
+                }
+            });
+            segment_unit.change(function (e){
+                if (datepicker1.data("DateTimePicker").date().add(segment_size.val(), $(this).val()).diff(datepicker2.data("DateTimePicker").date()) >= 0){
+                    $(this).val('minutes');
+                    segment_size.val(1);
+                }
+            });
+            segment_size.change(function (e){
+                if (datepicker1.data("DateTimePicker").date().add($(this).val(), segment_unit.val()).diff(datepicker2.data("DateTimePicker").date()) >= 0){
+                    $(this).val(1);
+                    segment_unit.val("minutes");
+                }
+            });
+        });
     </script>
 {% endblock %}
 
@@ -50,28 +103,67 @@
                         <h3 align="center" class="panel-title">Indicadores</h3>
                     {% endblock %}
                 </div>
-                <div class="panel-body" align="center">
+                <div class="panel-body">
                     <form action="{% url 'view_channel_form' patient.id record.id channel.id %}" method="post" class="form-inline">
                         {% csrf_token %}
-                        <p align="center">
-                            <label for="id_interval_start">{% trans 'Inicio' %}</label>
-                            <input type="number" id="id_interval_start" name="interval_start"/>
-                            <label for="id_interval_end">{% trans 'Fin' %}</label>
-                            <input type="number" id="id_interval_end" name="interval_end"/>
-                        </p>
-                        <p align="center">
-                            <label for="id_segment_size">{% trans 'Tamaño del segmento' %}</label>
-                            <input type="number" id="id_segment_size" name="segment_size"/>
-                        </p>
-                        <p align="center">
-                            <label for="id_stat_type">{% trans 'Tipo de estadística' %}</label>
-                            <select name="stat_type" id="id_stat_type" class="form-control">
-                                <option value="media">{% trans 'Media' %}</option>
-                                <option value="std_dev">{% trans 'Desviación Estándar' %}</option>
-                            </select>
-                            <button type="submit" class="btn btn-danger">{% trans 'Generar' %}</button>
-                            {% add_post_params_hidden 'csrfmiddlewaretoken' 'action' %}
-                        </p>
+                        <div class="container-fluid">
+                            <div class="row">
+                                <p class="col-lg-6 col-md-6 col-sm-6 col-sx-6">
+                                    <label for="id_interval_start">{% trans 'Inicio' %}</label>
+                                </p>
+                                <p class='input-group date col-lg-6 col-md-6 col-sm-6 col-sx-6' id='datetimepicker1'>
+                                    <input type='text' class="form-control" id="id_interval_start" />
+                                    <input type='hidden' id="id_actual_interval_start" name="interval_start" />
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </p>
+                            </div>
+                            <div class="row">
+                                <p class="col-lg-6 col-md-6 col-sm-6 col-sx-6">
+                                    <label for="id_interval_end">{% trans 'Fin' %}</label>
+                                </p>
+                                <p class='input-group date col-lg-6 col-md-6 col-sm-6 col-sx-6' id='datetimepicker2'>
+                                    <input type='text' class="form-control" id="id_interval_end" />
+                                    <input type='hidden' id="id_actual_interval_end" name="interval_end" />
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </p>
+                            </div>
+                            <div class="row">
+                                <p class="col-lg-6 col-md-6 col-sm-6 col-sx-6">
+                                    <label for="id_segment_size">{% trans 'Tamaño del segmento' %}</label>
+                                </p>
+                                <p class='input-group col-lg-1 col-md-1 col-sm-1 col-sx-1'>
+                                    <input class="form-control" type="number" id="id_segment_size" value="1" name="segment_size"/>
+                                </p>
+                                <p class='input-group col-lg-3 col-md-3 col-sm-3 col-sx-3'>
+                                    <select name="segment_unit" id="id_segment_unit" class="form-control">
+                                        <option value="minutes">{% trans 'Minutos' %}</option>
+                                        <option value="hours">{% trans 'Horas' %}</option>
+                                    </select>
+                                </p>
+                            </div>
+                            <div class="row">
+                                <p class="col-lg-6 col-md-6 col-sm-6 col-sx-6">
+                                    <label for="id_stat_type">{% trans 'Tipo de estadística' %}</label>
+                                </p>
+                                <p class='input-group col-lg-6 col-md-6 col-sm-6 col-sx-6'>
+                                    <select name="stat_type" id="id_stat_type" class="form-control">
+                                        <option value="media">{% trans 'Media' %}</option>
+                                        <option value="std_dev">{% trans 'Desviación Estándar' %}</option>
+                                    </select>
+                                </p>
+                            </div>
+                            <div class="row">
+                                <div class='input-group col-lg-12 col-md-12 col-sm-12 col-sx-12'>
+                                    <button type="submit" class="btn btn-danger pull-right">{% trans 'Generar' %}</button>
+                                    {% add_post_params_hidden 'csrfmiddlewaretoken' 'action' %}
+                                </div>
+
+                            </div>
+                        </div>
                     </form>
                 </div>
             </div>

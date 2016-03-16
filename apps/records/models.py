@@ -3,7 +3,7 @@ from datetime import timedelta
 
 from apps.patients.models import OrderManager
 from django.db import models
-from django.db.models.aggregates import Avg, StdDev
+from django.db.models.aggregates import Avg, StdDev, Sum
 from django.utils.translation import ugettext as _
 
 
@@ -26,7 +26,7 @@ class Channel(models.Model):
         ('n', _('Normal')),
         ('i', _('Integrada')),
         ('c', _(u'Cuadrática')),
-        ('r', _('Original')),
+        ('o', _('Original')),
         ('d', _('Derivada')),
         ('f', _('Filtrada')),
         ('r', _('RR'))
@@ -47,7 +47,17 @@ class Channel(models.Model):
 
     @property
     def duration(self):
+        if self.is_time:
+            return self.points.all().aggregate(sum=Sum('y'))['sum']
         return self.points.all().count() * self.sampling_rate
+
+    @property
+    def is_time(self):
+        """
+        Says if Y represents time or not
+        :return:
+        """
+        return self.type == 'r'
 
     @property
     def duration_str(self):
@@ -105,7 +115,11 @@ class Channel(models.Model):
 
     @property
     def SDNN(self):
-        return self.points.all().order_by('x').aggregate(std_dev=StdDev('y'))['std_dev']
+        return self.points.all().aggregate(std_dev=StdDev('y'))['std_dev']
+
+    @property
+    def average(self):
+        return self.points.all().aggregate(avg=Avg('y'))['avg']
 
 
 class Point(models.Model):
