@@ -23,10 +23,18 @@
         $(function () {
             var datepicker1 = $('#datetimepicker1');
             var datepicker2 = $('#datetimepicker2');
-            var input1 = datepicker1.find('input');
-            var input2 = datepicker2.find('input');
             var segment_size = $("#id_segment_size");
             var segment_unit = $("#id_segment_unit");
+            $("#id_actual_interval_start").val(moment("{{ channel.start_date|date:"Ymd H:i" }}", "YYYYMMDD HH:mm").toISOString());
+            $("#id_actual_interval_end").val(moment("{{ channel.start_date|date:"Ymd H:i" }}", "YYYYMMDD HH:mm").add(1, 'minutes').toISOString());
+            $("#id_stat_form").submit(function(e){
+                if(datepicker1.data("DateTimePicker").date().diff(datepicker2.data("DateTimePicker").date()) == 0){
+                    e.preventDefault();
+                    alert("{% trans 'Las horas no deben ser iguales' %}");
+                }
+                $("#id_actual_interval_start").val(datepicker1.data("DateTimePicker").date().toISOString());
+                $("#id_actual_interval_end").val(datepicker2.data("DateTimePicker").date().toISOString());
+            });
             datepicker1.datetimepicker({
                     locale: language,
                     minDate: moment("{{ channel.start_date|date:"Ymd H:i" }}", "YYYYMMDD HH:mm"),
@@ -41,20 +49,23 @@
                 if (newDate.diff(datepicker2.data("DateTimePicker").date()) >= 0){
                     datepicker2.data("DateTimePicker").date(newDate.add(1, 'minutes'));
                 }
+                $("#id_actual_interval_start").val(newDate.toISOString());
             });
+
             datepicker2.datetimepicker({
                 locale: language,
-                minDate: moment("{{ channel.start_date|date:"Ymd H:i" }}", "YYYYMMDD HH:mm").add(1, 'minutes'),
+                minDate: moment("{{ channel.start_date|date:"Ymd H:i" }}", "YYYYMMDD HH:mm"),
                 maxDate: moment("{{ channel.end_date|date:"Ymd H:i" }}", "YYYYMMDD HH:mm"),
                 sideBySide: true,
                 allowInputToggle: true,
                 useCurrent: false,
-                defaultDate: moment("{{ channel.start_date|date:"Ymd H:i" }}", "YYYYMMDD HH:mm").add(1, 'minutes')
+                defaultDate: moment("{{ channel.start_date|date:"Ymd H:i" }}", "YYYYMMDD HH:mm")
             }).on("dp.change", function(e){
                 var newDate = e.date;
                 if (newDate.diff(datepicker1.data("DateTimePicker").date()) <= 0){
                     datepicker1.data("DateTimePicker").date(newDate.subtract(1, 'minutes'));
                 }
+                $("#id_actual_interval_end").val(newDate.toISOString());
             });
             segment_unit.change(function (e){
                 if (datepicker1.data("DateTimePicker").date().add(segment_size.val(), $(this).val()).diff(datepicker2.data("DateTimePicker").date()) >= 0){
@@ -104,7 +115,7 @@
                     {% endblock %}
                 </div>
                 <div class="panel-body">
-                    <form action="{% url 'view_channel_form' patient.id record.id channel.id %}" method="post" class="form-inline">
+                    <form action="{% url 'view_channel_form' patient.id record.id channel.id %}" id="id_stat_form" method="post" class="form-inline">
                         {% csrf_token %}
                         <div class="container-fluid">
                             <div class="row">
@@ -113,7 +124,6 @@
                                 </p>
                                 <p class='input-group date col-lg-6 col-md-6 col-sm-6 col-sx-6' id='datetimepicker1'>
                                     <input type='text' class="form-control" id="id_interval_start" />
-                                    <input type='hidden' id="id_actual_interval_start" name="interval_start" />
                                     <span class="input-group-addon">
                                         <span class="glyphicon glyphicon-calendar"></span>
                                     </span>
@@ -125,7 +135,6 @@
                                 </p>
                                 <p class='input-group date col-lg-6 col-md-6 col-sm-6 col-sx-6' id='datetimepicker2'>
                                     <input type='text' class="form-control" id="id_interval_end" />
-                                    <input type='hidden' id="id_actual_interval_end" name="interval_end" />
                                     <span class="input-group-addon">
                                         <span class="glyphicon glyphicon-calendar"></span>
                                     </span>
@@ -158,6 +167,8 @@
                             </div>
                             <div class="row">
                                 <div class='input-group col-lg-12 col-md-12 col-sm-12 col-sx-12'>
+                                    <input type='hidden' id="id_actual_interval_start" name="interval_start" />
+                                    <input type='hidden' id="id_actual_interval_end" name="interval_end" />
                                     <button type="submit" class="btn btn-danger pull-right">{% trans 'Generar' %}</button>
                                     {% add_post_params_hidden 'csrfmiddlewaretoken' 'action' %}
                                 </div>

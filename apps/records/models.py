@@ -91,17 +91,34 @@ class Channel(models.Model):
         return range(1, len(y) + 1), y
 
     def get_standard_deviation(self, initial_time, final_time):
+
+        if self.is_time:
+            return self.points.filter(y_accumulative__gte=initial_time, y_accumulative__lte=final_time).order_by(
+                'x').aggregate(std_dev=StdDev('y'))[
+                'std_dev']
+
         return \
-            self.points.filter(x__gte=initial_time, x__lte=final_time).order_by('x').aggregate(std_dev=StdDev('y'))[
+            self.points.filter(x__gte=initial_time, x__lte=final_time).order_by('x').aggregate(
+                std_dev=StdDev('y'))[
                 'std_dev']
 
     def get_media(self, initial_time, final_time):
+        if self.is_time:
+            return \
+                self.points.filter(y_accumulative__gte=initial_time, y_accumulative__lte=final_time).order_by('x').aggregate(avg=Avg('y'))[
+                    'avg']
+
         return \
             self.points.filter(x__gte=initial_time, x__lte=final_time).order_by('x').aggregate(avg=Avg('y'))[
                 'avg']
 
     def get_return_map(self, initial_time, final_time):
-        points = [point.y for point in self.points.filter(x__gte=initial_time, x__lte=final_time).order_by('x')]
+        if self.is_time:
+            points = [point.y for point in
+                      self.points.filter(y_accumulative__gte=initial_time, y_accumulative__lte=final_time).order_by(
+                          'x')]
+        else:
+            points = [point.y for point in self.points.filter(x__gte=initial_time, x__lte=final_time).order_by('x')]
         x = []
         y = []
 
@@ -112,6 +129,27 @@ class Channel(models.Model):
             except IndexError:
                 break
         return x, y
+
+    def get_PNN50(self, initial_time, final_time):
+        if self.is_time:
+            points = self.points.filter(y_accumulative__gte=initial_time, y_accumulative__lte=final_time).order_by('x')
+        else:
+            points = self.points.filter(x__gte=initial_time, x__lte=final_time).order_by('x')
+
+        length = points.count()
+        if length == 0:
+            return None
+
+        last_value = points[0].y
+        counter = 0
+        for point in points:
+            if abs(last_value - point.y) > 50:
+                counter += 1
+            last_value = point.y
+        return (counter / (length - 1)) * 100
+
+
+
 
     @property
     def SDNN(self):

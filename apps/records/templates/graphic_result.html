@@ -62,12 +62,12 @@
                             {% media channel %}
                         </p>
                         <p align="center">
-                            <b>{% trans 'Desviación estándar' %}</b>
+                            <b>{% trans 'STD (SDNN)' %}</b>
                             {% standard_deviation channel %}
                         </p>
                         <p align="center">
-                            <b>{% trans 'SDNN' %}</b>
-                            {{ channel.SDNN|floatformat:2 }}
+                            <b>{% trans 'PNN50' %}</b>
+                            {% pnn50 channel %}
                         </p>
                     </p>
                 </div>
