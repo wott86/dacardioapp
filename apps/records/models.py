@@ -73,18 +73,30 @@ class Channel(models.Model):
     def get_media_points(self, initial_time, final_time, interval):
         y = []
         while initial_time < final_time:
-            y.append(
-                self.points.filter(x__gte=initial_time,
-                                   x__lte=initial_time+interval).order_by('x').aggregate(average=Avg('y'))['average']
-            )
+            if self.is_time:
+                y.append(
+                    self.points.filter(y_accumulative__gte=initial_time,
+                                       y_accumulative__lte=initial_time + interval).order_by('x').aggregate(
+                        average=Avg('y'))['average']
+                )
+            else:
+                y.append(
+                    self.points.filter(y___gte=initial_time,
+                                       x__lte=initial_time+interval).order_by('x').aggregate(average=Avg('y'))['average']
+                )
             initial_time += interval
         return range(1, len(y) + 1), y
 
     def get_standard_deviation_points(self, initial_time, final_time, interval):
         y = []
         while initial_time < final_time:
-            std_dev = self.points.filter(x__gte=initial_time,
-                                         x__lte=initial_time+interval).order_by('x').aggregate(std_dev=StdDev('y'))
+            if self.is_time:
+                std_dev = self.points.filter(y_accumulative__gte=initial_time,
+                                             y_accumulative__lte=initial_time + interval).order_by('x').aggregate(
+                    std_dev=StdDev('y'))
+            else:
+                std_dev = self.points.filter(x__gte=initial_time,
+                                             x__lte=initial_time+interval).order_by('x').aggregate(std_dev=StdDev('y'))
 
             y.append(std_dev['std_dev'])
             initial_time += interval
@@ -148,7 +160,13 @@ class Channel(models.Model):
             last_value = point.y
         return (counter / (length - 1)) * 100
 
+    def get_SDNNindex(self, initial_time, final_time, segment_size):
+        if self.is_time:
+            points = self.points.filter(y_accumulative__gte=initial_time, y_accumulative__lte=final_time).order_by('x')
+        else:
+            points = self.points.filter(x__gte=initial_time, x__lte=final_time).order_by('x')
 
+        # todo: finish this
 
 
     @property

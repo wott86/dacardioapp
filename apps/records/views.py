@@ -1,4 +1,6 @@
 from apps.patients.models import Patient
+from apps.records.helpers.time import convert_time_to_milli, TIME_MULTIPLIER
+from dateutil import parser
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.http.response import HttpResponse
 from django.shortcuts import get_object_or_404, render
@@ -35,9 +37,13 @@ class GraphicStatFormView(View):
             'record': record,
             'patient': patient,
             'channel': channel,
-            'type': GraphicView.GRAPHIC_TYPE_NORMAL
+            'type': request.POST.get('stat_type', GraphicView.GRAPHIC_TYPE_NORMAL),
+            'interval_start': int(convert_time_to_milli(channel, parser.parse(request.POST.get('interval_start', 0)))),
+            'interval_end': int(convert_time_to_milli(channel, parser.parse(request.POST.get('interval_end', 0)))),
+            'segment_size': TIME_MULTIPLIER[request.POST.get('segment_unit', 'minutes')] * int(request.POST.get('segment_size'))
         }
         return HttpResponse(render(request, 'graphic_result.html', context_instance=RequestContext(request, data)))
+
 
 class GraphicView(View):
     GRAPHIC_TYPE_NORMAL = 'normal'
@@ -55,14 +61,18 @@ class GraphicView(View):
 
         graphic_type = request.GET.get(self.GRAPHIC_TYPE_PARAM_NAME, self.GRAPHIC_TYPE_NORMAL)
 
+        interval_start = int(request.GET.get('interval_start', 0))
+        interval_end = int(request.GET.get('interval_end', None))
+        segment_size = int(request.GET.get('segment_size', TIME_MULTIPLIER['minutes']))
+
         if graphic_type == self.GRAPHIC_TYPE_NORMAL:
-            plot.get_channel_image(channel, response, limit=request.GET.get('samples', None))
+            plot.get_channel_image(channel, response, interval_start=interval_start, interval_end=interval_end)
         elif graphic_type == self.GRAPHIC_TYPE_MEDIA:
-            plot.get_media_image(channel, response, 0, 5000, 40)
+            plot.get_media_image(channel, response, interval_start, interval_end, segment_size)
         elif graphic_type == self.GRAPHIC_TYPE_STANDARD_DEVIATION:
-            plot.get_standard_deviation_image(channel, response, 0, 5000, 40)
+            plot.get_standard_deviation_image(channel, response, interval_start, interval_end, segment_size)
         elif graphic_type == self.GRAPHIC_TYPE_RETURN_MAP:
-            plot.get_return_map_image(channel, response, 0, 5000)
+            plot.get_return_map_image(channel, response, interval_start, interval_end)
         return response
 
 

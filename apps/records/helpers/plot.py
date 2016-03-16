@@ -3,18 +3,17 @@ import matplotlib.pyplot as plt
 from django.utils.translation import ugettext as _
 
 
-def get_channel_image(channel, file_like, format_='png', limit=None, offset=None):
+def get_channel_image(channel, file_like, format_='png', interval_start=0, interval_end=None):
     x = []
     y = []
-    points = channel.points.all().order_by('x')
-    if limit is not None and offset is not None:
-        points = points[offset:limit]
-    elif limit is not None and offset is None:
-        points = points[:limit]
-    elif limit is None and offset is not None:
-        points = points[offset:]
-    else:
-        points = points[:3000]
+    kwargs = {
+        ('x__gte' if not channel.is_time else 'y_accumulative__gte'): interval_start
+    }
+    if interval_end not in (None, ''):
+        kwargs['x__lte' if not channel.is_time else 'y_accumulative__lte'] = interval_end
+
+    points = channel.points.filter(**kwargs).order_by('x')
+
     for point in points:
         x.append(point.x)
         y.append(point.y)
