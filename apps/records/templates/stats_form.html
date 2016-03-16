@@ -68,13 +68,14 @@
                 $("#id_actual_interval_end").val(newDate.toISOString());
             });
             segment_unit.change(function (e){
-                if (datepicker1.data("DateTimePicker").date().add(segment_size.val(), $(this).val()).diff(datepicker2.data("DateTimePicker").date()) >= 0){
+                if (datepicker1.data("DateTimePicker").date().add(segment_size.val(), $(this).val()).diff(datepicker2.data("DateTimePicker").date()) > 0){
                     $(this).val('minutes');
                     segment_size.val(1);
                 }
             });
             segment_size.change(function (e){
-                if (datepicker1.data("DateTimePicker").date().add($(this).val(), segment_unit.val()).diff(datepicker2.data("DateTimePicker").date()) >= 0){
+
+                if (moment(datepicker1.data("DateTimePicker").date()).add($(this).val(), segment_unit.val()).diff(datepicker2.data("DateTimePicker").date()) > 0){
                     $(this).val(1);
                     segment_unit.val("minutes");
                 }
