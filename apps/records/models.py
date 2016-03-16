@@ -121,6 +121,17 @@ class Channel(models.Model):
     def average(self):
         return self.points.all().aggregate(avg=Avg('y'))['avg']
 
+    def fill_accumulatives(self):
+        """
+        Fills all Point.y_accumulative
+        :return: NoneType
+        """
+        sum = 0
+        for point in self.points.all().order_by('x'):
+            sum += point.y
+            point.y_accumulative = sum
+            point.save()
+
 
 class Point(models.Model):
     WAVES_TYPES = (
@@ -135,6 +146,9 @@ class Point(models.Model):
     channel = models.ForeignKey(Channel, verbose_name=_('canal'), related_name='points')
     x = models.FloatField(db_index=True)
     y = models.FloatField()
+    y_accumulative = models.FloatField(default=0, verbose_name=_('Y acumulativo'),
+                                       help_text=_(
+                                           'La sumatoria de todos los valores "Y" hasta el actual, se calcula con Channel.fill_accumulatives'))
     wave = models.CharField(max_length=1, choices=WAVES_TYPES, null=True, blank=True, verbose_name=_('onda detectada'))
     flagged = models.BooleanField(default=False, verbose_name=_('marca'))
 

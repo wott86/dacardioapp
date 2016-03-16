@@ -16,13 +16,12 @@ if __name__ == "__main__":
     channel = Channel.objects.create(record=record, name='RR', type='r')
 
     length = len(results)
-    offset = 0
-    if length > 0:
-        offset = int(results[0])
+    _sum = 0
 
     for index, result in enumerate(results):
         print 'Reading %d entry of %s' % (index+1, length)
-        Point.objects.create(channel=channel, x=offset, y=int(result))
-        offset += 1
+        y = int(result)
+        _sum += y
+        Point.objects.create(channel=channel, x=index, y=y, y_accumulative=_sum)
 
     print 'Finished reading %d entries' % length
