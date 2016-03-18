@@ -158,7 +158,7 @@ class Channel(models.Model):
             if abs(last_value - point.y) > 50:
                 counter += 1
             last_value = point.y
-        return (counter / (length - 1)) * 100
+        return (float(counter) / float(length - 1)) * 100
 
     def get_SDNNindex(self, initial_time, final_time, segment_size):
         if self.is_time:
@@ -167,7 +167,6 @@ class Channel(models.Model):
             points = self.points.filter(x__gte=initial_time, x__lte=final_time).order_by('x')
 
         # todo: finish this
-
 
     @property
     def SDNN(self):

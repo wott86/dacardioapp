@@ -66,4 +66,5 @@ def pnn50(context, channel):
 
     if interval_end == '':
         interval_end = 5000
-    return "{0:.2f}".format(channel.get_PNN50(interval_start, interval_end))
+    res = channel.get_PNN50(interval_start, interval_end)
+    return "{0:.2f}".format(res)
