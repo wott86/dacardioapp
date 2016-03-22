@@ -1,7 +1,8 @@
 #id_segment_unit {
-    width: 233px;
+    width: 65%;
 }
 
 #id_segment_size {
-    width: 75px;
+    width: 30%;
+    margin-right: 5%;
 }
