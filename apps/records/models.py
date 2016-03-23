@@ -5,6 +5,7 @@ from apps.patients.models import OrderManager
 from django.db import models
 from django.db.models.aggregates import Avg, StdDev, Sum
 from django.utils.translation import ugettext as _
+import numpy
 
 
 # Create your models here.
@@ -55,7 +56,7 @@ class Channel(models.Model):
     def is_time(self):
         """
         Says if Y represents time or not
-        :return:
+        :return: boolean
         """
         return self.type == 'r'
 
@@ -146,7 +147,7 @@ class Channel(models.Model):
         if self.is_time:
             points = self.points.filter(y_accumulative__gte=initial_time, y_accumulative__lte=final_time).order_by('x')
         else:
-            points = self.points.filter(x__gte=initial_time, x__lte=final_time).order_by('x')
+            points = self.points.filter(x__gte=initial_time / self.sampling_rate, x__lte=final_time / self.sampling_rate).order_by('x')
 
         length = points.count()
         if length == 0:
@@ -160,13 +161,22 @@ class Channel(models.Model):
             last_value = point.y
         return (float(counter) / float(length - 1)) * 100
 
-    def get_SDNNindex(self, initial_time, final_time, segment_size):
-        if self.is_time:
-            points = self.points.filter(y_accumulative__gte=initial_time, y_accumulative__lte=final_time).order_by('x')
-        else:
-            points = self.points.filter(x__gte=initial_time, x__lte=final_time).order_by('x')
-
-        # todo: finish this
+    def get_SDNNindex(self, initial_time, final_time, interval):
+        y = []
+        sum = 0
+        n = 0
+        while initial_time < final_time:
+            if self.is_time:
+                std_dev = self.points.filter(y_accumulative__gte=initial_time,
+                                             y_accumulative__lte=initial_time + interval).order_by('x').aggregate(
+                    std_dev=StdDev('y'))['std_dev']
+            else:
+                std_dev = self.points.filter(x__gte=initial_time,
+                                             x__lte=initial_time+interval).order_by('x').aggregate(std_dev=StdDev('y'))['std_dev']
+            sum += std_dev
+            n += 1
+            initial_time += interval
+        return sum / n if n > 0 else 0
 
     @property
     def SDNN(self):

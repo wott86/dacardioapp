@@ -7,10 +7,10 @@ def get_channel_image(channel, file_like, format_='png', interval_start=0, inter
     x = []
     y = []
     kwargs = {
-        ('x__gte' if not channel.is_time else 'y_accumulative__gte'): interval_start
+        ('x__gte' if not channel.is_time else 'y_accumulative__gte'): interval_start if channel.is_time else interval_start / channel.sampling_rate
     }
     if interval_end not in (None, ''):
-        kwargs['x__lte' if not channel.is_time else 'y_accumulative__lte'] = interval_end
+        kwargs['x__lte' if not channel.is_time else 'y_accumulative__lte'] = interval_end if channel.is_time else interval_end / channel.sampling_rate
 
     points = channel.points.filter(**kwargs).order_by('x')
 
@@ -50,3 +50,4 @@ def get_image(x, y, file_like, title=None, format_='png', xlabel=None, ylabel=No
 
 if __name__ == '__main__':
     get_channel_image(None, 'test.png')
+
