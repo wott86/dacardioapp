@@ -173,7 +173,7 @@ class Channel(models.Model):
             else:
                 std_dev = self.points.filter(x__gte=initial_time,
                                              x__lte=initial_time+interval).order_by('x').aggregate(std_dev=StdDev('y'))['std_dev']
-            sum += std_dev
+            sum += (std_dev if std_dev is not None else 0)
             n += 1
             initial_time += interval
         return sum / n if n > 0 else 0

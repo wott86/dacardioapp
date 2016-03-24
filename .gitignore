@@ -61,3 +61,6 @@ target/
 
 # Bower
 static/bower_components
+
+# Vim
+*.swp

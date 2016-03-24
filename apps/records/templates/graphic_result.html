@@ -55,6 +55,7 @@
                         <img width="100%" class="img-responsive" src="{% url 'record_image' patient.id record.id channel.id %}?type={{ type }}&interval_start={{ interval_start }}&interval_end={{ interval_end }}&segment_size={{ segment_size }}" alt="{% trans 'Gráfica' %}">
                     </p>
                     <hr />
+                    {% if channel.is_time %}
                     <p align="left">
                         <h4>Otros indicadores</h4>
                         <p align="center">
@@ -74,6 +75,7 @@
                             {% pnn50 channel %}
                         </p>
                     </p>
+                    {% endif %}
                 </div>
             </div>
         </div>
