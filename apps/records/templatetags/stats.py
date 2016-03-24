@@ -88,3 +88,23 @@ def sdnn_index(context, channel):
     if interval_end == '':
         interval_end = 5000
     return "{0:.2f}".format(channel.get_SDNNindex(interval_start, interval_end, segment_size))
+
+
+@register.simple_tag(takes_context=True)
+def sdann(context, channel):
+    """
+
+    :param context:
+    :param channel:
+    :return:
+    """
+    request = Variable('request').resolve(context)
+    interval_start, interval_end = get_interval(context)
+    segment_size = time.TIME_MULTIPLIER[request.POST.get('segment_unit', 'minutes')] * int(request.POST.get('segment_size'))
+
+    if interval_start == '':
+        interval_start = 0
+
+    if interval_end == '':
+        interval_end = 5000
+    return "{0:.2f}".format(channel.get_SDANN(interval_start, interval_end, segment_size))

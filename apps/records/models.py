@@ -177,6 +177,22 @@ class Channel(models.Model):
             n += 1
             initial_time += interval
         return sum / n if n > 0 else 0
+    def get_SDANN(self, initial_time, final_time, interval):
+        y = []
+        while initial_time < final_time:
+            if self.is_time:
+                y.append(
+                    self.points.filter(y_accumulative__gte=initial_time,
+                                       y_accumulative__lte=initial_time + interval).order_by('x').aggregate(
+                        average=Avg('y'))['average']
+                )
+            else:
+                y.append(
+                    self.points.filter(y___gte=initial_time,
+                                       x__lte=initial_time+interval).order_by('x').aggregate(average=Avg('y'))['average']
+                )
+            initial_time += interval
+        return numpy.std(y)
 
     @property
     def SDNN(self):
