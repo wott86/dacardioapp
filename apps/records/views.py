@@ -50,6 +50,7 @@ class GraphicView(View):
     GRAPHIC_TYPE_MEDIA = 'media'
     GRAPHIC_TYPE_STANDARD_DEVIATION = 'std_dev'
     GRAPHIC_TYPE_RETURN_MAP = 'return'
+    GRAPHIC_TYPE_SDSD = 'sdsd'
 
     GRAPHIC_TYPE_PARAM_NAME = 'type'
 
@@ -71,6 +72,8 @@ class GraphicView(View):
             plot.get_media_image(channel, response, interval_start, interval_end, segment_size)
         elif graphic_type == self.GRAPHIC_TYPE_STANDARD_DEVIATION:
             plot.get_standard_deviation_image(channel, response, interval_start, interval_end, segment_size)
+        elif graphic_type == self.GRAPHIC_TYPE_SDSD:
+            plot.get_SDSD_image(channel, response, interval_start, interval_end, segment_size)
         elif graphic_type == self.GRAPHIC_TYPE_RETURN_MAP:
             plot.get_return_map_image(channel, response, interval_start, interval_end)
         return response
@@ -80,10 +83,6 @@ class RegisterViewList(View):
     paginator_class = Paginator
 
     def get(self, request, patient_id):
-
-        patient = get_object_or_404(Patient, id=patient_id)
-
-        order = request.GET.get('order', '-id')
         paginator = self.paginator_class(patient.records.all(), getattr(settings, 'MAX_ELEMENTS_PER_PAGE', 25))
         try:
             page = paginator.page(request.GET.get('page', 1))

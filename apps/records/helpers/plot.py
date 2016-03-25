@@ -35,6 +35,11 @@ def get_return_map_image(channel, file_like, initial_time, final_time, format_='
     get_image(x, y, file_like, _('RR Mapa de retorno: %(patient)s') % { 'patient': channel.record.patient.full_name }, format_=format_, line_style='.', ylabel=_('Tiempo (t + 1)'), xlabel=_('Tiempo (t)'), hide_axis=not channel.is_time)
 
 
+def get_SDSD_image(channel, file_like, initial_time, final_time, interval, format_='png'):
+    x, y = channel.get_SDSD(initial_time, final_time, interval)
+    get_image(x, y, file_like, _(u'RR SDSD: %(patient)s') % {'patient': channel.record.patient.full_name }, format_=format_, ylabel=_('SDSD (ms)'), xlabel=_('Intervalo'), hide_axis=not channel.is_time)
+
+
 def get_image(x, y, file_like, title=None, format_='png', xlabel=None, ylabel=None, line_style='-', hide_axis=False):
     plt.clf()
     plt.plot(x, y, line_style)

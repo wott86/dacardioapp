@@ -177,6 +177,7 @@ class Channel(models.Model):
             n += 1
             initial_time += interval
         return sum / n if n > 0 else 0
+
     def get_SDANN(self, initial_time, final_time, interval):
         y = []
         while initial_time < final_time:
@@ -193,6 +194,30 @@ class Channel(models.Model):
                 )
             initial_time += interval
         return numpy.std(y)
+
+
+    def get_SDSD(self, initial_time, final_time, interval):
+        y = []
+        if not self.is_time:
+            interval = interval / self.sampling_rate
+        while initial_time < final_time:
+            if self.is_time:
+                points = self.points.filter(y_accumulative__gte=initial_time,
+                                            y_accumulative__lte=initial_time + interval)
+
+            else:
+                points = self.points.filter(y___gte=initial_time,
+                                            x__lte=initial_time+interval).order_by('x')
+
+            initial_time += interval
+            differences = []
+            if points.exists():
+                aux = points[0]
+                for point in points[1:]:
+                    differences.append((aux.y - point.y) ** 2)
+                    aux = point
+                y.append(numpy.mean(differences) ** 0.5)
+        return xrange(1, len(y) + 1), y  # TODO check this
 
     @property
     def SDNN(self):
