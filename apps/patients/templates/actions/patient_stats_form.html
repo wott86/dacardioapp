@@ -1,6 +1,7 @@
 {% extends "actions/patient_action_bulk_base.html" %}
 {% load i18n %}
 {% load l10n %}
+{% load static %}
 {% load search_parameters %}
 {% block title %}
     {% trans 'Estadísticas de pacientes' %}
@@ -22,21 +23,151 @@
 {% endblock %}
 
 
+{% block extra_static %}
+    <link rel="stylesheet" href="{% static "bower_components/bootstrap-select/dist/css/bootstrap-select.min.css" %}"/>
+    <link rel="stylesheet" href="{% static "css/records/stat_form.css" %}"/>
+    <script>
+    language = "{{ request.LANGUAGE_CODE }}"
+    </script>
+    <script type="application/javascript" src="{% static 'bower_components/moment/moment.js' %}"></script>
+    {% with 'bower_components/moment/locale/'|add:request.LANGUAGE_CODE|add:'.js' as inputfile_lang %}
+        <script src="{% static inputfile_lang %}"></script>
+    {% endwith %}
+    <script type="application/javascript" src="{% static 'bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css' %}">
+    <script type="text/javascript">
+        $(function () {
+            var datepicker1 = $('#datetimepicker1');
+            var datepicker2 = $('#datetimepicker2');
+            var segment_size = $("#id_segment_size");
+            var segment_unit = $("#id_segment_unit");
+            $("#id_actual_interval_start").val(moment("{{ channel.start_date|date:"Ymd H:i" }}", "YYYYMMDD HH:mm").toISOString());
+            $("#id_actual_interval_end").val(moment("{{ channel.start_date|date:"Ymd H:i" }}", "YYYYMMDD HH:mm").add(1, 'minutes').toISOString());
+            $("#id_stat_form").submit(function(e){
+                if(datepicker1.data("DateTimePicker").date().diff(datepicker2.data("DateTimePicker").date()) >= 0){
+                    e.preventDefault();
+                    alert("{% trans 'La hora de inicio debe ser inferior a la hora final' %}");
+                }
+                $("#id_actual_interval_start").val(datepicker1.data("DateTimePicker").date().toISOString());
+                $("#id_actual_interval_end").val(datepicker2.data("DateTimePicker").date().toISOString());
+            });
+            datepicker1.datetimepicker({
+                    locale: language,
+                    //minDate: moment("{{ channel.start_date|date:"Ymd H:i" }}", "YYYYMMDD HH:mm"),
+                    //maxDate: moment("{{ channel.end_date|date:"Ymd H:i" }}", "YYYYMMDD HH:mm").subtract(1, 'minutes'),
+                    sideBySide: true,
+                    allowInputToggle: true,
+                    useCurrent: false,
+                    //defaultDate: moment("{{ channel.start_date|date:"Ymd H:i" }}", "YYYYMMDD HH:mm")
+                }
+            ).on("dp.change", function(e){
+                var newDate = e.date;
+                if (newDate.diff(datepicker2.data("DateTimePicker").date()) >= 0){
+                    datepicker2.data("DateTimePicker").date(newDate.add(1, 'minutes'));
+                }
+                $("#id_actual_interval_start").val(newDate.toISOString());
+            });
+
+            datepicker2.datetimepicker({
+                locale: language,
+                //minDate: moment("{{ channel.start_date|date:"Ymd H:i" }}", "YYYYMMDD HH:mm"),
+                //maxDate: moment("{{ channel.end_date|date:"Ymd H:i" }}", "YYYYMMDD HH:mm"),
+                sideBySide: true,
+                allowInputToggle: true,
+                useCurrent: false,
+                //defaultDate: moment("{{ channel.start_date|date:"Ymd H:i" }}", "YYYYMMDD HH:mm")
+            }).on("dp.change", function(e){
+                var newDate = e.date;
+                if (newDate.diff(datepicker1.data("DateTimePicker").date()) <= 0){
+                    datepicker1.data("DateTimePicker").date(newDate.subtract(1, 'minutes'));
+                }
+                $("#id_actual_interval_end").val(newDate.toISOString());
+            });
+            segment_unit.change(function (e){
+                if (datepicker1.data("DateTimePicker").date().add(segment_size.val(), $(this).val()).diff(datepicker2.data("DateTimePicker").date()) > 0){
+                    $(this).val('minutes');
+                    segment_size.val(1);
+                }
+            });
+            segment_size.change(function (e){
+
+                if (moment(datepicker1.data("DateTimePicker").date()).add($(this).val(), segment_unit.val()).diff(datepicker2.data("DateTimePicker").date()) > 0){
+                    $(this).val(1);
+                    segment_unit.val("minutes");
+                }
+            });
+        });
+    </script>
+{% endblock %}
+
 {% block question_block %}
     <h3 align="center" class="panel-title">{% trans 'Parámetros' %}</h3>
 {% endblock %}
 
 {% block action_form %}
     <form action="{% url 'patients_action_stats' %}" method="post" class="form-inline">
-        <p align="center">
-            {% csrf_token %}
-            <label for="id_stat_type">{% trans 'Tipo de estadística' %}</label>
-            <select name="stat_type" id="id_stat_type" class="form-control">
-                <option value="media">{% trans 'Media' %}</option>
-                <option value="std_dev">{% trans 'Desviación Estándar' %}</option>
-            </select>
-            <button type="submit" class="btn btn-danger">{% trans 'Generar' %}</button>
-            {% add_post_params_hidden 'csrfmiddlewaretoken' 'action' %}
-        </p>
+        {% csrf_token %}
+        <div class="container-fluid">
+            <div class="row">
+                <p class="col-lg-6 col-md-6 col-sm-6 col-sx-6">
+                    <label for="id_interval_start">{% trans 'Inicio' %}</label>
+                </p>
+                <p class='input-group date col-lg-6 col-md-6 col-sm-6 col-sx-6' id='datetimepicker1'>
+                    <input type='text' class="form-control" id="id_interval_start" />
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </p>
+            </div>
+            <div class="row">
+                <p class="col-lg-6 col-md-6 col-sm-6 col-sx-6">
+                    <label for="id_interval_end">{% trans 'Fin' %}</label>
+                </p>
+                <p class='input-group date col-lg-6 col-md-6 col-sm-6 col-sx-6' id='datetimepicker2'>
+                    <input type='text' class="form-control" id="id_interval_end" />
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </p>
+            </div>
+            <div class="row">
+                <p class="col-lg-6 col-md-6 col-sm-6 col-sx-6">
+                    <label for="id_segment_size">{% trans 'Tamaño del segmento' %}</label>
+                </p>
+                <!--p class='input-group col-lg-1 col-md-1 col-sm-1 col-sx-1'>
+                    <input class="form-control" type="number" id="id_segment_size" value="1" name="segment_size"/>
+                </p-->
+                <p class='input-group col-lg-6 col-md-6 col-sm-6 col-sx-6'>
+                    <input class="form-control" type="number" id="id_segment_size" value="1" name="segment_size"/>
+                    <select name="segment_unit" id="id_segment_unit" class="form-control">
+                        <option value="minutes">{% trans 'Minutos' %}</option>
+                        <option value="hours">{% trans 'Horas' %}</option>
+                    </select>
+                </p>
+            </div>
+            <div class="row">
+                <p class="col-lg-6 col-md-6 col-sm-6 col-sx-6">
+                    <label for="id_stat_type">{% trans 'Tipo de gráfica' %}</label>
+                </p>
+                <p class='input-group col-lg-6 col-md-6 col-sm-6 col-sx-6'>
+                    <select name="stat_type" id="id_stat_type" class="form-control">
+                        <option value="normal">{% trans 'Original' %}</option>
+                        <option value="media">{% trans 'Media' %}</option>
+                        <option value="std_dev">{% trans 'Desviación Estándar' %}</option>
+                        <option value="return">{% trans 'Mapa de retorno' %}</option>
+                        <option value="sdsd">{% trans 'MSSD o SDSD' %}</option>
+                    </select>
+                </p>
+            </div>
+            <div class="row">
+                <div class='input-group col-lg-12 col-md-12 col-sm-12 col-sx-12'>
+                    <input type='hidden' id="id_actual_interval_start" name="interval_start" />
+                    <input type='hidden' id="id_actual_interval_end" name="interval_end" />
+                    <button type="submit" class="btn btn-danger pull-right">{% trans 'Generar' %}</button>
+                    {% add_post_params_hidden 'csrfmiddlewaretoken' 'action' %}
+                </div>
+
+            </div>
+        </div>
     </form>
 {% endblock %}

@@ -28,9 +28,9 @@
             $("#id_actual_interval_start").val(moment("{{ channel.start_date|date:"Ymd H:i" }}", "YYYYMMDD HH:mm").toISOString());
             $("#id_actual_interval_end").val(moment("{{ channel.start_date|date:"Ymd H:i" }}", "YYYYMMDD HH:mm").add(1, 'minutes').toISOString());
             $("#id_stat_form").submit(function(e){
-                if(datepicker1.data("DateTimePicker").date().diff(datepicker2.data("DateTimePicker").date()) == 0){
+                if(datepicker1.data("DateTimePicker").date().diff(datepicker2.data("DateTimePicker").date()) >= 0){
                     e.preventDefault();
-                    alert("{% trans 'Las horas no deben ser iguales' %}");
+                    alert("{% trans 'La hora de inicio debe ser inferior a la hora final' %}");
                 }
                 $("#id_actual_interval_start").val(datepicker1.data("DateTimePicker").date().toISOString());
                 $("#id_actual_interval_end").val(datepicker2.data("DateTimePicker").date().toISOString());
