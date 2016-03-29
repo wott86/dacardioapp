@@ -365,8 +365,10 @@ class PatientActionStats(View):
 class PatientActionStatsGraphic(View):
     MEDIA = 'media'
     STD_DEV = 'std_dev'
+    RETURN = 'return'
+    SDSD = 'sdsd'
 
-    STAT_TYPES = [MEDIA, STD_DEV]
+    STAT_TYPES = [MEDIA, STD_DEV, RETURN, SDSD]
 
     def get(self, request):
         ids = get_patient_ids(request.GET)
@@ -376,6 +378,8 @@ class PatientActionStatsGraphic(View):
         ys = []
         xs = []
         stat_type = request.GET.get('stat_type', 'media')
+        interval_start = request.GET.get('interval_start', 0)
+        interval_end = request.GET.get('interval_end')
         title = None
 
         if stat_type not in self.STAT_TYPES:

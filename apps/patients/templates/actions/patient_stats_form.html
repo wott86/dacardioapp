@@ -41,41 +41,38 @@
             var datepicker2 = $('#datetimepicker2');
             var segment_size = $("#id_segment_size");
             var segment_unit = $("#id_segment_unit");
-            $("#id_actual_interval_start").val(moment("{{ channel.start_date|date:"Ymd H:i" }}", "YYYYMMDD HH:mm").toISOString());
-            $("#id_actual_interval_end").val(moment("{{ channel.start_date|date:"Ymd H:i" }}", "YYYYMMDD HH:mm").add(1, 'minutes').toISOString());
+            $("#id_actual_interval_start").val((moment().minute() * 60 * 1000) + (moment().hour() * 60 * 60 *1000));
+            $("#id_actual_interval_end").val((moment().add(1, 'minutes').minute() * 60 * 1000) + (moment().add(1, 'minutes').hour() * 60 * 60 *1000));
             $("#id_stat_form").submit(function(e){
-                if(datepicker1.data("DateTimePicker").date().diff(datepicker2.data("DateTimePicker").date()) >= 0){
-                    e.preventDefault();
-                    alert("{% trans 'La hora de inicio debe ser inferior a la hora final' %}");
-                }
-                $("#id_actual_interval_start").val(datepicker1.data("DateTimePicker").date().toISOString());
-                $("#id_actual_interval_end").val(datepicker2.data("DateTimePicker").date().toISOString());
+                //if(datepicker1.data("DateTimePicker").date().diff(datepicker2.data("DateTimePicker").date()) >= 0){
+                //    e.preventDefault();
+                //    alert("{% trans 'La hora de inicio debe ser inferior a la hora final' %}");
+                //}
+                $("#id_actual_interval_start").val((datepicker1.data("DateTimePicker").date().minute() * 60 * 1000) + (datepicker1.data("DateTimePicker").date().hour() * 60 * 60 * 1000));
+                $("#id_actual_interval_end").val((datepicker2.data("DateTimePicker").date().minute() * 60 * 1000) + (datepicker2.data("DateTimePicker").date().hour() * 60 * 60 * 1000));
             });
             datepicker1.datetimepicker({
                     locale: language,
-                    //minDate: moment("{{ channel.start_date|date:"Ymd H:i" }}", "YYYYMMDD HH:mm"),
-                    //maxDate: moment("{{ channel.end_date|date:"Ymd H:i" }}", "YYYYMMDD HH:mm").subtract(1, 'minutes'),
                     sideBySide: true,
+                    format: "HH:mm",
                     allowInputToggle: true,
                     useCurrent: false,
-                    //defaultDate: moment("{{ channel.start_date|date:"Ymd H:i" }}", "YYYYMMDD HH:mm")
-                }
-            ).on("dp.change", function(e){
+                    defaultDate: moment()
+            }).on("dp.change", function(e){
                 var newDate = e.date;
                 if (newDate.diff(datepicker2.data("DateTimePicker").date()) >= 0){
                     datepicker2.data("DateTimePicker").date(newDate.add(1, 'minutes'));
                 }
-                $("#id_actual_interval_start").val(newDate.toISOString());
+                $("#id_actual_interval_start").val((newDate.minute() * 60 * 1000) + (newDate.hour() * 60 * 60 * 1000));
             });
 
             datepicker2.datetimepicker({
                 locale: language,
-                //minDate: moment("{{ channel.start_date|date:"Ymd H:i" }}", "YYYYMMDD HH:mm"),
-                //maxDate: moment("{{ channel.end_date|date:"Ymd H:i" }}", "YYYYMMDD HH:mm"),
                 sideBySide: true,
+                format: "HH:mm",
                 allowInputToggle: true,
                 useCurrent: false,
-                //defaultDate: moment("{{ channel.start_date|date:"Ymd H:i" }}", "YYYYMMDD HH:mm")
+                defaultDate: moment().add(1, 'minutes')
             }).on("dp.change", function(e){
                 var newDate = e.date;
                 if (newDate.diff(datepicker1.data("DateTimePicker").date()) <= 0){
@@ -151,7 +148,6 @@
                 </p>
                 <p class='input-group col-lg-6 col-md-6 col-sm-6 col-sx-6'>
                     <select name="stat_type" id="id_stat_type" class="form-control">
-                        <option value="normal">{% trans 'Original' %}</option>
                         <option value="media">{% trans 'Media' %}</option>
                         <option value="std_dev">{% trans 'Desviación Estándar' %}</option>
                         <option value="return">{% trans 'Mapa de retorno' %}</option>
