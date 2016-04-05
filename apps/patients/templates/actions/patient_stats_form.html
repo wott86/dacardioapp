@@ -41,15 +41,15 @@
             var datepicker2 = $('#datetimepicker2');
             var segment_size = $("#id_segment_size");
             var segment_unit = $("#id_segment_unit");
-            $("#id_actual_interval_start").val((moment().minute() * 60 * 1000) + (moment().hour() * 60 * 60 *1000));
-            $("#id_actual_interval_end").val((moment().add(1, 'minutes').minute() * 60 * 1000) + (moment().add(1, 'minutes').hour() * 60 * 60 *1000));
+            $("#id_actual_interval_start").val(moment().format('HH:mm'));
+            $("#id_actual_interval_end").val(moment().add(1, 'minutes').format('HH:mm'));
             $("#id_stat_form").submit(function(e){
                 //if(datepicker1.data("DateTimePicker").date().diff(datepicker2.data("DateTimePicker").date()) >= 0){
                 //    e.preventDefault();
                 //    alert("{% trans 'La hora de inicio debe ser inferior a la hora final' %}");
                 //}
-                $("#id_actual_interval_start").val((datepicker1.data("DateTimePicker").date().minute() * 60 * 1000) + (datepicker1.data("DateTimePicker").date().hour() * 60 * 60 * 1000));
-                $("#id_actual_interval_end").val((datepicker2.data("DateTimePicker").date().minute() * 60 * 1000) + (datepicker2.data("DateTimePicker").date().hour() * 60 * 60 * 1000));
+                $("#id_actual_interval_start").val(datepicker1.data("DateTimePicker").date().format('HH:mm'));
+                $("#id_actual_interval_end").val(datepicker2.data("DateTimePicker").date().format('HH:mm'));
             });
             datepicker1.datetimepicker({
                     locale: language,
@@ -63,7 +63,7 @@
                 if (newDate.diff(datepicker2.data("DateTimePicker").date()) >= 0){
                     datepicker2.data("DateTimePicker").date(newDate.add(1, 'minutes'));
                 }
-                $("#id_actual_interval_start").val((newDate.minute() * 60 * 1000) + (newDate.hour() * 60 * 60 * 1000));
+                //$("#id_actual_interval_start").val((newDate.minute() * 60 * 1000) + (newDate.hour() * 60 * 60 * 1000));
             });
 
             datepicker2.datetimepicker({
@@ -78,7 +78,7 @@
                 if (newDate.diff(datepicker1.data("DateTimePicker").date()) <= 0){
                     datepicker1.data("DateTimePicker").date(newDate.subtract(1, 'minutes'));
                 }
-                $("#id_actual_interval_end").val(newDate.toISOString());
+                //$("#id_actual_interval_end").val(newDate.toISOString());
             });
             segment_unit.change(function (e){
                 if (datepicker1.data("DateTimePicker").date().add(segment_size.val(), $(this).val()).diff(datepicker2.data("DateTimePicker").date()) > 0){

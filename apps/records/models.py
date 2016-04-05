@@ -5,6 +5,7 @@ from apps.patients.models import OrderManager
 from django.db import models
 from django.db.models.aggregates import Avg, StdDev, Sum
 from django.utils.translation import ugettext as _
+from django.utils import timezone
 import numpy
 
 
@@ -37,8 +38,7 @@ class Channel(models.Model):
     type = models.CharField(max_length=2, default='n', choices=CHANNEL_TYPES, verbose_name=_('tipo'))
     name = models.CharField(max_length=50, blank=True, default='', verbose_name=_('nombre'))
     description = models.TextField(blank=True, default='', verbose_name=_(u'descripción'))
-    start_date = models.DateTimeField(null=True, blank=True, verbose_name=_('Fecha de inicio'))
-    #end_date = models.DateTimeField(null=True, blank=True, verbose_name=_(u'Fecha de finalización'))
+    start_date = models.DateTimeField(default=timezone.now, blank=True, verbose_name=_('Fecha de inicio'))
     sampling_rate = models.IntegerField(default=500, verbose_name=_('Tasa de muestreo'))
 
     @property

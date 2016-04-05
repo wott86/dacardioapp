@@ -18,6 +18,7 @@ from django.utils import timezone
 from faker import Factory
 import datetime
 from apps.records.helpers import plot
+from apps.records.helpers.time import convert_hour_to_milli
 
 fake = Factory.create()
 
@@ -378,9 +379,12 @@ class PatientActionStatsGraphic(View):
         ys = []
         xs = []
         stat_type = request.GET.get('stat_type', 'media')
-        interval_start = request.GET.get('interval_start', 0)
+        interval_start = request.GET.get('interval_start')
         interval_end = request.GET.get('interval_end')
         title = None
+
+        if interval_start is None or interval_end is None:
+            return HttpRequest(status=400)
 
         if stat_type not in self.STAT_TYPES:
             return HttpResponse(status=400)
@@ -390,7 +394,8 @@ class PatientActionStatsGraphic(View):
             for patient in patients:
                 channel = patient.get_last_channel()
                 if channel is not None:
-                    ys.append(channel.points.all().aggregate(average=Avg('y'))['average'])
+                    initial, ending = convert_hour_to_milli(channel, interval_start, interval_end)
+                    ys.append(channel.points.filter(y_accumulative__gte=initial, y_accumulative__lte=ending).aggregate(average=Avg('y'))['average'])
                 else:
                     ys.append(0)
         elif stat_type == self.STD_DEV:
