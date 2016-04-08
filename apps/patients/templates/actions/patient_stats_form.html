@@ -144,14 +144,29 @@
             </div>
             <div class="row">
                 <p class="col-lg-6 col-md-6 col-sm-6 col-sx-6">
-                    <label for="id_stat_type">{% trans 'Tipo de gráfica' %}</label>
+                    <label for="id_stat_type">{% trans 'Estadística' %}</label>
                 </p>
                 <p class='input-group col-lg-6 col-md-6 col-sm-6 col-sx-6'>
                     <select name="stat_type" id="id_stat_type" class="form-control">
                         <option value="media">{% trans 'Media' %}</option>
+                        <option value="original">{% trans 'Media' %}</option>
+                        <option value="std_dev">{% trans 'Desviación Estándar' %}</option>
+                    </select>
+                </p>
+            </div>
+            <div class="row">
+                <p class="col-lg-6 col-md-6 col-sm-6 col-sx-6">
+                    <label for="id_indicator">{% trans 'Indicador' %}</label>
+                </p>
+                <p class='input-group col-lg-6 col-md-6 col-sm-6 col-sx-6'>
+                    <select name="indicator" id="id_indicator" class="form-control">
+                        <option value="media">{% trans 'Media' %}</option>
                         <option value="std_dev">{% trans 'Desviación Estándar' %}</option>
                         <option value="return">{% trans 'Mapa de retorno' %}</option>
                         <option value="sdsd">{% trans 'MSSD o SDSD' %}</option>
+                        <option value="pnn50">{% trans 'PNN50' %}</option>
+                        <option value="sdnn">{% trans 'SDNN' %}</option>
+                        <option value="sdann">{% trans 'SDANN' %}</option>
                     </select>
                 </p>
             </div>

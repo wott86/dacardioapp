@@ -19,6 +19,8 @@ from faker import Factory
 import datetime
 from apps.records.helpers import plot
 from apps.records.helpers.time import convert_hour_to_milli
+from apps.records.helpers.time import TIME_MULTIPLIER
+import numpy
 
 fake = Factory.create()
 
@@ -368,8 +370,15 @@ class PatientActionStatsGraphic(View):
     STD_DEV = 'std_dev'
     RETURN = 'return'
     SDSD = 'sdsd'
+    ORIGINAL = 'original'
 
-    STAT_TYPES = [MEDIA, STD_DEV, RETURN, SDSD]
+    # indicators
+    PNN50 = 'pnn50'
+    SDNN = 'sdnn'
+    SDANN = 'sdann'
+
+    STAT_TYPES = [MEDIA, STD_DEV, RETURN, SDSD, ORIGINAL]
+    INDICATORS = STAT_TYPES + [PNN50, SDNN, SDANN]
 
     def get(self, request):
         ids = get_patient_ids(request.GET)
@@ -378,9 +387,11 @@ class PatientActionStatsGraphic(View):
 
         ys = []
         xs = []
-        stat_type = request.GET.get('stat_type', 'media')
+        stat_type = request.GET.get('stat_type', self.MEDIA)
+        indicator = request.GET.get('indicator', self.ORIGINAL)
         interval_start = request.GET.get('interval_start')
         interval_end = request.GET.get('interval_end')
+        segment_size = int(request.GET.get('segment_size', TIME_MULTIPLIER['minutes']))
         title = None
 
         if interval_start is None or interval_end is None:
@@ -389,23 +400,47 @@ class PatientActionStatsGraphic(View):
         if stat_type not in self.STAT_TYPES:
             return HttpResponse(status=400)
 
-        if stat_type == self.MEDIA:
-            title = _('Promedio de los RR de los pacientes')
-            for patient in patients:
-                channel = patient.get_last_channel()
-                if channel is not None:
-                    initial, ending = convert_hour_to_milli(channel, interval_start, interval_end)
-                    ys.append(channel.points.filter(y_accumulative__gte=initial, y_accumulative__lte=ending).aggregate(average=Avg('y'))['average'])
-                else:
+        for patient in patients:
+            channel = patient.get_last_channel()
+            if channel is None:
+                ys.append(0)
+                continue
+
+            initial, ending = convert_hour_to_milli(channel, interval_start, interval_end)
+
+            if indicator == self.MEDIA:
+                x_points, channel_media = channel.get_media_points(initial, ending, segment_size)
+                if channel_media is None:
                     ys.append(0)
-        elif stat_type == self.STD_DEV:
-            title = _(u'Desviación estándar de los RR de los pacientes')
-            for patient in patients:
-                channel = patient.get_last_channel()
-                if channel is not None:
-                    ys.append(channel.points.all().aggregate(std_dev=StdDev('y'))['std_dev'])
-                else:
-                    ys.append(0)
+                    continue
+                if stat_type == self.ORIGINAL:
+                    title = _('Promedio de los RR de los pacientes')
+                    ys.append(channel.get_media(initial, ending))
+                elif stat_type == self.MEDIA:
+                    title = _('Promedio del promedio de los RR de los pacientes')
+                    ys.append(numpy.average(channel_media))
+                elif stat_type == self.STD_DEV:
+                    title = _('Desviación estándar del promedio de los RR de los pacientes')
+                    ys.append(numpy.std(channel_media))
+
+            elif indicator == self.STD_DEV:
+                x_points, channel_media = channel.get_standard_deviation_points(initial, ending, segment_size)
+                if stat_type == self.ORIGINAL:
+                    title = _(u'Desviación estándar de los RR de los pacientes')
+                    ys.append(channel.get_standard_deviation(initial, ending))
+                if stat_type == self.MEDIA:
+                    title = _(u'Promedio de la desviación estándar de los RR de los pacientes')
+                    ys.append(numpy.avg(channel_media))
+                if stat_type == self.STD_DEV:
+                    title = _(u'Desviación estándar de la desviación estándar de los RR de los pacientes')
+                    ys.append(numpy.std(channel_media))
+
+            elif indicator == self.PNN50:
+                pass
+            elif indicator == self.SDNN:
+                pass
+            elif indicator == self.SDANN:
+                pass
 
         xs = xrange(len(ys))
         response = HttpResponse(content_type='image/png')
