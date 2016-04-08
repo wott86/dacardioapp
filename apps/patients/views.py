@@ -443,6 +443,7 @@ class PatientActionStatsGraphic(View):
                 pass
 
         xs = xrange(len(ys))
+        print ys
         response = HttpResponse(content_type='image/png')
         plot.get_image(xs, ys, response, title=title)
 

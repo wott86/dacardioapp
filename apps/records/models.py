@@ -75,16 +75,15 @@ class Channel(models.Model):
         y = []
         while initial_time < final_time:
             if self.is_time:
-                y.append(
-                    self.points.filter(y_accumulative__gte=initial_time,
-                                       y_accumulative__lte=initial_time + interval).order_by('x').aggregate(
-                        average=Avg('y'))['average']
-                )
+                avg = self.points.filter(y_accumulative__gte=initial_time,
+                                         y_accumulative__lte=initial_time + interval).order_by('x').aggregate(average=Avg('y'))['average']
             else:
-                y.append(
-                    self.points.filter(y___gte=initial_time,
-                                       x__lte=initial_time+interval).order_by('x').aggregate(average=Avg('y'))['average']
-                )
+                avg = self.points.filter(x___gte=initial_time,
+                                         x__lte=initial_time+interval).order_by('x').aggregate(average=Avg('y'))['average']
+            if avg is not None:
+                y.append(avg)
+            else:
+                break
             initial_time += interval
         return range(1, len(y) + 1), y
 
@@ -99,7 +98,10 @@ class Channel(models.Model):
                 std_dev = self.points.filter(x__gte=initial_time,
                                              x__lte=initial_time+interval).order_by('x').aggregate(std_dev=StdDev('y'))
 
-            y.append(std_dev['std_dev'])
+            if std_dev['std_dev'] is not None:
+                y.append(std_dev['std_dev'])
+            else:
+                break
             initial_time += interval
         return range(1, len(y) + 1), y
 
