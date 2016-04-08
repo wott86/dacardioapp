@@ -83,6 +83,8 @@ class RegisterViewList(View):
     paginator_class = Paginator
 
     def get(self, request, patient_id):
+        patient = get_object_or_404(Patient, id=patient_id)		
+        order = request.GET.get('order', '-id')
         paginator = self.paginator_class(patient.records.all(), getattr(settings, 'MAX_ELEMENTS_PER_PAGE', 25))
         try:
             page = paginator.page(request.GET.get('page', 1))
