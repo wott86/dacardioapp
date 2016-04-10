@@ -11,10 +11,16 @@ import numpy
 
 # Create your models here.
 class Record(models.Model):
-    patient = models.ForeignKey('patients.Patient', verbose_name=_('paciente'), related_name='records')
-    taken_by = models.ForeignKey('users.User', verbose_name=_('registrado por'), related_name='records_loaded')
-    created = models.DateTimeField(auto_now_add=True, verbose_name=_(u'fecha de creación'))
-    modified = models.DateTimeField(auto_now=True, verbose_name=_(u'fecha de modificación'))
+    patient = models.ForeignKey('patients.Patient',
+                                verbose_name=_('paciente'),
+                                related_name='records')
+    taken_by = models.ForeignKey('users.User',
+                                 verbose_name=_('registrado por'),
+                                 related_name='records_loaded')
+    created = models.DateTimeField(auto_now_add=True,
+                                   verbose_name=_(u'fecha de creación'))
+    modified = models.DateTimeField(auto_now=True,
+                                    verbose_name=_(u'fecha de modificación'))
 
     def __unicode__(self):
         return u'%s (%s)' % (self.patient.full_name, self.created.isoformat())
@@ -34,17 +40,31 @@ class Channel(models.Model):
         ('r', _('RR'))
     )
 
-    record = models.ForeignKey(Record, verbose_name=_('registro'), related_name='channels')
-    type = models.CharField(max_length=2, default='n', choices=CHANNEL_TYPES, verbose_name=_('tipo'))
-    name = models.CharField(max_length=50, blank=True, default='', verbose_name=_('nombre'))
-    description = models.TextField(blank=True, default='', verbose_name=_(u'descripción'))
-    start_date = models.DateTimeField(default=timezone.now, blank=True, verbose_name=_('Fecha de inicio'))
-    sampling_rate = models.IntegerField(default=500, verbose_name=_('Tasa de muestreo'))
+    record = models.ForeignKey(Record,
+                               verbose_name=_('registro'),
+                               related_name='channels')
+    type = models.CharField(max_length=2,
+                            default='n',
+                            choices=CHANNEL_TYPES,
+                            verbose_name=_('tipo'))
+    name = models.CharField(max_length=50,
+                            blank=True,
+                            default='',
+                            verbose_name=_('nombre'))
+    description = models.TextField(blank=True,
+                                   default='',
+                                   verbose_name=_(u'descripción'))
+    start_date = models.DateTimeField(default=timezone.now,
+                                      blank=True,
+                                      verbose_name=_('Fecha de inicio'))
+    sampling_rate = models.IntegerField(default=500,
+                                        verbose_name=_('Tasa de muestreo'))
 
     @property
     def end_date(self):
         milliseconds = self.duration
-        return (self.start_date + timedelta(milliseconds=milliseconds)) if self.start_date else None
+        return (self.start_date + timedelta(milliseconds=milliseconds)) \
+            if self.start_date else None
 
     @property
     def duration(self):
@@ -69,17 +89,22 @@ class Channel(models.Model):
         verbose_name_plural = _('canales')
 
     def __unicode__(self):
-        return '%s - %s - %s' % (unicode(self.record), self.get_type_display(), self.name)
+        return '%s - %s - %s' % (unicode(self.record),
+                                 self.get_type_display(), self.name)
 
     def get_media_points(self, initial_time, final_time, interval):
         y = []
         while initial_time < final_time:
             if self.is_time:
-                avg = self.points.filter(y_accumulative__gte=initial_time,
-                                         y_accumulative__lte=initial_time + interval).order_by('x').aggregate(average=Avg('y'))['average']
+                avg = self.points.filter(
+                    y_accumulative__gte=initial_time,
+                    y_accumulative__lte=initial_time + interval)\
+                    .order_by('x').aggregate(average=Avg('y'))['average']
             else:
-                avg = self.points.filter(x___gte=initial_time,
-                                         x__lte=initial_time+interval).order_by('x').aggregate(average=Avg('y'))['average']
+                avg = self.points.filter(
+                    x___gte=initial_time,
+                    x__lte=initial_time+interval).order_by('x')\
+                    .aggregate(average=Avg('y'))['average']
             if avg is not None:
                 y.append(avg)
             else:
@@ -91,12 +116,15 @@ class Channel(models.Model):
         y = []
         while initial_time < final_time:
             if self.is_time:
-                std_dev = self.points.filter(y_accumulative__gte=initial_time,
-                                             y_accumulative__lte=initial_time + interval).order_by('x').aggregate(
-                    std_dev=StdDev('y'))
+                std_dev = self.points.filter(
+                    y_accumulative__gte=initial_time,
+                    y_accumulative__lte=initial_time + interval)\
+                    .order_by('x').aggregate(std_dev=StdDev('y'))
             else:
-                std_dev = self.points.filter(x__gte=initial_time,
-                                             x__lte=initial_time+interval).order_by('x').aggregate(std_dev=StdDev('y'))
+                std_dev = self.points.filter(
+                    x__gte=initial_time,
+                    x__lte=initial_time+interval)\
+                    .order_by('x').aggregate(std_dev=StdDev('y'))
 
             if std_dev['std_dev'] is not None:
                 y.append(std_dev['std_dev'])
@@ -108,20 +136,24 @@ class Channel(models.Model):
     def get_standard_deviation(self, initial_time, final_time):
 
         if self.is_time:
-            return self.points.filter(y_accumulative__gte=initial_time, y_accumulative__lte=final_time).order_by(
-                'x').aggregate(std_dev=StdDev('y'))[
-                'std_dev']
+            return self.points.filter(
+                y_accumulative__gte=initial_time,
+                y_accumulative__lte=final_time).order_by('x')\
+                .aggregate(std_dev=StdDev('y'))['std_dev']
 
         return \
-            self.points.filter(x__gte=initial_time, x__lte=final_time).order_by('x').aggregate(
-                std_dev=StdDev('y'))[
-                'std_dev']
+            self.points.filter(
+                x__gte=initial_time,
+                x__lte=final_time).order_by('x')\
+            .aggregate(std_dev=StdDev('y'))['std_dev']
 
     def get_media(self, initial_time, final_time):
         if self.is_time:
             return \
-                self.points.filter(y_accumulative__gte=initial_time, y_accumulative__lte=final_time).order_by('x').aggregate(avg=Avg('y'))[
-                    'avg']
+                self.points.filter(
+                    y_accumulative__gte=initial_time,
+                    y_accumulative__lte=final_time)\
+                .order_by('x').aggregate(avg=Avg('y'))['avg']
 
         return \
             self.points.filter(x__gte=initial_time, x__lte=final_time).order_by('x').aggregate(avg=Avg('y'))[
@@ -147,9 +179,15 @@ class Channel(models.Model):
 
     def get_PNN50(self, initial_time, final_time):
         if self.is_time:
-            points = self.points.filter(y_accumulative__gte=initial_time, y_accumulative__lte=final_time).order_by('x')
+            points = self.points.filter(
+                y_accumulative__gte=initial_time,
+                y_accumulative__lte=final_time
+            ).order_by('x')
         else:
-            points = self.points.filter(x__gte=initial_time / self.sampling_rate, x__lte=final_time / self.sampling_rate).order_by('x')
+            points = self.points.filter(
+                x__gte=initial_time / self.sampling_rate,
+                x__lte=final_time / self.sampling_rate
+            ).order_by('x')
 
         length = points.count()
         if length == 0:
@@ -163,8 +201,16 @@ class Channel(models.Model):
             last_value = point.y
         return (float(counter) / float(length - 1)) * 100
 
-    def get_SDNNindex(self, initial_time, final_time, interval):
+    def get_PNN50_points(self, initial_time, final_time, interval):
         y = []
+        while initial_time < final_time:
+            pnn50 = self.get_PNN50(initial_time, initial_time + interval)
+            y.append(pnn50)
+            initial_time += interval
+        return range(1, len(y) + 1), y
+
+
+    def get_SDNNindex(self, initial_time, final_time, interval):
         sum = 0
         n = 0
         while initial_time < final_time:

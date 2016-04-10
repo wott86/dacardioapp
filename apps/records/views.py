@@ -12,6 +12,9 @@ from django.template.context import RequestContext
 
 
 class GraphicStatFormView(View):
+    """
+    GraphicStatFormView
+    """
     form_class = None
 
     @staticmethod
@@ -22,27 +25,53 @@ class GraphicStatFormView(View):
         return patient, record, channel
 
     def get(self, request, record_id, channel_id, patient_id):
-        patient, record, channel = self.validate_objects(record_id, channel_id, patient_id)
+        patient, record, channel = self.validate_objects(
+                record_id,
+                channel_id,
+                patient_id
+        )
         data = {
             'record': record,
             'patient': patient,
             'channel': channel
         }
-        return HttpResponse(render(request, 'stats_form.html', context_instance=RequestContext(request, data)))
+        return HttpResponse(render(
+            request,
+            'stats_form.html',
+            context_instance=RequestContext(request, data)
+        ))
 
     def post(self, request, record_id, channel_id, patient_id):
-        patient, record, channel = self.validate_objects(record_id, channel_id, patient_id)
+        patient, record, channel = self.validate_objects(
+                record_id,
+                channel_id,
+                patient_id
+        )
+        segment_size = TIME_MULTIPLIER[
+                request.POST.get('segment_unit', 'minutes')]\
+            * int(request.POST.get('segment_size'))
 
         data = {
             'record': record,
             'patient': patient,
             'channel': channel,
-            'type': request.POST.get('stat_type', GraphicView.GRAPHIC_TYPE_NORMAL),
-            'interval_start': int(convert_time_to_milli(channel, parser.parse(request.POST.get('interval_start', 0)))),
-            'interval_end': int(convert_time_to_milli(channel, parser.parse(request.POST.get('interval_end', 0)))),
-            'segment_size': TIME_MULTIPLIER[request.POST.get('segment_unit', 'minutes')] * int(request.POST.get('segment_size'))
+            'type': request.POST.get(
+                'stat_type',
+                GraphicView.GRAPHIC_TYPE_NORMAL
+            ),
+            'interval_start': int(convert_time_to_milli(
+                channel,
+                parser.parse(request.POST.get('interval_start', 0)))),
+            'interval_end': int(convert_time_to_milli(
+                channel,
+                parser.parse(request.POST.get('interval_end', 0)))),
+            'segment_size': segment_size
         }
-        return HttpResponse(render(request, 'graphic_result.html', context_instance=RequestContext(request, data)))
+        return HttpResponse(render(
+            request,
+            'graphic_result.html',
+            context_instance=RequestContext(request, data)
+        ))
 
 
 class GraphicView(View):
@@ -51,6 +80,7 @@ class GraphicView(View):
     GRAPHIC_TYPE_STANDARD_DEVIATION = 'std_dev'
     GRAPHIC_TYPE_RETURN_MAP = 'return'
     GRAPHIC_TYPE_SDSD = 'sdsd'
+    GRAPHIC_TYPE_PNN50 = 'pnn50'
 
     GRAPHIC_TYPE_PARAM_NAME = 'type'
 
@@ -60,22 +90,52 @@ class GraphicView(View):
         channel = get_object_or_404(Channel, id=channel_id, record=record)
         response = HttpResponse(content_type='image/png')
 
-        graphic_type = request.GET.get(self.GRAPHIC_TYPE_PARAM_NAME, self.GRAPHIC_TYPE_NORMAL)
+        graphic_type = request.GET.get(
+                self.GRAPHIC_TYPE_PARAM_NAME, self.GRAPHIC_TYPE_NORMAL)
 
         interval_start = int(request.GET.get('interval_start', 0))
         interval_end = int(request.GET.get('interval_end', None))
-        segment_size = int(request.GET.get('segment_size', TIME_MULTIPLIER['minutes']))
+        segment_size = int(request.GET.get(
+            'segment_size', TIME_MULTIPLIER['minutes']))
 
         if graphic_type == self.GRAPHIC_TYPE_NORMAL:
-            plot.get_channel_image(channel, response, interval_start=interval_start, interval_end=interval_end)
+            plot.get_channel_image(
+                    channel,
+                    response,
+                    interval_start=interval_start,
+                    interval_end=interval_end
+            )
         elif graphic_type == self.GRAPHIC_TYPE_MEDIA:
-            plot.get_media_image(channel, response, interval_start, interval_end, segment_size)
+            plot.get_media_image(
+                    channel,
+                    response,
+                    interval_start,
+                    interval_end,
+                    segment_size
+            )
         elif graphic_type == self.GRAPHIC_TYPE_STANDARD_DEVIATION:
-            plot.get_standard_deviation_image(channel, response, interval_start, interval_end, segment_size)
+            plot.get_standard_deviation_image(
+                    channel,
+                    response,
+                    interval_start,
+                    interval_end,
+                    segment_size
+            )
         elif graphic_type == self.GRAPHIC_TYPE_SDSD:
-            plot.get_SDSD_image(channel, response, interval_start, interval_end, segment_size)
+            plot.get_SDSD_image(
+                    channel,
+                    response,
+                    interval_start,
+                    interval_end,
+                    segment_size
+            )
         elif graphic_type == self.GRAPHIC_TYPE_RETURN_MAP:
-            plot.get_return_map_image(channel, response, interval_start, interval_end)
+            plot.get_return_map_image(
+                    channel,
+                    response,
+                    interval_start,
+                    interval_end
+            )
         return response
 
 
@@ -83,9 +143,12 @@ class RegisterViewList(View):
     paginator_class = Paginator
 
     def get(self, request, patient_id):
-        patient = get_object_or_404(Patient, id=patient_id)		
+        patient = get_object_or_404(Patient, id=patient_id)
         order = request.GET.get('order', '-id')
-        paginator = self.paginator_class(patient.records.all(), getattr(settings, 'MAX_ELEMENTS_PER_PAGE', 25))
+        paginator = self.paginator_class(
+                patient.records.all(),
+                getattr(settings, 'MAX_ELEMENTS_PER_PAGE', 25)
+        )
         try:
             page = paginator.page(request.GET.get('page', 1))
         except PageNotAnInteger:
@@ -98,7 +161,9 @@ class RegisterViewList(View):
             'patient': patient
         }
 
-        return HttpResponse(render(request, 'record_list.html', context=RequestContext(request, data)))
+        return HttpResponse(render(request,
+                                   'record_list.html',
+                                   context=RequestContext(request, data)))
 
 
 class RegisterViewDetail(View):
@@ -115,4 +180,6 @@ class RegisterViewDetail(View):
             'constants': GraphicView
         }
 
-        return HttpResponse(render(request, 'graphic.html', context=RequestContext(request, data)))
+        return HttpResponse(render(request,
+                                   'graphic.html',
+                                   context=RequestContext(request, data)))
