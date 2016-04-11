@@ -136,6 +136,8 @@ class GraphicView(View):
                     interval_start,
                     interval_end
             )
+        elif graphic_type == self.GRAPHIC_TYPE_PNN50:
+            plot.get_PNN50_image(channel, response, interval_start, interval_end, segment_size)
         return response
 
 

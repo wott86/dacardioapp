@@ -156,16 +156,19 @@ class Channel(models.Model):
                 .order_by('x').aggregate(avg=Avg('y'))['avg']
 
         return \
-            self.points.filter(x__gte=initial_time, x__lte=final_time).order_by('x').aggregate(avg=Avg('y'))[
-                'avg']
+            self.points.filter(
+                x__gte=initial_time,
+                x__lte=final_time).order_by('x').aggregate(avg=Avg('y'))['avg']
 
     def get_return_map(self, initial_time, final_time):
         if self.is_time:
             points = [point.y for point in
-                      self.points.filter(y_accumulative__gte=initial_time, y_accumulative__lte=final_time).order_by(
-                          'x')]
+                      self.points.filter(
+                          y_accumulative__gte=initial_time,
+                          y_accumulative__lte=final_time).order_by('x')]
         else:
-            points = [point.y for point in self.points.filter(x__gte=initial_time, x__lte=final_time).order_by('x')]
+            points = [point.y for point in self.points.filter(
+                x__gte=initial_time, x__lte=final_time).order_by('x')]
         x = []
         y = []
 
@@ -209,18 +212,20 @@ class Channel(models.Model):
             initial_time += interval
         return range(1, len(y) + 1), y
 
-
     def get_SDNNindex(self, initial_time, final_time, interval):
         sum = 0
         n = 0
         while initial_time < final_time:
             if self.is_time:
-                std_dev = self.points.filter(y_accumulative__gte=initial_time,
-                                             y_accumulative__lte=initial_time + interval).order_by('x').aggregate(
-                    std_dev=StdDev('y'))['std_dev']
+                std_dev = self.points.filter(
+                    y_accumulative__gte=initial_time,
+                    y_accumulative__lte=initial_time + interval)\
+                    .order_by('x').aggregate(std_dev=StdDev('y'))['std_dev']
             else:
-                std_dev = self.points.filter(x__gte=initial_time,
-                                             x__lte=initial_time+interval).order_by('x').aggregate(std_dev=StdDev('y'))['std_dev']
+                std_dev = self.points.filter(
+                    x__gte=initial_time,
+                    x__lte=initial_time+interval)\
+                    .order_by('x').aggregate(std_dev=StdDev('y'))['std_dev']
             sum += (std_dev if std_dev is not None else 0)
             n += 1
             initial_time += interval
@@ -231,18 +236,19 @@ class Channel(models.Model):
         while initial_time < final_time:
             if self.is_time:
                 y.append(
-                    self.points.filter(y_accumulative__gte=initial_time,
-                                       y_accumulative__lte=initial_time + interval).order_by('x').aggregate(
-                        average=Avg('y'))['average']
-                )
+                    self.points.filter(
+                        y_accumulative__gte=initial_time,
+                        y_accumulative__lte=initial_time + interval
+                    ).order_by('x').aggregate(average=Avg('y'))['average'])
             else:
                 y.append(
-                    self.points.filter(y___gte=initial_time,
-                                       x__lte=initial_time+interval).order_by('x').aggregate(average=Avg('y'))['average']
+                    self.points.filter(
+                        y___gte=initial_time,
+                        x__lte=initial_time+interval)
+                    .order_by('x').aggregate(average=Avg('y'))['average']
                 )
             initial_time += interval
         return numpy.std(y)
-
 
     def get_SDSD(self, initial_time, final_time, interval):
         y = []
@@ -250,12 +256,14 @@ class Channel(models.Model):
             interval = interval / self.sampling_rate
         while initial_time < final_time:
             if self.is_time:
-                points = self.points.filter(y_accumulative__gte=initial_time,
-                                            y_accumulative__lte=initial_time + interval)
+                points = self.points.filter(
+                    y_accumulative__gte=initial_time,
+                    y_accumulative__lte=initial_time + interval)
 
             else:
-                points = self.points.filter(y___gte=initial_time,
-                                            x__lte=initial_time+interval).order_by('x')
+                points = self.points.filter(
+                    y___gte=initial_time,
+                    x__lte=initial_time+interval).order_by('x')
 
             initial_time += interval
             differences = []
@@ -297,13 +305,20 @@ class Point(models.Model):
         ('u', 'u')
     )
 
-    channel = models.ForeignKey(Channel, verbose_name=_('canal'), related_name='points')
+    channel = models.ForeignKey(Channel,
+                                verbose_name=_('canal'), related_name='points')
     x = models.FloatField(db_index=True)
     y = models.FloatField()
-    y_accumulative = models.FloatField(default=0, verbose_name=_('Y acumulativo'),
+    y_accumulative = models.FloatField(default=0,
+                                       verbose_name=_('Y acumulativo'),
                                        help_text=_(
-                                           'La sumatoria de todos los valores "Y" hasta el actual, se calcula con Channel.fill_accumulatives'))
-    wave = models.CharField(max_length=1, choices=WAVES_TYPES, null=True, blank=True, verbose_name=_('onda detectada'))
+                                           'La sumatoria de todos los valores \
+                                           "Y" hasta el actual, se calcula con \
+                                           Channel.fill_accumulatives'))
+    wave = models.CharField(max_length=1,
+                            choices=WAVES_TYPES,
+                            null=True,
+                            blank=True, verbose_name=_('onda detectada'))
     flagged = models.BooleanField(default=False, verbose_name=_('marca'))
 
     def __unicode__(self):
@@ -330,12 +345,19 @@ class Annotation(models.Model):
     point = models.ForeignKey('records.Point', verbose_name=_('punto'))
     annotation_type = models.CharField(max_length=45, verbose_name=_('tipo'))
     annotation = models.TextField()
-    created = models.DateTimeField(auto_now_add=True, verbose_name=_(u'fecha de creación'))
+    created = models.DateTimeField(auto_now_add=True,
+                                   verbose_name=_(u'fecha de creación'))
     created_by = models.ForeignKey('users.User', verbose_name=_('creado por'))
-    anomaly = models.ForeignKey('records.Anomaly', null=True, blank=True, verbose_name=_(u'anomalía'))
+    anomaly = models.ForeignKey('records.Anomaly',
+                                null=True,
+                                blank=True,
+                                verbose_name=_(u'anomalía'))
 
     def __unicode__(self):
-        return u'(%s) - %s - %s' % (unicode(self.point), self.created_by.full_name, self.created.isoformat())
+        return u'(%s) - %s - %s' % (
+            unicode(self.point),
+            self.created_by.full_name,
+            self.created.isoformat())
 
     class Meta:
         verbose_name = _(u'anotación')
