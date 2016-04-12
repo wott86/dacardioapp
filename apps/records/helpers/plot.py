@@ -119,8 +119,8 @@ def get_PNN50_image(channel, file_like, initial_time, final_time, interval, form
             'patient': channel.record.patient.full_name
         },
         format_=format_,
-        ylabel=_('SDSD (ms)'),
-        xlabel=_('Intervalo (%(interval)d ms)') % {'interval': interval},
+        ylabel=_('PNN50 (ms)'),
+        xlabel=_('Intervalo (%(interval)d m)') % {'interval': interval / 60000},
         hide_axis=not channel.is_time,
         clear=clear,
         color=color,
