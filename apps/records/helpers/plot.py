@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from django.utils.translation import ugettext as _
 
 
-def get_channel_image(channel, file_like, format_='png', interval_start=0, interval_end=None, clear=False, color='r', line_style='-'):
+def get_channel_image(channel, file_like, format_='png', interval_start=0, interval_end=None, clear=True, color='r', line_style='-'):
     x = []
     y = []
     kwargs = {
@@ -32,7 +32,7 @@ def get_channel_image(channel, file_like, format_='png', interval_start=0, inter
     )
 
 
-def get_media_image(channel, file_like, initial_time, final_time, interval, format_='png', clear=False, color='r', line_style='-'):
+def get_media_image(channel, file_like, initial_time, final_time, interval, format_='png', clear=True, color='r', line_style='-'):
     x, y = channel.get_media_points(initial_time, final_time, interval)
     get_image(
         x,
@@ -41,7 +41,7 @@ def get_media_image(channel, file_like, initial_time, final_time, interval, form
         'RR Media: %s' % channel.record.patient.full_name,
         format_=format_,
         ylabel=_('Media (ms)'),
-        xlabel=_('Secuencia'),
+        xlabel=_('Intervalo (%(interval)d m)') % {'interval': interval / 60000},
         hide_axis=not channel.is_time,
         clear=clear,
         color=color,
@@ -49,7 +49,7 @@ def get_media_image(channel, file_like, initial_time, final_time, interval, form
     )
 
 
-def get_standard_deviation_image(channel, file_like, initial_time, final_time, interval, format_='png', clear=False, color='r', line_style='-'):
+def get_standard_deviation_image(channel, file_like, initial_time, final_time, interval, format_='png', clear=True, color='r', line_style='-'):
     x, y = channel.get_standard_deviation_points(
         initial_time, final_time, interval)
     get_image(
@@ -61,7 +61,7 @@ def get_standard_deviation_image(channel, file_like, initial_time, final_time, i
         },
         format_=format_,
         ylabel=_('STD (ms)'),
-        xlabel=_('Secuencia'),
+        xlabel=_('Intervalo (%(interval)d m)') % {'interval': interval / 60000},
         hide_axis=not channel.is_time,
         clear=clear,
         color=color,
@@ -69,7 +69,7 @@ def get_standard_deviation_image(channel, file_like, initial_time, final_time, i
     )
 
 
-def get_return_map_image(channel, file_like, initial_time, final_time, format_='png', clear=False, color='r', line_style='.'):
+def get_return_map_image(channel, file_like, initial_time, final_time, format_='png', clear=True, color='r', line_style='.'):
     x, y = channel.get_return_map(initial_time, final_time)
     get_image(
         x,
@@ -79,8 +79,8 @@ def get_return_map_image(channel, file_like, initial_time, final_time, format_='
             'patient': channel.record.patient.full_name
         },
         format_=format_,
-        ylabel=_('Tiempo (t + 1)'),
-        xlabel=_('Tiempo (t)'),
+        ylabel=_('$RR_{t + 1} (ms)$'),
+        xlabel=_('$RR_t (ms)$'),
         hide_axis=not channel.is_time,
         clear=clear,
         color=color,
@@ -88,7 +88,7 @@ def get_return_map_image(channel, file_like, initial_time, final_time, format_='
     )
 
 
-def get_SDSD_image(channel, file_like, initial_time, final_time, interval, format_='png', clear=False, color='r', line_style='-'):
+def get_SDSD_image(channel, file_like, initial_time, final_time, interval, format_='png', clear=True, color='r', line_style='-'):
     x, y = channel.get_SDSD(initial_time, final_time, interval)
     get_image(
         x,
@@ -99,7 +99,7 @@ def get_SDSD_image(channel, file_like, initial_time, final_time, interval, forma
         },
         format_=format_,
         ylabel=_('SDSD (ms)'),
-        xlabel=_('Intervalo'),
+        xlabel=_('Intervalo (%(interval)d m)') % {'interval': interval / 60000},
         hide_axis=not channel.is_time,
         clear=clear,
         color=color,
@@ -108,7 +108,7 @@ def get_SDSD_image(channel, file_like, initial_time, final_time, interval, forma
     )
 
 
-def get_PNN50_image(channel, file_like, initial_time, final_time, interval, format_='png', clear=False, color='r', line_style='-'):
+def get_PNN50_image(channel, file_like, initial_time, final_time, interval, format_='png', clear=True, color='r', line_style='-'):
     x, y = channel.get_PNN50_points(
         initial_time, final_time, interval)
     get_image(
@@ -128,7 +128,7 @@ def get_PNN50_image(channel, file_like, initial_time, final_time, interval, form
 
     )
 
-def get_image(x, y, file_like, title=None, format_='png', xlabel=None, ylabel=None, line_style='-', hide_axis=False, clear=False, color='r'):
+def get_image(x, y, file_like, title=None, format_='png', xlabel=None, ylabel=None, line_style='-', hide_axis=False, clear=True, color='r'):
     if clear:
         plt.clf()
     plt.plot(x, y, line_style, color=color)
@@ -162,6 +162,23 @@ def get_image(x, y, file_like, title=None, format_='png', xlabel=None, ylabel=No
     plt.show()
 
 
+def get_histogram(channel, initial_time, final_time, file_like, bins=10, title=None, format_='png', xlabel=None, ylabel=None, line_style='-', hide_axis=False, clear=True, color='r'):
+    points = channel.points.filter(y_accumulative__gte=initial_time,
+                                   y_accumulative__lte=final_time)
+    if title is None:
+        title = _(u'RR Histograma: %(patient)s') % {
+            'patient': channel.record.patient.full_name
+        }
+    plt.clf()
+    plt.hist([point.y for point in points], bins)
+    plt.xlabel(xlabel if xlabel is not None else _('$RR_t$'))
+    plt.ylabel(ylabel if ylabel is not None else _('Frecuencia'))
+    plt.title(title)
+    plt.grid(True)
+    plt.tight_layout()
+    plt.savefig(file_like, format=format_, bbox_inches='tight')
+    plt.show()
+
+
 if __name__ == '__main__':
     get_channel_image(None, 'test.png')
-

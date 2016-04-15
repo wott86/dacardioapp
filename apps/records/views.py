@@ -81,6 +81,7 @@ class GraphicView(View):
     GRAPHIC_TYPE_RETURN_MAP = 'return'
     GRAPHIC_TYPE_SDSD = 'sdsd'
     GRAPHIC_TYPE_PNN50 = 'pnn50'
+    GRAPHIC_TYPE_HIST = 'histogram'
 
     GRAPHIC_TYPE_PARAM_NAME = 'type'
 
@@ -137,7 +138,14 @@ class GraphicView(View):
                     interval_end
             )
         elif graphic_type == self.GRAPHIC_TYPE_PNN50:
-            plot.get_PNN50_image(channel, response, interval_start, interval_end, segment_size)
+            plot.get_PNN50_image(channel,
+                                 response,
+                                 interval_start,
+                                 interval_end,
+                                 segment_size)
+        elif graphic_type == self.GRAPHIC_TYPE_HIST:
+            plot.get_histogram(channel, interval_start, interval_end, file_like=response)
+
         return response
 
 
