@@ -426,14 +426,14 @@ class PatientActionStatsGraphic(View):
                     if not individual_graphs:
                         ys.append(channel.get_media(initial, ending))
                     else:
-                        plot.get_image(
-                                x_points,
-                                channel_media,
-                                color=colors[patient],
-                                title=title,
-                                xlabel=_('Intervalo (%s m)') % (segment_size % 60000),
-                                ylabel=_('Promedio (ms)'),
-                                clear=False
+                        plot.get_media_image(
+                                channel,
+                                None,
+                                initial,
+                                ending,
+                                segment_size,
+                                clear=False,
+                                color=colors[patient]
                         )
                 elif stat_type == self.MEDIA:
                     title = _('Promedio del promedio de los RR de los pacientes')
