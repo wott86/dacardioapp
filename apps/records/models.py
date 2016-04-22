@@ -89,8 +89,10 @@ class Channel(models.Model):
         verbose_name_plural = _('canales')
 
     def __unicode__(self):
-        return '%s - %s - %s' % (unicode(self.record),
-                                 self.get_type_display(), self.name)
+        return 'Record: %s - %s - %s - Start: %s' % (unicode(self.record),
+                                 self.get_type_display(),
+                                 self.name,
+                                 self.start_date.isoformat() if self.start_date else '')
 
     def get_media_points(self, initial_time, final_time, interval):
         y = []

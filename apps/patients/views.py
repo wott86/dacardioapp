@@ -20,6 +20,7 @@ import datetime
 from apps.records.helpers import plot
 from apps.records.helpers.time import convert_hour_to_milli
 from apps.records.helpers.time import TIME_MULTIPLIER
+from numpy import random
 import numpy
 
 fake = Factory.create()
@@ -91,7 +92,7 @@ class PatientList(View):
 
     def post(self, request):
         """
-        Process user creation
+        Process patient creation
         :param request: well, the request object
         :return: response
         """
@@ -391,7 +392,10 @@ class PatientActionStatsGraphic(View):
         indicator = request.GET.get('indicator', self.ORIGINAL)
         interval_start = request.GET.get('interval_start')
         interval_end = request.GET.get('interval_end')
-        segment_size = int(request.GET.get('segment_size', TIME_MULTIPLIER['minutes']))
+        time_offset = int(request.GET.get('utc_offset', 0))
+        segment_size = TIME_MULTIPLIER[request.POST.get('segment_unit', 'minutes')]\
+            * int(request.POST.get('segment_size', 1))
+        individual_graphs = {'on': True, 'off': False}[request.GET.get('individual_graphs', 'on')]
         title = None
 
         if interval_start is None or interval_end is None:
@@ -400,22 +404,37 @@ class PatientActionStatsGraphic(View):
         if stat_type not in self.STAT_TYPES:
             return HttpResponse(status=400)
 
+        colors = {}
         for patient in patients:
             channel = patient.get_last_channel()
+            colors[patient] = random.rand(3,1)
+            print channel
             if channel is None:
                 ys.append(0)
                 continue
 
-            initial, ending = convert_hour_to_milli(channel, interval_start, interval_end)
+            initial, ending = convert_hour_to_milli(channel, interval_start, interval_end, time_offset)
 
             if indicator == self.MEDIA:
                 x_points, channel_media = channel.get_media_points(initial, ending, segment_size)
-                if channel_media is None:
-                    ys.append(0)
+                if channel_media is None or len(channel_media) == 0:
+                    if not individual_graphs:
+                        ys.append(0)
                     continue
                 if stat_type == self.ORIGINAL:
                     title = _('Promedio de los RR de los pacientes')
-                    ys.append(channel.get_media(initial, ending))
+                    if not individual_graphs:
+                        ys.append(channel.get_media(initial, ending))
+                    else:
+                        plot.get_image(
+                                x_points,
+                                channel_media,
+                                color=colors[patient],
+                                title=title,
+                                xlabel=_('Intervalo (%s m)') % (segment_size % 60000),
+                                ylabel=_('Promedio (ms)'),
+                                clear=False
+                        )
                 elif stat_type == self.MEDIA:
                     title = _('Promedio del promedio de los RR de los pacientes')
                     ys.append(numpy.average(channel_media))
@@ -445,6 +464,9 @@ class PatientActionStatsGraphic(View):
         xs = xrange(len(ys))
         print ys
         response = HttpResponse(content_type='image/png')
-        plot.get_image(xs, ys, response, title=title)
+        if individual_graphs:
+            plot.save(response)
+        else:
+            plot.get_image(xs, ys, response, title=title)
 
         return response

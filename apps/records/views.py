@@ -49,7 +49,7 @@ class GraphicStatFormView(View):
         )
         segment_size = TIME_MULTIPLIER[
                 request.POST.get('segment_unit', 'minutes')]\
-            * int(request.POST.get('segment_size'))
+            * int(request.POST.get('segment_size', 1))
 
         data = {
             'record': record,

@@ -1,4 +1,7 @@
 import datetime
+from django.utils import timezone
+
+
 TIME_MULTIPLIER = {
     'minutes': 60000,
     'hours': 3600000
@@ -16,7 +19,7 @@ def convert_time_to_milli(channel, date_obj):
     return diff if diff >= 0 else 0
 
 
-def convert_hour_to_milli(channel, interval_start, interval_end):
+def convert_hour_to_milli(channel, interval_start, interval_end, offset=0):
     """
     convert_hour_to_milli
 
@@ -30,7 +33,8 @@ def convert_hour_to_milli(channel, interval_start, interval_end):
     """
     hour, minute = interval_start.split(':')
     hour, minute = int(hour), int(minute)
-    initial_time = channel.start_date.replace(hour=hour, minute=minute)
+    initial_time = (channel.start_date + datetime.timedelta(minutes=offset)).replace(hour=hour, minute=minute, tzinfo=timezone.get_fixed_timezone(offset))
+    #print channel.id, 'DURATION,', channel.start_date, initial_time, offset
 
     if initial_time < channel.start_date:
         initial_time = initial_time + datetime.timedelta(days=1)
@@ -40,7 +44,7 @@ def convert_hour_to_milli(channel, interval_start, interval_end):
     end_time = initial_time.replace(hour=hour, minute=minute)
 
     if initial_time > end_time:
-        end_time = end_time + datetime.timedelta(hours=1)
+        end_time = end_time + datetime.timedelta(days=1)
 
     return convert_time_to_milli(channel, initial_time), \
            convert_time_to_milli(channel, end_time)

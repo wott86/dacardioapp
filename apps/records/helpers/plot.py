@@ -17,6 +17,7 @@ def get_channel_image(channel, file_like, format_='png', interval_start=0, inter
     for point in points:
         x.append(point.x)
         y.append(point.y)
+
     get_image(
         x,
         y,
@@ -128,11 +129,12 @@ def get_PNN50_image(channel, file_like, initial_time, final_time, interval, form
 
     )
 
-def get_image(x, y, file_like, title=None, format_='png', xlabel=None, ylabel=None, line_style='-', hide_axis=False, clear=True, color='r'):
+def get_image(x, y, file_like=None, title=None, format_='png', xlabel=None, ylabel=None, line_style='-', hide_axis=False, clear=True, color='r'):
     if clear:
         plt.clf()
     plt.plot(x, y, line_style, color=color)
-    plt.xlim(min(x), max(x))
+    if len(x) > 0:
+        plt.xlim(min(x), max(x))
     if title:
         plt.title(title)
     if xlabel:
@@ -157,9 +159,10 @@ def get_image(x, y, file_like, title=None, format_='png', xlabel=None, ylabel=No
                 left='off',
                 labelleft=False)
     # fig.savefig(file_like, format=format_)
-    plt.tight_layout()
-    plt.savefig(file_like, format=format_, bbox_inches='tight')
-    plt.show()
+    if file_like is not None:
+        plt.tight_layout()
+        plt.savefig(file_like, format=format_, bbox_inches='tight')
+        plt.show()
 
 
 def get_histogram(channel, initial_time, final_time, file_like, bins=10, title=None, format_='png', xlabel=None, ylabel=None, line_style='-', hide_axis=False, clear=True, color='r'):
@@ -175,9 +178,17 @@ def get_histogram(channel, initial_time, final_time, file_like, bins=10, title=N
     plt.ylabel(ylabel if ylabel is not None else _('Frecuencia'))
     plt.title(title)
     plt.grid(True)
-    plt.tight_layout()
-    plt.savefig(file_like, format=format_, bbox_inches='tight')
-    plt.show()
+    if file_like is not None:
+        plt.tight_layout()
+        plt.savefig(file_like, format=format_, bbox_inches='tight')
+        plt.show()
+
+
+def save(file_like, format_='png'):
+    if file_like is not None:
+        plt.tight_layout()
+        plt.savefig(file_like, format=format_, bbox_inches='tight')
+        plt.show()
 
 
 if __name__ == '__main__':

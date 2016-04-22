@@ -43,6 +43,7 @@
             var segment_unit = $("#id_segment_unit");
             $("#id_actual_interval_start").val(moment().format('HH:mm'));
             $("#id_actual_interval_end").val(moment().add(1, 'minutes').format('HH:mm'));
+            $("#id_utc_offset").val(moment().utcOffset());
             $("#id_stat_form").submit(function(e){
                 //if(datepicker1.data("DateTimePicker").date().diff(datepicker2.data("DateTimePicker").date()) >= 0){
                 //    e.preventDefault();
@@ -59,10 +60,10 @@
                     useCurrent: false,
                     defaultDate: moment()
             }).on("dp.change", function(e){
-                var newDate = e.date;
-                if (newDate.diff(datepicker2.data("DateTimePicker").date()) >= 0){
-                    datepicker2.data("DateTimePicker").date(newDate.add(1, 'minutes'));
-                }
+                //var newDate = e.date;
+                //if (newDate.diff(datepicker2.data("DateTimePicker").date()) >= 0){
+                    //datepicker2.data("DateTimePicker").date(newDate.add(1, 'minutes'));
+                //}
                 //$("#id_actual_interval_start").val((newDate.minute() * 60 * 1000) + (newDate.hour() * 60 * 60 * 1000));
             });
 
@@ -74,10 +75,10 @@
                 useCurrent: false,
                 defaultDate: moment().add(1, 'minutes')
             }).on("dp.change", function(e){
-                var newDate = e.date;
+                /*var newDate = e.date;
                 if (newDate.diff(datepicker1.data("DateTimePicker").date()) <= 0){
                     datepicker1.data("DateTimePicker").date(newDate.subtract(1, 'minutes'));
-                }
+                }*/
                 //$("#id_actual_interval_end").val(newDate.toISOString());
             });
             segment_unit.change(function (e){
@@ -102,7 +103,7 @@
 {% endblock %}
 
 {% block action_form %}
-    <form action="{% url 'patients_action_stats' %}" method="post" class="form-inline">
+    <form action="{% url 'patients_action_stats' %}" id="id_stat_form" method="post" class="form-inline">
         {% csrf_token %}
         <div class="container-fluid">
             <div class="row">
@@ -174,6 +175,7 @@
                 <div class='input-group col-lg-12 col-md-12 col-sm-12 col-sx-12'>
                     <input type='hidden' id="id_actual_interval_start" name="interval_start" />
                     <input type='hidden' id="id_actual_interval_end" name="interval_end" />
+                    <input type='hidden' id="id_utc_offset" name="utc_offset"/>
                     <button type="submit" class="btn btn-danger pull-right">{% trans 'Generar' %}</button>
                     {% add_post_params_hidden 'csrfmiddlewaretoken' 'action' %}
                 </div>
