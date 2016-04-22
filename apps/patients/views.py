@@ -433,7 +433,8 @@ class PatientActionStatsGraphic(View):
                                 ending,
                                 segment_size,
                                 clear=False,
-                                color=colors[patient]
+                                color=colors[patient],
+                                title=title
                         )
                 elif stat_type == self.MEDIA:
                     title = _('Promedio del promedio de los RR de los pacientes')

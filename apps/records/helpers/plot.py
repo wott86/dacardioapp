@@ -33,20 +33,21 @@ def get_channel_image(channel, file_like, format_='png', interval_start=0, inter
     )
 
 
-def get_media_image(channel, file_like, initial_time, final_time, interval, format_='png', clear=True, color='r', line_style='-'):
+def get_media_image(channel, file_like, initial_time, final_time, interval, format_='png', clear=True, color='r', line_style='-', label=None, title=None):
     x, y = channel.get_media_points(initial_time, final_time, interval)
     get_image(
         x,
         y,
         file_like,
-        'RR Media: %s' % channel.record.patient.full_name,
+        'RR Media: %s' % channel.record.patient.full_name if title is None else title,
         format_=format_,
         ylabel=_('Media (ms)'),
         xlabel=_('Intervalo (%(interval)d m)') % {'interval': interval / 60000},
         hide_axis=not channel.is_time,
         clear=clear,
         color=color,
-        line_style=line_style
+        line_style=line_style,
+        label=channel.record.patient.full_name if label is None else label
     )
 
 
@@ -129,10 +130,11 @@ def get_PNN50_image(channel, file_like, initial_time, final_time, interval, form
 
     )
 
-def get_image(x, y, file_like=None, title=None, format_='png', xlabel=None, ylabel=None, line_style='-', hide_axis=False, clear=True, color='r'):
+def get_image(x, y, file_like=None, title=None, format_='png', xlabel=None, ylabel=None, line_style='-', hide_axis=False, clear=True, color='r', label=None):
     if clear:
         plt.clf()
-    plt.plot(x, y, line_style, color=color)
+    plt.plot(x, y, line_style, color=color, label=label if label else '')
+    plt.legend()
     if len(x) > 0:
         plt.xlim(min(x), max(x))
     if title:
