@@ -5,7 +5,6 @@ from apps.patients.models import Patient, History, Diagnosis
 from apps.records.models import Anomaly
 from django.core.urlresolvers import reverse
 from django.db.models import Model, Q
-from django.db.models.aggregates import Avg, StdDev
 from django.http.response import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.views.generic.base import View
@@ -21,7 +20,6 @@ from apps.records.helpers import plot
 from apps.records.helpers.time import convert_hour_to_milli
 from apps.records.helpers.time import TIME_MULTIPLIER
 from numpy import random
-import numpy
 
 fake = Factory.create()
 
@@ -386,8 +384,6 @@ class PatientActionStatsGraphic(View):
 
         patients = Patient.objects.filter(id__in=ids)
 
-        ys = []
-        xs = []
         stat_type = request.GET.get('stat_type', self.MEDIA)
         indicator = request.GET.get('indicator', self.ORIGINAL)
         interval_start = request.GET.get('interval_start')
@@ -395,79 +391,74 @@ class PatientActionStatsGraphic(View):
         time_offset = int(request.GET.get('utc_offset', 0))
         segment_size = TIME_MULTIPLIER[request.POST.get('segment_unit', 'minutes')]\
             * int(request.POST.get('segment_size', 1))
-        individual_graphs = {'on': True, 'off': False}[request.GET.get('individual_graphs', 'on')]
         title = None
 
         if interval_start is None or interval_end is None:
-            return HttpRequest(status=400)
+            return HttpResponse(status=400)
 
         if stat_type not in self.STAT_TYPES:
             return HttpResponse(status=400)
 
         colors = {}
+        print patients
         for patient in patients:
             channel = patient.get_last_channel()
             colors[patient] = random.rand(3,1)
             print channel
             if channel is None:
-                ys.append(0)
                 continue
 
-            initial, ending = convert_hour_to_milli(channel, interval_start, interval_end, time_offset)
+            initial, ending = convert_hour_to_milli(
+                channel,
+                interval_start,
+                interval_end,
+                time_offset
+            )
 
             if indicator == self.MEDIA:
-                x_points, channel_media = channel.get_media_points(initial, ending, segment_size)
-                if channel_media is None or len(channel_media) == 0:
-                    if not individual_graphs:
-                        ys.append(0)
-                    continue
-                if stat_type == self.ORIGINAL:
-                    title = _('Promedio de los RR de los pacientes')
-                    if not individual_graphs:
-                        ys.append(channel.get_media(initial, ending))
-                    else:
-                        plot.get_media_image(
-                                channel,
-                                None,
-                                initial,
-                                ending,
-                                segment_size,
-                                clear=False,
-                                color=colors[patient],
-                                title=title
-                        )
-                elif stat_type == self.MEDIA:
-                    title = _('Promedio del promedio de los RR de los pacientes')
-                    ys.append(numpy.average(channel_media))
-                elif stat_type == self.STD_DEV:
-                    title = _('Desviación estándar del promedio de los RR de los pacientes')
-                    ys.append(numpy.std(channel_media))
+                title = _('Promedio de los RR de los pacientes')
+                plot.get_media_image(
+                    channel,
+                    None,
+                    initial,
+                    ending,
+                    segment_size,
+                    clear=False,
+                    color=colors[patient],
+                    title=title
+                )
 
             elif indicator == self.STD_DEV:
-                x_points, channel_media = channel.get_standard_deviation_points(initial, ending, segment_size)
-                if stat_type == self.ORIGINAL:
-                    title = _(u'Desviación estándar de los RR de los pacientes')
-                    ys.append(channel.get_standard_deviation(initial, ending))
-                if stat_type == self.MEDIA:
-                    title = _(u'Promedio de la desviación estándar de los RR de los pacientes')
-                    ys.append(numpy.avg(channel_media))
-                if stat_type == self.STD_DEV:
-                    title = _(u'Desviación estándar de la desviación estándar de los RR de los pacientes')
-                    ys.append(numpy.std(channel_media))
+                title = _(u'Desviación estándar de los RR de los pacientes')
+                plot.get_standard_deviation_image(
+                    channel,
+                    None,
+                    initial,
+                    ending,
+                    segment_size,
+                    clear=False,
+                    color=colors[patient],
+                    title=title
+                )
 
             elif indicator == self.PNN50:
-                pass
+                title = _(u'PNN50 de los RR de los pacientes')
+                plot.get_PNN50_image(
+                    channel,
+                    None,
+                    initial,
+                    ending,
+                    segment_size,
+                    clear=False,
+                    color=colors[patient],
+                    title=title
+                )
             elif indicator == self.SDNN:
                 pass
             elif indicator == self.SDANN:
                 pass
 
-        xs = xrange(len(ys))
-        print ys
         response = HttpResponse(content_type='image/png')
-        if individual_graphs:
-            plot.save(response)
-        else:
-            plot.get_image(xs, ys, response, title=title)
+        plot.save(response)
 
         return response

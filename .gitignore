@@ -63,4 +63,7 @@ target/
 static/bower_components
 
 # Vim
-*.swp
+.swp
+.swo
+
+.ropeproject
