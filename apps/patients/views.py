@@ -464,7 +464,17 @@ class PatientActionStatsGraphic(View):
                     title=title
                 )
             elif indicator == self.SDSD:
-                pass
+                title = _(u'SDSD de los RR de los pacientes')
+                plot.get_SDSD_image(
+                    channel,
+                    None,
+                    initial,
+                    ending,
+                    segment_size,
+                    clear=False,
+                    color=colors[patient],
+                    title=title
+                )
 
         response = HttpResponse(content_type='image/png')
         plot.save(response)

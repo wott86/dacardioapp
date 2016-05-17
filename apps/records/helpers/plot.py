@@ -109,7 +109,6 @@ def get_SDSD_image(channel, file_like, initial_time, final_time, interval, forma
         color=color,
         line_style=line_style,
         label=channel.record.patient.full_name if label is None else label
-
     )
 
 
