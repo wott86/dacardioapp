@@ -34,7 +34,6 @@ def convert_hour_to_milli(channel, interval_start, interval_end, offset=0):
     hour, minute = interval_start.split(':')
     hour, minute = int(hour), int(minute)
     initial_time = (channel.start_date + datetime.timedelta(minutes=offset)).replace(hour=hour, minute=minute, tzinfo=timezone.get_fixed_timezone(offset))
-    #print channel.id, 'DURATION,', channel.start_date, initial_time, offset
 
     if initial_time < channel.start_date:
         initial_time = initial_time + datetime.timedelta(days=1)

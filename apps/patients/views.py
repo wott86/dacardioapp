@@ -400,11 +400,9 @@ class PatientActionStatsGraphic(View):
             return HttpResponse(status=400)
 
         colors = {}
-        print patients
         for patient in patients:
             channel = patient.get_last_channel()
             colors[patient] = random.rand(3,1)
-            print channel
             if channel is None:
                 continue
 
@@ -453,9 +451,19 @@ class PatientActionStatsGraphic(View):
                     color=colors[patient],
                     title=title
                 )
-            elif indicator == self.SDNN:
-                pass
-            elif indicator == self.SDANN:
+            elif indicator == self.RETURN:
+                title = _(u'Mapa de retorno de los RR de los pacientes')
+                plot.get_return_map_image(
+                    channel,
+                    None,
+                    initial,
+                    ending,
+                    segment_size,
+                    clear=False,
+                    color=colors[patient],
+                    title=title
+                )
+            elif indicator == self.SDSD:
                 pass
 
         response = HttpResponse(content_type='image/png')

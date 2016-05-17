@@ -54,7 +54,6 @@ def get_media_image(channel, file_like, initial_time, final_time, interval, form
 def get_standard_deviation_image(channel, file_like, initial_time, final_time, interval, format_='png', clear=True, color='r', line_style='-', label=None, title=None):
     x, y = channel.get_standard_deviation_points(
         initial_time, final_time, interval)
-    print title
     get_image(
         x,
         y,
@@ -73,41 +72,43 @@ def get_standard_deviation_image(channel, file_like, initial_time, final_time, i
     )
 
 
-def get_return_map_image(channel, file_like, initial_time, final_time, format_='png', clear=True, color='r', line_style='.'):
+def get_return_map_image(channel, file_like, initial_time, final_time, format_='png', clear=True, color='r', line_style='.', title=None, label=None):
     x, y = channel.get_return_map(initial_time, final_time)
     get_image(
         x,
         y,
         file_like,
-        _('RR Mapa de retorno: %(patient)s') % {
+        (_('RR Mapa de retorno: %(patient)s') % {
             'patient': channel.record.patient.full_name
-        },
+        }) if title is None else title,
         format_=format_,
         ylabel=_('$RR_{t + 1} (ms)$'),
         xlabel=_('$RR_t (ms)$'),
         hide_axis=not channel.is_time,
         clear=clear,
         color=color,
-        line_style=line_style
+        line_style=line_style,
+        label=channel.record.patient.full_name if label is None else label
     )
 
 
-def get_SDSD_image(channel, file_like, initial_time, final_time, interval, format_='png', clear=True, color='r', line_style='-'):
+def get_SDSD_image(channel, file_like, initial_time, final_time, interval, format_='png', clear=True, color='r', line_style='-', label=None, title=None):
     x, y = channel.get_SDSD(initial_time, final_time, interval)
     get_image(
         x,
         y,
         file_like,
-        _(u'RR SDSD: %(patient)s') % {
+        (_(u'RR SDSD: %(patient)s') % {
             'patient': channel.record.patient.full_name
-        },
+        }) if title is None else title,
         format_=format_,
         ylabel=_('SDSD (ms)'),
         xlabel=_('Intervalo (%(interval)d m)') % {'interval': interval / 60000},
         hide_axis=not channel.is_time,
         clear=clear,
         color=color,
-        line_style=line_style
+        line_style=line_style,
+        label=channel.record.patient.full_name if label is None else label
 
     )
 
@@ -131,6 +132,7 @@ def get_PNN50_image(channel, file_like, initial_time, final_time, interval, form
         line_style=line_style,
         label=channel.record.patient.full_name if label is None else label
     )
+
 
 def get_image(x, y, file_like=None, title=None, format_='png', xlabel=None, ylabel=None, line_style='-', hide_axis=False, clear=True, color='r', label=None):
     if clear:
