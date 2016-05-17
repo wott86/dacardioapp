@@ -1,5 +1,5 @@
 <ul class="list-group">
     {% for patient in patients %}
-        <li class="list-group-item">{{ patient.full_name }}</li>
+    <li class="list-group-item"><a href="{% url 'patient_detail' patient.id %}" target="_blank">{{ patient.full_name }}</a></li>
     {% endfor %}
 </ul>
