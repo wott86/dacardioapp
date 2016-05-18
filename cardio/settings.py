@@ -82,7 +82,7 @@ DATABASES = {
 
 LANGUAGE_CODE = 'es-ve'
 
-TIME_ZONE = 'America/Caracas'
+TIME_ZONE = 'America/Manaus'
 
 USE_I18N = True
 
