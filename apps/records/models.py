@@ -111,8 +111,7 @@ class Channel(models.Model):
                     .aggregate(average=Avg('y'))['average']
             if avg is not None:
                 y.append(avg)
-            else:
-                break
+
             initial_time += interval
         return range(1, len(y) + 1), y
 
