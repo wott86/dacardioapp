@@ -294,6 +294,8 @@ class DiagnosisDetail(View):
         }
 
 
+
+# Actions
 class PatientsActionView(View):
 
     TEMPLATES = {
@@ -400,6 +402,7 @@ class PatientActionStatsGraphic(View):
             return HttpResponse(status=400)
 
         colors = {}
+        plot.plt.clf()
         for patient in patients:
             channel = patient.get_last_channel()
             colors[patient] = random.rand(3,1)
