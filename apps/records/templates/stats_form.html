@@ -80,6 +80,16 @@
                     segment_unit.val("minutes");
                 }
             });
+            $("#id_stat_type").change(function(e){
+                if($(this).val() == "histogram"){
+                    $("#bins_container").slideDown("fast");
+                }
+                else {
+                    if($("#bins_container").is(":visible")){
+                        $("#bins_container").slideUp("fast");
+                    }
+                }
+            });
         });
     </script>
 {% endblock %}
@@ -116,7 +126,7 @@
                     {% endblock %}
                 </div>
                 <div class="panel-body">
-                    <form action="{% url 'view_channel_form' patient.id record.id channel.id %}" id="id_stat_form" method="post" class="form-inline">
+                    <form action="{% url 'view_channel_form' patient.id record.id channel.id %}" id="id_stat_form" method="post" class="form-inline" target="_blank">
                         {% csrf_token %}
                         <div class="container-fluid">
                             <div class="row">
@@ -170,6 +180,14 @@
                                         <option value="pnn50">{% trans 'PNN50' %}</option>
                                         <option value="histogram">{% trans 'Histograma' %}</option>
                                     </select>
+                                </p>
+                            </div>
+                            <div class="row" id="bins_container" style="display: none">
+                                <p class="col-lg-6 col-md-6 col-sm-6 col-sx-6">
+                                    <label for="id_stat_type">{% trans 'Bins' %}</label>
+                                </p>
+                                <p class='input-group col-lg-2 col-md-2 col-sm-2 col-sx-2'>
+                                    <input type='number' class="form-control" id="id_bins" name="bins" value="10" />
                                 </p>
                             </div>
                             <div class="row">

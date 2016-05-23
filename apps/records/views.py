@@ -144,7 +144,11 @@ class GraphicView(View):
                                  interval_end,
                                  segment_size)
         elif graphic_type == self.GRAPHIC_TYPE_HIST:
-            plot.get_histogram(channel, interval_start, interval_end, file_like=response)
+            plot.get_histogram(channel,
+                               interval_start,
+                               interval_end,
+                               file_like=response,
+                               bins=int(request.GET.get('bins', 10)))
 
         return response
 
