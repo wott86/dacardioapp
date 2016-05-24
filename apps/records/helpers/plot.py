@@ -1,9 +1,10 @@
 # coding=utf-8
 import matplotlib.pyplot as plt
 from django.utils.translation import ugettext as _
+from numpy import random
 
 
-def get_channel_image(channel, file_like, format_='png', interval_start=0, interval_end=None, clear=True, color='r', line_style='-'):
+def get_channel_points(channel, interval_start, interval_end):
     x = []
     y = []
     kwargs = {
@@ -17,6 +18,12 @@ def get_channel_image(channel, file_like, format_='png', interval_start=0, inter
     for point in points:
         x.append(point.x)
         y.append(point.y)
+
+    return x, y
+
+
+def get_channel_image(channel, file_like, format_='png', interval_start=0, interval_end=None, clear=True, color='r', line_style='-'):
+    x, y = get_channel_points(channel, interval_start, interval_end)
 
     get_image(
         x,
@@ -133,6 +140,72 @@ def get_PNN50_image(channel, file_like, initial_time, final_time, interval, form
     )
 
 
+def get_histogram(channel, initial_time, final_time, file_like, bins=10, title=None, format_='png', xlabel=None, ylabel=None, line_style='-', hide_axis=False, clear=True, color='r'):
+    points = channel.points.filter(y_accumulative__gte=initial_time,
+                                   y_accumulative__lte=final_time)
+    if title is None:
+        title = _(u'RR Histograma: %(patient)s') % {
+            'patient': channel.record.patient.full_name
+        }
+    plt.clf()
+    plt.hist([point.y for point in points], bins)
+    plt.xlabel(xlabel if xlabel is not None else _('$RR_t$'))
+    plt.ylabel(ylabel if ylabel is not None else _('Frecuencia'))
+    plt.title(title)
+    plt.grid(True)
+    if file_like is not None:
+        plt.tight_layout()
+        plt.savefig(file_like, format=format_, bbox_inches='tight')
+        plt.show()
+
+
+def get_all_images(channel, file_like, initial_time, final_time, interval, format_='png', clear=True, color=None, line_style='-', label=None, title=None):
+    if clear:
+        plt.clf()
+    plt.figure(1)
+    # Original
+    x, y = get_channel_points(channel, initial_time, final_time)
+    plt.subplot(3, 2, 1)
+    plt.plot(x,y, line_style, color=random.rand(3, 1), label=label if label else _(u'Media'))
+    plt.title(_('Original'))
+    plt.grid(True)
+    # Media
+    x, y = channel.get_media_points(initial_time, final_time, interval)
+    plt.subplot(3, 2, 2)
+    plt.plot(x,y, line_style, color=random.rand(3, 1), label=label if label else _(u'Media'))
+    plt.title(_('Media'))
+    plt.grid(True)
+    # STD
+    x, y = channel.get_standard_deviation_points(initial_time, final_time, interval)
+    plt.subplot(3, 2, 3)
+    plt.title(_(u'Desviación estándar'))
+    plt.grid(True)
+    plt.plot(x,y, line_style, color=random.rand(3, 1), label=label if label else '')
+    # Return map
+    x, y = channel.get_return_map(initial_time, final_time)
+    plt.subplot(3, 2, 4)
+    plt.title(_('Mapa de retorno'))
+    plt.grid(True)
+    plt.plot(x,y, '.', color=random.rand(3, 1), label=label if label else '')
+    # SDSD
+    x, y = channel.get_SDSD(initial_time, final_time, interval)
+    plt.subplot(3, 2, 5)
+    plt.title(_('rMSSD o SDSD'))
+    plt.grid(True)
+    plt.plot(x,y, line_style, color=random.rand(3, 1), label=label if label else '')
+    # PNN50
+    x, y = channel.get_PNN50_points(
+        initial_time, final_time, interval)
+    plt.subplot(3, 2, 6)
+    plt.title(_('PNN50'))
+    plt.grid(True)
+    plt.plot(x,y, line_style, color=random.rand(3, 1), label=label if label else '')
+
+    # Finally drawing
+    plt.tight_layout()
+    plt.savefig(file_like, format=format_, bbox_inches='tight')
+
+
 def get_image(x, y, file_like=None, title=None, format_='png', xlabel=None, ylabel=None, line_style='-', hide_axis=False, clear=True, color='r', label=None):
     if clear:
         plt.clf()
@@ -164,25 +237,6 @@ def get_image(x, y, file_like=None, title=None, format_='png', xlabel=None, ylab
                 left='off',
                 labelleft=False)
     # fig.savefig(file_like, format=format_)
-    if file_like is not None:
-        plt.tight_layout()
-        plt.savefig(file_like, format=format_, bbox_inches='tight')
-        plt.show()
-
-
-def get_histogram(channel, initial_time, final_time, file_like, bins=10, title=None, format_='png', xlabel=None, ylabel=None, line_style='-', hide_axis=False, clear=True, color='r'):
-    points = channel.points.filter(y_accumulative__gte=initial_time,
-                                   y_accumulative__lte=final_time)
-    if title is None:
-        title = _(u'RR Histograma: %(patient)s') % {
-            'patient': channel.record.patient.full_name
-        }
-    plt.clf()
-    plt.hist([point.y for point in points], bins)
-    plt.xlabel(xlabel if xlabel is not None else _('$RR_t$'))
-    plt.ylabel(ylabel if ylabel is not None else _('Frecuencia'))
-    plt.title(title)
-    plt.grid(True)
     if file_like is not None:
         plt.tight_layout()
         plt.savefig(file_like, format=format_, bbox_inches='tight')
