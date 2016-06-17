@@ -8,6 +8,7 @@ from django.views.generic.base import View
 from django.conf import settings
 from apps.records.helpers import plot
 from apps.records.models import Record, Channel
+from apps.records.helpers.pdf import create_pdf
 from django.template.context import RequestContext
 
 
@@ -206,3 +207,15 @@ class RegisterViewDetail(View):
         return HttpResponse(render(request,
                                    'graphic.html',
                                    context=RequestContext(request, data)))
+
+
+class ReportView(View):
+
+    def get(self, request, record_id, channel_id, _format, patient_id):
+        if _format == 'pdf':
+            response = HttpResponse(content_type='application/pdf')
+            response.write(create_pdf(request))
+        else:
+            response = HttpResponse(status=400)
+
+        return response
