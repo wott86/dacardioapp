@@ -81,6 +81,7 @@
                         </p>
                     </p>
                     {% endif %}
+                    <a class="btn btn-info" href="{% url 'report' patient.id record.id channel.id 'pdf' %}?type={{ type }}&interval_start={{ interval_start }}&interval_end={{ interval_end }}&segment_size={{ segment_size }}&{% add_post_params "segment_size" "interval_start" "interval_end" "csrfmiddlewaretoken" %}">{% trans 'Generar PDF' %}</a>
                 </div>
             </div>
         </div>

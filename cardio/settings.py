@@ -167,6 +167,9 @@ CITIES_FILES = {
     },
 }
 
+# Reports
+from reportlab.lib.pagesizes import letter
+REPORT_PAGE_FORMAT = 'Letter'
 
 # Pagination
 MAX_ELEMENTS_PER_PAGE = 15

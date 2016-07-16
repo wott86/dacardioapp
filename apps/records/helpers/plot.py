@@ -166,13 +166,15 @@ def get_all_images(channel, file_like, initial_time, final_time, interval, forma
     # Original
     x, y = get_channel_points(channel, initial_time, final_time)
     plt.subplot(3, 2, 1)
-    plt.plot(x,y, line_style, color=random.rand(3, 1), label=label if label else _(u'Media'))
+    plt.plot(x, y, line_style,
+             color=random.rand(3, 1), label=label if label else _(u'Original'))
     plt.title(_('Original'))
     plt.grid(True)
     # Media
     x, y = channel.get_media_points(initial_time, final_time, interval)
     plt.subplot(3, 2, 2)
-    plt.plot(x,y, line_style, color=random.rand(3, 1), label=label if label else _(u'Media'))
+    plt.plot(x, y, line_style,
+             color=random.rand(3, 1), label=label if label else _(u'Media'))
     plt.title(_('Media'))
     plt.grid(True)
     # STD
@@ -180,30 +182,32 @@ def get_all_images(channel, file_like, initial_time, final_time, interval, forma
     plt.subplot(3, 2, 3)
     plt.title(_(u'Desviación estándar'))
     plt.grid(True)
-    plt.plot(x,y, line_style, color=random.rand(3, 1), label=label if label else '')
+    plt.plot(x, y, line_style,
+             color=random.rand(3, 1), label=label if label else '')
     # Return map
     x, y = channel.get_return_map(initial_time, final_time)
     plt.subplot(3, 2, 4)
     plt.title(_('Mapa de retorno'))
     plt.grid(True)
-    plt.plot(x,y, '.', color=random.rand(3, 1), label=label if label else '')
+    plt.plot(x, y, '.', color=random.rand(3, 1), label=label if label else '')
     # SDSD
     x, y = channel.get_SDSD(initial_time, final_time, interval)
     plt.subplot(3, 2, 5)
     plt.title(_('rMSSD o SDSD'))
     plt.grid(True)
-    plt.plot(x,y, line_style, color=random.rand(3, 1), label=label if label else '')
+    plt.plot(x, y, line_style, color=random.rand(3, 1), label=label if label else '')
     # PNN50
     x, y = channel.get_PNN50_points(
         initial_time, final_time, interval)
     plt.subplot(3, 2, 6)
     plt.title(_('PNN50'))
     plt.grid(True)
-    plt.plot(x,y, line_style, color=random.rand(3, 1), label=label if label else '')
+    plt.plot(x, y, line_style, color=random.rand(3, 1), label=label if label else '')
 
     # Finally drawing
     plt.tight_layout()
-    plt.savefig(file_like, format=format_, bbox_inches='tight')
+    if file_like is not None:
+        plt.savefig(file_like, format=format_, bbox_inches='tight')
 
 
 def get_image(x, y, file_like=None, title=None, format_='png', xlabel=None, ylabel=None, line_style='-', hide_axis=False, clear=True, color='r', label=None):

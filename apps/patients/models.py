@@ -224,6 +224,11 @@ class Patient(models.Model):
             return None
 
     @property
+    def added_by(self):
+        first_history = self.first_history
+        return first_history.modified_by if first_history else None
+
+    @property
     def last_history(self):
         """
         :rtype apps.patients.models.History

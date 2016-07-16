@@ -212,9 +212,13 @@ class RegisterViewDetail(View):
 class ReportView(View):
 
     def get(self, request, record_id, channel_id, _format, patient_id):
+        patient = get_object_or_404(Patient, id=patient_id)
+        record = get_object_or_404(Record, id=record_id, patient=patient)
+        channel = get_object_or_404(Channel, id=channel_id, record=record)
         if _format == 'pdf':
             response = HttpResponse(content_type='application/pdf')
-            response.write(create_pdf(request))
+            # response.write(create_pdf(request, channel))
+            create_pdf(request, channel, response)
         else:
             response = HttpResponse(status=400)
 
