@@ -6,6 +6,7 @@ from django.db import models
 from django.db.models.aggregates import Avg, StdDev, Sum
 from django.utils.translation import ugettext as _
 from django.utils import timezone
+from apps.records.helpers.points import get_max_pow2
 import numpy
 
 
@@ -238,18 +239,17 @@ class Channel(models.Model):
         y = []
         while initial_time < final_time:
             if self.is_time:
-                y.append(
-                    self.points.filter(
-                        y_accumulative__gte=initial_time,
-                        y_accumulative__lte=initial_time + interval
-                    ).order_by('x').aggregate(average=Avg('y'))['average'])
+                avg = self.points.filter(
+                    y_accumulative__gte=initial_time,
+                    y_accumulative__lte=initial_time + interval
+                ).order_by('x').aggregate(average=Avg('y'))['average']
             else:
-                y.append(
-                    self.points.filter(
+                avg = self.points.filter(
                         y___gte=initial_time,
-                        x__lte=initial_time+interval)
+                        x__lte=initial_time+interval) \
                     .order_by('x').aggregate(average=Avg('y'))['average']
-                )
+
+            y.append(avg if avg is not None else 0)
             initial_time += interval
         return numpy.std(y)
 
@@ -277,6 +277,49 @@ class Channel(models.Model):
                     aux = point
                 y.append(numpy.mean(differences) ** 0.5)
         return xrange(1, len(y) + 1), y  # TODO check this
+
+    def get_fft(self, initial_time, final_time, interval):
+        windows = []
+        while initial_time < final_time:
+            if self.is_time:
+                points = self.points.filter(
+                    y_accumulative__gte=initial_time,
+                    y_accumulative__lte=initial_time + interval)
+
+            else:
+                points = self.points.filter(
+                    y___gte=initial_time,
+                    x__lte=initial_time+interval).order_by('x')
+            if points.count() > 0:
+                windows.append([p.y for p in points])
+            initial_time += interval
+
+        # determine which pow2 is the max we can use
+        max_pow = get_max_pow2(windows)
+        ftt_sets = [
+            numpy.fft.fft(p[:2**max_pow]).real
+            for p in windows]
+
+        '''vlf = [
+            sum([point for point in pts if point <= 0.038])
+            for pts in ftt_sets
+        ]'''
+        lf = [
+            sum(
+                [point for point in pts
+                 if point > 0.038 and point <= 0.16]
+            )
+            for pts in ftt_sets
+        ]
+        hf = [
+            sum(
+                [point for point in pts
+                 if point > 0.16 and point <= 0.5]
+            )
+            for pts in ftt_sets
+        ]
+
+        return lf, hf, xrange(1, len(ftt_sets) + 1)
 
     @property
     def SDNN(self):

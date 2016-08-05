@@ -83,6 +83,7 @@ class GraphicView(View):
     GRAPHIC_TYPE_SDSD = 'sdsd'
     GRAPHIC_TYPE_PNN50 = 'pnn50'
     GRAPHIC_TYPE_HIST = 'histogram'
+    GRAPHIC_TYPE_LFHF = 'lfhf'
     GRAPHIC_TYPE_ALL = 'all'
 
     GRAPHIC_TYPE_PARAM_NAME = 'type'
@@ -151,6 +152,13 @@ class GraphicView(View):
                                interval_end,
                                file_like=response,
                                bins=int(request.GET.get('bins', 10)))
+        elif graphic_type == self.GRAPHIC_TYPE_LFHF:
+            plot.get_fft_image(channel,
+                               response,
+                               interval_start,
+                               interval_end,
+                               segment_size)
+
         elif graphic_type == self.GRAPHIC_TYPE_ALL:
             plot.get_all_images(
                 channel,

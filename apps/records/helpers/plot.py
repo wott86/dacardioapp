@@ -120,8 +120,7 @@ def get_SDSD_image(channel, file_like, initial_time, final_time, interval, forma
 
 
 def get_PNN50_image(channel, file_like, initial_time, final_time, interval, format_='png', clear=True, color='r', line_style='-', label=None, title=None):
-    x, y = channel.get_PNN50_points(
-        initial_time, final_time, interval)
+    x, y = channel.get_PNN50(initial_time, final_time, interval)
     get_image(
         x,
         y,
@@ -138,6 +137,64 @@ def get_PNN50_image(channel, file_like, initial_time, final_time, interval, form
         line_style=line_style,
         label=channel.record.patient.full_name if label is None else label
     )
+
+
+def get_fft_image(channel, file_like, initial_time, final_time, interval,
+                  format_='png', clear=True, color='r', line_style='-',
+                  label=None, title=None):
+    lf, hf, x = channel.get_fft(initial_time, final_time, interval)
+    format_ = format_
+    ylabel = _('')
+    xlabel = _('Intervalo (%(interval)d m)') % {'interval': interval / 60000}
+    hide_axis = not channel.is_time
+    clear = clear
+    color = color
+    line_style = line_style
+    label = channel.record.patient.full_name if label is None else label
+    title = (_(u'RR FFT: %(patient)s') % {
+                'patient': channel.record.patient.full_name
+            }) if title is None else title
+    if clear:
+        plt.clf()
+    plt.plot(
+        x, lf,
+        linestyle=line_style,
+        color='blue', label=_('LF'))
+    plt.plot(
+        x, hf,
+        linestyle=line_style,
+        color='red', label=_('HF'))
+    plt.legend()
+    if len(x) > 0:
+        plt.xlim(min(x), max(x))
+    if title:
+        plt.title(title)
+    if xlabel:
+        plt.xlabel(xlabel)
+    if ylabel:
+        plt.ylabel(ylabel)
+
+    fig = plt.figure()
+    fig.gca()
+    plt.figure(1)
+
+    plt.grid(True)
+
+    if hide_axis:
+        # plt.axis('off')
+        plt.tick_params(
+                axis='both',
+                which='both',
+                bottom='off',
+                top='off',
+                labelbottom='off',
+                left='off',
+                labelleft=False)
+    # fig.savefig(file_like, format=format_)
+    if file_like is not None:
+        plt.tight_layout()
+        plt.savefig(file_like, format=format_, bbox_inches='tight')
+        plt.show()
 
 
 def get_histogram(channel, initial_time, final_time, file_like, bins=10, title=None, format_='png', xlabel=None, ylabel=None, line_style='-', hide_axis=False, clear=True, color='r'):
