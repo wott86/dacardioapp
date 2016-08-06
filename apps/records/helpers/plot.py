@@ -142,7 +142,9 @@ def get_PNN50_image(channel, file_like, initial_time, final_time, interval, form
 def get_fft_image(channel, file_like, initial_time, final_time, interval,
                   format_='png', clear=True, color='r', line_style='-',
                   label=None, title=None):
-    lf, hf, x = channel.get_fft(initial_time, final_time, interval)
+    lf, hf, power, relation, x = channel.get_fft(
+        initial_time, final_time, interval)
+    print len(lf), len(hf), len(power), len(relation)
     format_ = format_
     ylabel = _('')
     xlabel = _('Intervalo (%(interval)d m)') % {'interval': interval / 60000}
@@ -156,19 +158,42 @@ def get_fft_image(channel, file_like, initial_time, final_time, interval,
             }) if title is None else title
     if clear:
         plt.clf()
-    plt.plot(
-        x, lf,
-        linestyle=line_style,
-        color='blue', label=_('LF'))
-    plt.plot(
-        x, hf,
-        linestyle=line_style,
-        color='red', label=_('HF'))
-    plt.legend()
+
+    plt.subplot(2, 1, 1)
     if len(x) > 0:
         plt.xlim(min(x), max(x))
+
     if title:
         plt.title(title)
+
+    if xlabel:
+        plt.xlabel(xlabel)
+    if ylabel:
+        plt.ylabel(ylabel)
+
+    plt.plot(
+        x, lf,
+        linestyle='solid',
+        color='blue', label=_('LF (un)'))
+    plt.plot(
+        x, hf,
+        linestyle='solid',
+        color='red', label=_('HF(un)'))
+    plt.legend()
+    plt.subplot(2, 1, 2)
+    plt.plot(
+        x, power,
+        linestyle='solid',
+        color='green', label=_('Potencia'))
+    plt.plot(
+        x, relation,
+        linestyle='solid',
+        color='magenta', label=_(u'Relación LF/HF'))
+    plt.legend()
+
+    if len(x) > 0:
+        plt.xlim(min(x), max(x))
+
     if xlabel:
         plt.xlabel(xlabel)
     if ylabel:
@@ -178,7 +203,7 @@ def get_fft_image(channel, file_like, initial_time, final_time, interval,
     fig.gca()
     plt.figure(1)
 
-    plt.grid(True)
+    plt.grid(False)
 
     if hide_axis:
         # plt.axis('off')

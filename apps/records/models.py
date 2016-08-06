@@ -296,9 +296,12 @@ class Channel(models.Model):
 
         # determine which pow2 is the max we can use
         max_pow = get_max_pow2(windows)
+        pow2 = 2**max_pow
         fft_sets = [
-            numpy.fft.fft(p[:2**max_pow]).real
+            numpy.fft.fft(p[:pow2], norm='ortho').real[:pow2/2]
             for p in windows]
+
+        indexes = [float(i)/(pow2) for i in xrange(pow2/2)]
 
         '''vlf = [
             sum([point for point in pts if point <= 0.038])
@@ -306,20 +309,24 @@ class Channel(models.Model):
         ]'''
         lf = [
             sum(
-                [point for point in pts
-                 if point > 0.038 and point <= 0.16]
+                [point for i, point in enumerate(pts)
+                 if indexes[i] > 0.038 and indexes[i] <= 0.16]
             )
             for pts in fft_sets
         ]
         hf = [
             sum(
-                [point for point in pts
-                 if point > 0.16 and point <= 0.5]
+                [point for i, point in enumerate(pts)
+                 if indexes[i] > 0.16 and indexes[i] <= 0.5]
             )
             for pts in fft_sets
         ]
+        len_sets = len(fft_sets)
+        power = [lf[i] + hf[i] for i in xrange(len_sets)]
 
-        return lf, hf, xrange(1, len(fft_sets) + 1)
+        relation = [lf[i] / hf[i] for i in xrange(len_sets)]
+
+        return lf, hf, power, relation, xrange(1, len(fft_sets) + 1)
 
     @property
     def SDNN(self):
