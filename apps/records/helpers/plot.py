@@ -144,7 +144,7 @@ def get_fft_image(channel, file_like, initial_time, final_time, interval,
                   label=None, title=None):
     lf, hf, power, relation, x = channel.get_fft(
         initial_time, final_time, interval)
-    print len(lf), len(hf), len(power), len(relation)
+    print relation
     format_ = format_
     ylabel = _('')
     xlabel = _('Intervalo (%(interval)d m)') % {'interval': interval / 60000}
@@ -159,7 +159,7 @@ def get_fft_image(channel, file_like, initial_time, final_time, interval,
     if clear:
         plt.clf()
 
-    plt.subplot(2, 1, 1)
+    plt.subplot(3, 1, 1)
     if len(x) > 0:
         plt.xlim(min(x), max(x))
 
@@ -180,11 +180,23 @@ def get_fft_image(channel, file_like, initial_time, final_time, interval,
         linestyle='solid',
         color='red', label=_('HF(un)'))
     plt.legend()
-    plt.subplot(2, 1, 2)
+    plt.subplot(3, 1, 2)
     plt.plot(
         x, power,
         linestyle='solid',
         color='green', label=_('Potencia'))
+
+    plt.legend()
+
+    if len(x) > 0:
+        plt.xlim(min(x), max(x))
+
+    if xlabel:
+        plt.xlabel(xlabel)
+    if ylabel:
+        plt.ylabel(ylabel)
+
+    plt.subplot(3, 1, 3)
     plt.plot(
         x, relation,
         linestyle='solid',

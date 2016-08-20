@@ -2,7 +2,12 @@ import math
 
 
 def get_pow2(points):
-    return int(math.log(len(points), 2))
+    '''
+    Returns max pox below number of points
+    param: points can be an int (lenght) or a list (points)
+    '''
+    length = len(points) if not isinstance(points, int) else points
+    return int(math.log(length, 2))
 
 
 def get_max_pow2(points_sets):

@@ -6,7 +6,7 @@ from django.db import models
 from django.db.models.aggregates import Avg, StdDev, Sum
 from django.utils.translation import ugettext as _
 from django.utils import timezone
-from apps.records.helpers.points import get_max_pow2
+from apps.records.helpers.points import get_max_pow2, get_pow2
 import numpy
 
 
@@ -325,8 +325,28 @@ class Channel(models.Model):
         power = [lf[i] + hf[i] for i in xrange(len_sets)]
 
         relation = [lf[i] / hf[i] for i in xrange(len_sets)]
+        # print relation
 
         return lf, hf, power, relation, xrange(1, len(fft_sets) + 1)
+
+    def get_total_fft(self):
+        pow2 = get_pow2(self.points.all().count())
+        pow2 = 2**pow2
+        points = [point.y for point in self.points.all().order_by('x')]
+        fft = numpy.fft.fft(points[:pow2], norm='ortho').real[:pow2/2]
+        indexes = [float(i)/(pow2) for i in xrange(pow2/2)]
+
+        lf = sum([point for i, point in enumerate(fft)
+                 if indexes[i] > 0.038 and indexes[i] <= 0.16]
+                 )
+        hf = sum([point for i, point in enumerate(fft)
+                 if indexes[i] > 0.16 and indexes[i] <= 0.5]
+                 )
+        power = lf + hf
+
+        relation = lf/hf
+
+        return lf, hf, power, relation
 
     @property
     def SDNN(self):
