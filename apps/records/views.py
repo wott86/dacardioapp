@@ -9,7 +9,6 @@ from django.conf import settings
 from apps.records.helpers import plot
 from apps.records.models import Record, Channel
 from apps.records.helpers.pdf import create_pdf
-from django.template.context import RequestContext
 
 
 class GraphicStatFormView(View):
@@ -39,7 +38,7 @@ class GraphicStatFormView(View):
         return HttpResponse(render(
             request,
             'stats_form.html',
-            context_instance=RequestContext(request, data)
+            data
         ))
 
     def post(self, request, record_id, channel_id, patient_id):

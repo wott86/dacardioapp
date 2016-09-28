@@ -12,7 +12,6 @@ from django.contrib import messages
 from django.utils.translation import ugettext as _
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.conf import settings
-from django.template.context import RequestContext
 from django.utils import timezone
 from faker import Factory
 import datetime
@@ -57,23 +56,28 @@ class PatientList(View):
                     age_init, age_end = age_end, age_init
                 date_init = now.year - int(age_end)
                 date_end = now.year - int(age_init)
-                patients = patients.filter(birth_date__range=(datetime.date(date_init, 1, 1),
-                                                              datetime.date(date_end+1, now.month, now.day)))
+                patients = patients.filter(
+                    birth_date__range=(datetime.date(date_init, 1, 1),
+                                       datetime.date(date_end+1,
+                                                     now.month, now.day)))
             else:
                 date_init = now.year - int(age_init)
-                patients = patients.filter(birth_date__range=(datetime.date(date_init, 1, 1),
-                                                              datetime.date(date_init+1, now.month, now.day)))
+                patients = patients.filter(birth_date__range=(
+                    datetime.date(date_init, 1, 1),
+                    datetime.date(date_init+1, now.month, now.day)))
 
         anomaly = request.GET.get('anomaly')
 
         if anomaly not in ('', None):
-            patients = patients.filter(diagnosis__anomalies__id=anomaly).distinct()
+            patients = patients.filter(
+                diagnosis__anomalies__id=anomaly).distinct()
 
         if not deactivated_patients:
             patients = patients.filter(active=True)
         paginator = self.paginator_class(
             patients,
-            request.GET.get('num_elements', getattr(settings, 'MAX_ELEMENTS_PER_PAGE', 25))
+            request.GET.get('num_elements',
+                            getattr(settings, 'MAX_ELEMENTS_PER_PAGE', 25))
         )
         try:
             page = paginator.page(request.GET.get('page', 1))
@@ -85,8 +89,7 @@ class PatientList(View):
             'page': page,
             'order': order
         }
-        return HttpResponse(render(request, 'patient_list.html',
-                                   context=RequestContext(request, data)))
+        return HttpResponse(render(request, 'patient_list.html', data))
 
     def post(self, request):
         """
@@ -106,14 +109,16 @@ class PatientList(View):
             )
             messages.success(
                 request,
-                _('Los datos del paciente %(name)s han sido guardados &eacute;xitosamente') % {'name': patient.full_name})
-            return HttpResponseRedirect(reverse('patient_detail', args=(patient.id,)))
+                _('Los datos del paciente %(name)s han sido guardados \
+                  &eacute;xitosamente') % {'name': patient.full_name})
+            return HttpResponseRedirect(reverse('patient_detail',
+                                                args=(patient.id,)))
 
         data = {
             'patient': patient,
             'form': form
         }
-        return HttpResponse(render(request, 'patient_detail.html', context=RequestContext(request, data)))
+        return HttpResponse(render(request, 'patient_detail.html', data))
 
 
 class PatientDetail(View):
@@ -121,8 +126,8 @@ class PatientDetail(View):
 
     def get(self, request, patient_id):
         patient = get_object_or_404(Patient, id=patient_id)
-        return HttpResponse(render(request, 'patient_detail.html',
-                                   context=RequestContext(request, {'patient': patient})))
+        return HttpResponse(render(request,
+                                   'patient_detail.html', {'patient': patient}))
 
 
 class PatientEdit(View):
@@ -141,7 +146,7 @@ class PatientEdit(View):
             'patient': patient,
             'form': form
         }
-        return HttpResponse(render(request, 'patient_detail.html', context=RequestContext(request, data)))
+        return HttpResponse(render(request, 'patient_detail.html', data))
 
     def post(self, request, patient_id):
         """
@@ -161,21 +166,27 @@ class PatientEdit(View):
                     modified_by=request.user,
                     patient=patient,
                     modified_field=changed,
-                    modified_old_value=unicode(form.initial[changed]) if not isinstance(form.initial[changed], Model) else str(form.initial[changed].id),
-                    modified_new_value=unicode(form.cleaned_data[changed]) if not isinstance(form.cleaned_data[changed], Model) else str(form.cleaned_data[changed].id)
+                    modified_old_value=unicode(form.initial[changed])
+                    if not isinstance(form.initial[changed], Model)
+                    else str(form.initial[changed].id),
+                    modified_new_value=unicode(form.cleaned_data[changed])
+                    if not isinstance(form.cleaned_data[changed], Model)
+                    else str(form.cleaned_data[changed].id)
                 )
             messages.success(
                 request,
-                _('Los datos del paciente %(name)s han sido guardados &eacute;xitosamente') % {
+                _('Los datos del paciente %(name)s han sido guardados \
+                  &eacute;xitosamente') % {
                     'name': patient.full_name
                 })
-            return HttpResponseRedirect(reverse('patient_detail', args=(patient.id,)))
+            return HttpResponseRedirect(
+                reverse('patient_detail', args=(patient.id,)))
 
         data = {
             'patient': patient,
             'form': form
         }
-        return HttpResponse(render(request, 'patient_detail.html', context=RequestContext(request, data)))
+        return HttpResponse(render(request, 'patient_detail.html', data))
 
 
 class PatientDelete(View):
@@ -187,7 +198,8 @@ class PatientDelete(View):
         patient.save()
         messages.success(
                          request,
-                         _(u'El paciente %(name)s han desactivado éxitosamente') % {'name': patient.full_name})
+                         _(u'El paciente %(name)s han desactivado éxitosamente')
+                         % {'name': patient.full_name})
         return HttpResponseRedirect(reverse('patient_list'))
 
 
@@ -200,7 +212,8 @@ class PatientActivate(View):
         patient.save()
         messages.success(
                          request,
-                         _(u'El paciente %(name)s han activado éxitosamente') % {'name': patient.full_name})
+                         _(u'El paciente %(name)s han activado éxitosamente')
+                         % {'name': patient.full_name})
         return HttpResponseRedirect(reverse('patient_list'))
 
 
@@ -217,7 +230,7 @@ class PatientNew(View):
         data = {
             'form': form
         }
-        return HttpResponse(render(request, 'patient_detail.html', context=RequestContext(request, data)))
+        return HttpResponse(render(request, 'patient_detail.html', data))
 
 
 class PatientAdvanceSearch(View):
@@ -226,7 +239,8 @@ class PatientAdvanceSearch(View):
         data = {
             'anomalies': Anomaly.objects.all()
         }
-        return HttpResponse(render(request, 'patient_advanced_search.html', context=RequestContext(request, data)))
+        return HttpResponse(render(request,
+                                   'patient_advanced_search.html', data))
 
 
 # Diagnosis
@@ -235,7 +249,8 @@ class DiagnosisList(View):
 
     def get(self, request, patient_id):
         patient = get_object_or_404(Patient, id=patient_id)
-        paginator = self.paginator_class(patient.diagnosis.all().order_by('-id'), 25)
+        paginator = self.paginator_class(
+            patient.diagnosis.all().order_by('-id'), 25)
         try:
             page = paginator.page(request.GET.get('page', 1))
         except PageNotAnInteger:
@@ -246,7 +261,7 @@ class DiagnosisList(View):
             'patient': patient,
             'page': page,
         }
-        return HttpResponse(render(request, 'diagnosis_list.html', context=RequestContext(request, data)))
+        return HttpResponse(render(request, 'diagnosis_list.html', data))
 
 
 class DiagnosisNew(View):
@@ -259,7 +274,7 @@ class DiagnosisNew(View):
             'form': self.form_class()
         }
 
-        return HttpResponse(render(request, 'diagnosis_form.html', context=RequestContext(request, data)))
+        return HttpResponse(render(request, 'diagnosis_form.html', data))
 
     def post(self, request, patient_id):
         patient = get_object_or_404(Patient, id=patient_id)
@@ -270,7 +285,7 @@ class DiagnosisNew(View):
                 'patient': patient,
                 'form': form
             }
-            return HttpResponse(render(request, 'diagnosis_form.html', context=RequestContext(request, data)))
+            return HttpResponse(render(request, 'diagnosis_form.html', data))
 
         diagnosis = form.save(commit=False)
         diagnosis.made_by = request.user
@@ -279,11 +294,13 @@ class DiagnosisNew(View):
         form.save_m2m()
         messages.success(
             request,
-            _(u'El diagnóstico del paciente %(name)s ha sido guardado éxitosamente') % {
+            _(u'El diagnóstico del paciente %(name)s ha sido guardado \
+              éxitosamente') % {
                 'name': patient.full_name
             }
         )
-        return HttpResponseRedirect(reverse('diagnosis_list', args=(patient_id,)))
+        return HttpResponseRedirect(
+            reverse('diagnosis_list', args=(patient_id,)))
 
 
 class DiagnosisDetail(View):
@@ -292,7 +309,7 @@ class DiagnosisDetail(View):
         data = {
             'diagnosis': diagnosis
         }
-
+        return data
 
 
 # Actions
@@ -332,7 +349,7 @@ class PatientsActionView(View):
             'patients': patients
         }
 
-        return HttpResponse(render(request, template, context=RequestContext(request, data)))
+        return HttpResponse(render(request, template, data))
 
 
 class PatientActionDeactivate(View):
@@ -363,7 +380,7 @@ class PatientActionStats(View):
 
     def post(self, request):
         request.GET = request.POST
-        return HttpResponse(render(request, 'stats/bulk_graphic.html', context=RequestContext(request)))
+        return HttpResponse(render(request, 'stats/bulk_graphic.html'))
 
 
 class PatientActionStatsGraphic(View):
@@ -391,7 +408,8 @@ class PatientActionStatsGraphic(View):
         interval_start = request.GET.get('interval_start')
         interval_end = request.GET.get('interval_end')
         time_offset = int(request.GET.get('utc_offset', 0))
-        segment_size = TIME_MULTIPLIER[request.POST.get('segment_unit', 'minutes')]\
+        segment_size = TIME_MULTIPLIER[request.POST.get(
+            'segment_unit', 'minutes')]\
             * int(request.POST.get('segment_size', 1))
         title = None
 
@@ -405,7 +423,7 @@ class PatientActionStatsGraphic(View):
         plot.plt.clf()
         for patient in patients:
             channel = patient.get_last_channel()
-            colors[patient] = random.rand(3,1)
+            colors[patient] = random.rand(3, 1)
             if channel is None:
                 continue
 
