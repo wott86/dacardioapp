@@ -70,7 +70,7 @@ class GraphicStatFormView(View):
         return HttpResponse(render(
             request,
             'graphic_result.html',
-            context_instance=RequestContext(request, data)
+            data
         ))
 
 
@@ -194,7 +194,7 @@ class RegisterViewList(View):
 
         return HttpResponse(render(request,
                                    'record_list.html',
-                                   context=RequestContext(request, data)))
+                                   data))
 
 
 class RegisterViewDetail(View):
@@ -213,7 +213,7 @@ class RegisterViewDetail(View):
 
         return HttpResponse(render(request,
                                    'graphic.html',
-                                   context=RequestContext(request, data)))
+                                   data))
 
 
 class ReportView(View):
