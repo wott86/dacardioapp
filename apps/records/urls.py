@@ -1,10 +1,9 @@
 from apps.records.views import GraphicView, RegisterViewDetail, \
     RegisterViewList, GraphicStatFormView, ReportView
 from django.contrib.auth.decorators import login_required
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 
-urlpatterns = patterns(
-    'apps.records.views',
+urlpatterns = (
     url(r'^$', login_required(RegisterViewList.as_view()),
         name='record_list'),
     url(r'^(\d+)/channel/(\d+)/$',
