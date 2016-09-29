@@ -1,12 +1,14 @@
 from django.template import Library, Variable
 from django.http.request import QueryDict
+from django.utils.safestring import mark_safe
+from django.utils.html import escape
 
 register = Library()
 
 
 def filter_params(params, *args):
     data = QueryDict('', mutable=True)
-    data.update({param:params[param] for param in params if param not in args})
+    data.update({param: params[param] for param in params if param not in args})
     print data, args
     return data
 
@@ -49,9 +51,10 @@ def add_get_params_hidden(context, *args):
     hiddens = []
     for param in params:
         if param not in args:
-            hiddens.append('<input type="hidden" name="%s" value="%s" />' % (param, params[param]))
+            hiddens.append('<input type="hidden" name="%s" value="%s" />'
+                           % (escape(param), escape(params[param])))
 
-    return ''.join(hiddens)
+    return mark_safe(''.join(hiddens))
 
 
 @register.simple_tag(takes_context=True)
@@ -70,6 +73,7 @@ def add_post_params_hidden(context, *args):
     hiddens = []
     for param in params:
         if param not in args:
-            hiddens.append('<input type="hidden" name="%s" value="%s" />' % (param, params[param]))
+            hiddens.append('<input type="hidden" name="%s" value="%s" />'
+                           % (escape(param), escape(params[param])))
 
-    return ''.join(hiddens)
+    return mark_safe(''.join(hiddens))
