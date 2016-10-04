@@ -6,7 +6,8 @@ import django
 
 if __name__ == "__main__":
     if len(sys.argv) < 4:
-        print 'Usage: ./load_sample_rr.py <filename> <patient_id> <loader>'
+        print 'Usage: ./load_sample_rr.py <filename> <patient_id> \
+            <admin username>'
         exit()
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "cardio.settings")
     django.setup()

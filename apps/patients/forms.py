@@ -1,7 +1,5 @@
 from apps.patients.models import Patient, Diagnosis
 from django import forms
-from django.utils.translation import ugettext as _
-from django.core.files.images import get_image_dimensions
 __author__ = 'alvaro'
 
 
@@ -32,11 +30,12 @@ class PatientAdminForm(PatientBaseForm):
 
 class PatientForm(PatientBaseForm):
     class Meta(PatientBaseForm.Meta):
-        exclude = ['street_2', 'chart_number']
+        exclude = ['street_2', 'chart_number', 'active']
         widgets = {
             'city': forms.TextInput,
             'habits': forms.SelectMultiple(attrs={'class': 'selectpicker'}),
-            'picture': forms.ClearableFileInput(attrs={'class': 'testing_class'})
+            'picture': forms.ClearableFileInput(
+                attrs={'class': 'testing_class'})
         }
 
 
@@ -46,5 +45,6 @@ class DiagnosisForm(forms.ModelForm):
         exclude = ['patient', 'made_by']
         widgets = {
             'anomalies': forms.SelectMultiple(attrs={'class': 'selectpicker'}),
-            'attachment': forms.ClearableFileInput(attrs={'class': 'testing_class'})
+            'attachment': forms.ClearableFileInput(
+                attrs={'class': 'testing_class'})
         }

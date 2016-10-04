@@ -144,7 +144,6 @@ def get_fft_image(channel, file_like, initial_time, final_time, interval,
                   label=None, title=None):
     lf, hf, power, relation, x = channel.get_fft(
         initial_time, final_time, interval)
-    print relation
     format_ = format_
     ylabel = _('')
     xlabel = _('Intervalo (%(interval)d m)') % {'interval': interval / 60000}
@@ -173,10 +172,12 @@ def get_fft_image(channel, file_like, initial_time, final_time, interval,
 
     plt.plot(
         x, lf,
+        'o',
         linestyle='solid',
         color='blue', label=_('LF (un)'))
     plt.plot(
         x, hf,
+        'o',
         linestyle='solid',
         color='red', label=_('HF(un)'))
     plt.legend()

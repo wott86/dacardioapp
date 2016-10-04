@@ -8,6 +8,7 @@ from django.utils.translation import ugettext as _
 from django.utils import timezone
 from apps.records.helpers.points import get_max_pow2, get_pow2
 import numpy
+import math
 
 
 # Create your models here.
@@ -298,10 +299,15 @@ class Channel(models.Model):
         max_pow = get_max_pow2(windows)
         pow2 = 2**max_pow
         fft_sets = [
-            numpy.fft.fft(p[:pow2], norm='ortho').real[:pow2/2]
+            numpy.fft.fft(p[:pow2]).real # [:pow2/2]
             for p in windows]
 
-        indexes = [float(i)/(pow2) for i in xrange(pow2/2)]
+        #indexes = [float(i)/(pow2) for i in xrange(pow2/2)]
+        indexes = numpy.fft.fftfreq(pow2)[:pow2/2]
+        #raise Exception()
+        fft_sets = [[math.sqrt((pts[i]**2 + pts[pow2-i-1]**2) / 2.0) / (pow2/2.0)
+                     for i in xrange(pow2/2)]
+                    for pts in fft_sets]
 
         '''vlf = [
             sum([point for point in pts if point <= 0.038])
@@ -326,7 +332,8 @@ class Channel(models.Model):
 
         relation = [lf[i] / hf[i] for i in xrange(len_sets)]
         # print relation
-
+        lf = [a/b for a, b in zip(lf, power)]
+        hf = [a/b for a, b in zip(hf, power)]
         return lf, hf, power, relation, xrange(1, len(fft_sets) + 1)
 
     def get_total_fft(self):
