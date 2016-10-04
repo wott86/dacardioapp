@@ -299,13 +299,13 @@ class Channel(models.Model):
         max_pow = get_max_pow2(windows)
         pow2 = 2**max_pow
         fft_sets = [
-            numpy.fft.fft(p[:pow2]).real # [:pow2/2]
+            numpy.fft.fft(p[:pow2]).real
             for p in windows]
 
-        #indexes = [float(i)/(pow2) for i in xrange(pow2/2)]
+        # indexes = [float(i)/(pow2) for i in xrange(pow2/2)]
         indexes = numpy.fft.fftfreq(pow2)[:pow2/2]
-        #raise Exception()
-        fft_sets = [[math.sqrt((pts[i]**2 + pts[pow2-i-1]**2) / 2.0) / (pow2/2.0)
+        fft_sets = [[(math.sqrt((pts[i]**2 + pts[pow2-i-1]**2)/2.0)/(pow2/2.0),
+                      ((pts[i]**2 + pts[pow2-i-1]**2) / 2.0))
                      for i in xrange(pow2/2)]
                     for pts in fft_sets]
 
@@ -314,27 +314,36 @@ class Channel(models.Model):
             for pts in ftt_sets
         ]'''
         lf = [
-            sum(
-                [point for i, point in enumerate(pts)
+            (sum(
+                [point[0] for i, point in enumerate(pts)
                  if indexes[i] > 0.038 and indexes[i] <= 0.16]
-            )
+            ),
+             sum(
+                [point[1] for i, point in enumerate(pts)
+                 if indexes[i] > 0.038 and indexes[i] <= 0.16]
+            ))
             for pts in fft_sets
         ]
         hf = [
-            sum(
-                [point for i, point in enumerate(pts)
+            (sum(
+                [point[0] for i, point in enumerate(pts)
                  if indexes[i] > 0.16 and indexes[i] <= 0.5]
-            )
+            ),
+             sum(
+                [point[1] for i, point in enumerate(pts)
+                 if indexes[i] > 0.16 and indexes[i] <= 0.5]
+            ))
             for pts in fft_sets
         ]
         len_sets = len(fft_sets)
-        # TODO fix power to be cuadratic
-        power = [lf[i] + hf[i] for i in xrange(len_sets)]
+        power = [lf[i][1] + hf[i][1] for i in xrange(len_sets)]
 
-        relation = [lf[i] / hf[i] for i in xrange(len_sets)]
-        # print relation
-        lf = [a/b for a, b in zip(lf, power)]
-        hf = [a/b for a, b in zip(hf, power)]
+        relation = [lf[i][0] / hf[i][0] for i in xrange(len_sets)]
+
+        # Normalizing
+        sum_lf_hf = [lf[i][0] + hf[i][0] for i in xrange(len_sets)]
+        lf = [a[0]/b for a, b in zip(lf, sum_lf_hf)]
+        hf = [a[0]/b for a, b in zip(hf, sum_lf_hf)]
         return lf, hf, power, relation, xrange(1, len(fft_sets) + 1)
 
     def get_total_fft(self):
