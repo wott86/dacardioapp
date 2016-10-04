@@ -328,6 +328,7 @@ class Channel(models.Model):
             for pts in fft_sets
         ]
         len_sets = len(fft_sets)
+        # TODO fix power to be cuadratic
         power = [lf[i] + hf[i] for i in xrange(len_sets)]
 
         relation = [lf[i] / hf[i] for i in xrange(len_sets)]
