@@ -51,14 +51,14 @@ class GraphicStatFormView(View):
                 request.POST.get('segment_unit', 'minutes')]\
             * int(request.POST.get('segment_size', 1))
 
+        graphic_type = request.POST.get('stat_type',
+                                        GraphicView.GRAPHIC_TYPE_NORMAL)
+
         data = {
             'record': record,
             'patient': patient,
             'channel': channel,
-            'type': request.POST.get(
-                'stat_type',
-                GraphicView.GRAPHIC_TYPE_NORMAL
-            ),
+            'type': graphic_type,
             'interval_start': int(convert_time_to_milli(
                 channel,
                 parser.parse(request.POST.get('interval_start', 0)))),
@@ -67,6 +67,13 @@ class GraphicStatFormView(View):
                 parser.parse(request.POST.get('interval_end', 0)))),
             'segment_size': segment_size
         }
+
+        # In case graphic type is a pdf
+        if graphic_type == GraphicView.GRAPHIC_TYPE_PDF:
+            response = HttpResponse(content_type='application/pdf')
+            create_pdf(channel, data, response)
+            return response
+
         return HttpResponse(render(
             request,
             'graphic_result.html',
@@ -83,6 +90,7 @@ class GraphicView(View):
     GRAPHIC_TYPE_PNN50 = 'pnn50'
     GRAPHIC_TYPE_HIST = 'histogram'
     GRAPHIC_TYPE_LFHF = 'lfhf'
+    GRAPHIC_TYPE_PDF = 'pdf'
     GRAPHIC_TYPE_ALL = 'all'
 
     GRAPHIC_TYPE_PARAM_NAME = 'type'

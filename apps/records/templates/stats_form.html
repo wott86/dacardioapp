@@ -80,9 +80,13 @@
                     segment_unit.val("minutes");
                 }
             });
+
+            // Bins field show
             $("#id_stat_type").change(function(e){
-                if($(this).val() == "histogram"){
-                    $("#bins_container").slideDown("fast");
+                if($(this).val() == "histogram" || $(this).val() == "pdf"){
+                    if(!$("#bins_container").is(":visible")){
+                        $("#bins_container").slideDown("fast");
+                    }
                 }
                 else {
                     if($("#bins_container").is(":visible")){
@@ -90,6 +94,17 @@
                     }
                 }
             });
+
+            if($("#id_stat_type").val() == "histogram" || $("#id_stat_type").val() == "pdf"){
+                if(!$("#bins_container").is(":visible")){
+                    $("#bins_container").slideDown("fast");
+                }
+            }
+            else {
+                if($("#bins_container").is(":visible")){
+                    $("#bins_container").slideUp("fast");
+                }
+            }
         });
     </script>
 {% endblock %}
@@ -181,12 +196,13 @@
                                         <option value="histogram">{% trans 'Histograma' %}</option>
                                         <option value="lfhf">{% trans 'LF/HF' %}</option>
                                         <option value="all">{% trans 'Todas las gráficas' %}</option>
+                                        <option value="pdf">{% trans 'Generar reporte' %}</option>
                                     </select>
                                 </p>
                             </div>
                             <div class="row" id="bins_container" style="display: none">
                                 <p class="col-lg-6 col-md-6 col-sm-6 col-sx-6">
-                                    <label for="id_stat_type">{% trans 'Bins' %}</label>
+                                    <label for="id_stat_type">{% trans 'Bins (Histograma)' %}</label>
                                 </p>
                                 <p class='input-group col-lg-2 col-md-2 col-sm-2 col-sx-2'>
                                     <input type='number' class="form-control" id="id_bins" name="bins" value="10" />
