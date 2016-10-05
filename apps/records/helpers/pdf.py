@@ -1,10 +1,12 @@
 # coding=utf-8
 import StringIO
+from PIL import Image
 from fpdf import FPDF
 from django.conf import settings
 from django.utils.translation import ugettext as _
 from reportlab.pdfgen import canvas
 from reportlab.lib import colors
+from reportlab.lib.utils import ImageReader
 from . import plot
 from apps.records.helpers.time import TIME_MULTIPLIER
 
@@ -160,8 +162,105 @@ def create_pdf(channel, data=None, file_like=None):
     y_offset += y_inc
 
     c.drawCentredString(width/2, height-y_offset,
-                        _(u'Análisis'))
+                        _(u'Parámetros'))
+    y_offset += y_inc
+    y_offset += y_inc
 
+    c.drawString(margin[3], height - y_offset,
+                 _(u'Inicio: %(initial_time)s') % {
+                     'initial_time': data['request_data']['interval_start']
+                 })
+
+    c.drawString(width - margin[1]-250, height - y_offset,
+                 _(u'Final:'))
+    c.drawRightString(width - margin[1], height - y_offset,
+                      data['request_data']['interval_start'])
+
+    y_offset += y_inc
+    c.drawString(margin[3], height - y_offset,
+                 _(u'Tamaño de ventana: %(segment_size)s%(segment_unit)s') % {
+                     'segment_size': data['request_data']['segment_size'],
+                     'segment_unit': data['request_data']['segment_unit'][0],
+                 })
+
+    c.drawString(width - margin[1]-250, height - y_offset,
+                 _(u'Bins:'))
+    c.drawRightString(width - margin[1], height - y_offset,
+                      data['request_data']['bins'])
+
+    y_offset += 6
+    c.line(margin[3], height - y_offset, width - margin[1], height - y_offset)
+    y_offset += y_inc
+    y_offset += y_inc
+
+    c.drawCentredString(width/2, height-y_offset,
+                        _(u'Indicadores'))
+    y_offset += y_inc
+    y_offset += y_inc
+
+    c.drawString(margin[3], height - y_offset,
+                 _(u'STD (SDNN): %(std)10.2f (ms)') % {
+                     'std': channel.get_standard_deviation(
+                         interval_start,
+                         interval_end
+                     ),
+                 })
+
+    c.drawString(width - margin[1]-250, height - y_offset,
+                 _(u'Media:'))
+    c.drawRightString(width - margin[1], height - y_offset,
+                      '%10.2f (ms)' % channel.get_media(
+                         interval_start,
+                         interval_end
+                      )
+                      )
+
+    y_offset += y_inc
+
+    c.drawString(margin[3], height - y_offset,
+                 _(u'SDNNindex: %(value)10.2f (ms)') % {
+                     'value': channel.get_SDNNindex(
+                         interval_start,
+                         interval_end,
+                         segment_size
+                     ),
+                 })
+
+    c.drawString(width - margin[1]-250, height - y_offset,
+                 _(u'SDANN:'))
+    c.drawRightString(width - margin[1], height - y_offset,
+                      '%10.2f (ms)' % channel.get_SDANN(
+                          interval_start,
+                          interval_end,
+                          segment_size
+                      )
+                      )
+
+    y_offset += y_inc
+
+    c.drawString(margin[3], height - y_offset,
+                 _(u'PNN50: %(value)10.2f (ms)') % {
+                     'value': channel.get_PNN50(
+                         interval_start,
+                         interval_end
+                     ),
+                 })
+    y_offset += 6
+    c.line(margin[3], height - y_offset, width - margin[1], height - y_offset)
+    y_offset += y_inc
+    y_offset += y_inc
+
+    image_buffer = StringIO.StringIO()
+    plot.get_all_images(channel, image_buffer, interval_start, interval_end,
+                        segment_size)
+    image_buffer = ImageReader(Image.open(image_buffer))
+    iw, ih = image_buffer.getSize()
+    aspect = ih / float(iw)
+    image_width = width - margin[1] - margin[3]
+    image_height = image_width * aspect
+    c.drawImage(image_buffer, width - image_width - 50,
+                height - y_offset - image_height,
+                width=image_width, height=image_height)
     # ########
     c.showPage()
     c.save()

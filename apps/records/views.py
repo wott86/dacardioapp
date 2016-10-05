@@ -65,7 +65,8 @@ class GraphicStatFormView(View):
             'interval_end': int(convert_time_to_milli(
                 channel,
                 parser.parse(request.POST.get('interval_end', 0)))),
-            'segment_size': segment_size
+            'segment_size': segment_size,
+            'request_data': request.POST.copy()
         }
 
         # In case graphic type is a pdf

@@ -8,10 +8,14 @@ def get_channel_points(channel, interval_start, interval_end):
     x = []
     y = []
     kwargs = {
-        ('x__gte' if not channel.is_time else 'y_accumulative__gte'): interval_start if channel.is_time else interval_start / channel.sampling_rate
+        ('x__gte' if not channel.is_time else 'y_accumulative__gte'):
+        interval_start if channel.is_time else
+        interval_start / channel.sampling_rate
     }
     if interval_end not in (None, ''):
-        kwargs['x__lte' if not channel.is_time else 'y_accumulative__lte'] = interval_end if channel.is_time else interval_end / channel.sampling_rate
+        kwargs['x__lte' if not channel.is_time else 'y_accumulative__lte'] = \
+            interval_end if channel.is_time else\
+            interval_end / channel.sampling_rate
 
     points = channel.points.filter(**kwargs).order_by('x')
 
@@ -22,7 +26,8 @@ def get_channel_points(channel, interval_start, interval_end):
     return x, y
 
 
-def get_channel_image(channel, file_like, format_='png', interval_start=0, interval_end=None, clear=True, color='r', line_style='-'):
+def get_channel_image(channel, file_like, format_='png', interval_start=0,
+                      interval_end=None, clear=True, color='r', line_style='-'):
     x, y = get_channel_points(channel, interval_start, interval_end)
 
     get_image(
@@ -254,7 +259,9 @@ def get_histogram(channel, initial_time, final_time, file_like, bins=10, title=N
         plt.show()
 
 
-def get_all_images(channel, file_like, initial_time, final_time, interval, format_='png', clear=True, color=None, line_style='-', label=None, title=None):
+def get_all_images(channel, file_like, initial_time, final_time, interval,
+                   format_='png', clear=True, color=None, line_style='-',
+                   label=None, title=None):
     if clear:
         plt.clf()
     plt.figure(1)
