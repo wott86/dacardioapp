@@ -240,7 +240,9 @@ def get_fft_image(channel, file_like, initial_time, final_time, interval,
         plt.show()
 
 
-def get_histogram(channel, initial_time, final_time, file_like, bins=10, title=None, format_='png', xlabel=None, ylabel=None, line_style='-', hide_axis=False, clear=True, color='r'):
+def get_histogram(channel, initial_time, final_time, file_like, bins=10,
+                  title=None, format_='png', xlabel=None, ylabel=None,
+                  line_style='-', hide_axis=False, clear=True, color='r'):
     points = channel.points.filter(y_accumulative__gte=initial_time,
                                    y_accumulative__lte=final_time)
     if title is None:

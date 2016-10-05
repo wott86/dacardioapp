@@ -248,8 +248,8 @@ def create_pdf(channel, data=None, file_like=None):
     y_offset += 6
     c.line(margin[3], height - y_offset, width - margin[1], height - y_offset)
     y_offset += y_inc
-    y_offset += y_inc
 
+    # Drawing images
     image_buffer = StringIO.StringIO()
     plot.get_all_images(channel, image_buffer, interval_start, interval_end,
                         segment_size)
@@ -258,9 +258,66 @@ def create_pdf(channel, data=None, file_like=None):
     aspect = ih / float(iw)
     image_width = width - margin[1] - margin[3]
     image_height = image_width * aspect
-    c.drawImage(image_buffer, width - image_width - 50,
+    c.drawImage(image_buffer, (width - image_width)/2,
                 height - y_offset - image_height,
                 width=image_width, height=image_height)
+
+    # Page 2
+    y_offset = margin[0]  # this must be incremented
+    c.showPage()
+    c.drawCentredString(width/2, height-y_offset,
+                        _(u'Electrocardiografía ambulatoria continua'))
+    y_offset += y_inc
+    c.drawCentredString(width/2, height-y_offset,
+                        _(u'(Holter 24 Hrs)'))
+    y_offset += y_inc
+    c.setStrokeColor(colors.grey)
+    c.setLineWidth(4)
+    c.line(margin[3], height - y_offset, width - margin[1], height - y_offset)
+    y_offset += (y_inc * 2)
+    c.setStrokeColor(colors.black)
+
+    # patient data
+    c.drawString(margin[3], height - y_offset,
+                 _('Nombre del paciente: %(patient_name)s') % {
+                     'patient_name': channel.record.patient.full_name
+                 })
+    c.drawString(width - margin[1]-250, height - y_offset,
+                 _(u'Médico tratante:'))
+    c.drawRightString(width - margin[1], height - y_offset,
+                      channel.record.patient.added_by.full_name)
+
+    y_offset += 6
+    c.setLineWidth(0.5)
+    c.line(margin[3], height - y_offset, width - margin[1], height - y_offset)
+    y_offset += (y_inc * 2)
+
+    # Images
+    image_buffer = StringIO.StringIO()
+    plot.get_histogram(channel, interval_start, interval_end, image_buffer,
+                       int(data['request_data']['bins']))
+    image_buffer = ImageReader(Image.open(image_buffer))
+    iw, ih = image_buffer.getSize()
+    aspect = ih / float(iw)
+    image_width = 300
+    image_height = image_width * aspect
+    c.drawImage(image_buffer, (width - image_width)/2,
+                height - y_offset - image_height,
+                width=image_width, height=image_height)
+
+    y_offset += y_inc + image_height
+    image_buffer = StringIO.StringIO()
+    plot.get_fft_image(channel, image_buffer, interval_start, interval_end,
+                       segment_size)
+    image_buffer = ImageReader(Image.open(image_buffer))
+    iw, ih = image_buffer.getSize()
+    aspect = ih / float(iw)
+    image_width = 500
+    image_height = image_width * aspect
+    c.drawImage(image_buffer, (width - image_width)/2,
+                height - y_offset - image_height,
+                width=image_width, height=image_height)
+
     # ########
     c.showPage()
     c.save()
