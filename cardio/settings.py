@@ -40,7 +40,6 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.gis',
     'django_extensions',
-    'cities',
     'apps.users',
     'apps.patients',
     'apps.records',
@@ -171,14 +170,6 @@ MESSAGE_TAGS = {
     message_constants.SUCCESS: 'alert-success',
     message_constants.WARNING: 'alert-warning',
     message_constants.ERROR: 'alert-danger'
-}
-
-# cities
-CITIES_FILES = {
-    'city': {
-        'filename': 'cities1000.zip',
-        'urls':     ['http://download.geonames.org/export/dump/' + '{filename}']
-    },
 }
 
 # Reports

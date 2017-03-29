@@ -2,8 +2,8 @@ from django.conf.urls import url
 from django.contrib import admin
 
 
-from rest_framework.authtoken import views
+from .views import HabitsView
 
 urlpatterns = [
-    url(r'^api-token-auth/', views.obtain_auth_token),
+    url(r'^$', HabitsView.as_view()),
 ]
