@@ -17,7 +17,6 @@ except ImportError:
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/
 
@@ -44,7 +43,12 @@ INSTALLED_APPS = (
     'cities',
     'apps.users',
     'apps.patients',
-    'apps.records'
+    'apps.records',
+
+    # Django Rest Framework
+    'rest_framework',
+    'rest_framework.authtoken',
+    'rest_framework_docs',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -108,6 +112,16 @@ MEDIA_URL = '/media/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+    )
+}
+
 # My settings
 # Auth
 AUTH_USER_MODEL = 'users.User'
@@ -163,7 +177,7 @@ MESSAGE_TAGS = {
 CITIES_FILES = {
     'city': {
         'filename': 'cities1000.zip',
-        'urls':     ['http://download.geonames.org/export/dump/'+'{filename}']
+        'urls':     ['http://download.geonames.org/export/dump/' + '{filename}']
     },
 }
 
