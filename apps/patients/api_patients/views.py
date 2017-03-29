@@ -1,18 +1,11 @@
-from apps.patients.models import (
-    Habit,
-    Patient
-    )
+from apps.patients.models import Patient
 
 from rest_framework.generics import (
-    ListAPIView,
     ListCreateAPIView,
     RetrieveUpdateDestroyAPIView
 )
 
-from .serializers import (
-    HabitSerializer,
-    PatientSerializer
-)
+from .serializers import PatientSerializer
 
 
 class PatientsView(ListCreateAPIView):
@@ -23,9 +16,3 @@ class PatientsView(ListCreateAPIView):
 class PatientView(RetrieveUpdateDestroyAPIView):
     queryset = Patient.objects.all()
     serializer_class = PatientSerializer
-
-
-class HabitsView(ListAPIView):
-    queryset = Habit.objects.all()
-    serializer_class = HabitSerializer
-

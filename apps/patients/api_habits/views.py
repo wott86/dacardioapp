@@ -1,14 +1,6 @@
 from apps.patients.models import Habit
 
-from rest_framework.generics import (
-    ListAPIView,
-    ListCreateAPIView,
-    RetrieveUpdateDestroyAPIView
-)
-
-from rest_framework.permissions import (
-    IsAuthenticatedOrReadOnly,
-)
+from rest_framework.generics import ListAPIView
 
 from .serializers import (
     HabitSerializer
