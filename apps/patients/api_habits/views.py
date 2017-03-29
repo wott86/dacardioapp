@@ -18,5 +18,3 @@ from .serializers import (
 class HabitsView(ListAPIView):
     queryset = Habit.objects.all()
     serializer_class = HabitSerializer
-    permission_classes = (IsAuthenticatedOrReadOnly,)
-
