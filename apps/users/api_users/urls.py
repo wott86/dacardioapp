@@ -3,10 +3,10 @@ from django.contrib import admin
 
 from .views import (
     UserView,
-    UsersView,
+    UserDetailView,
 )
 
 urlpatterns = [
-    url(r'^$', UsersView.as_view()),
-    url(r'^(?P<pk>[\w-]+)/$', UserView.as_view())
+    url(r'^$', UserView.as_view()),
+    url(r'^(?P<pk>[\w-]+)/$', UserDetailView.as_view())
 ]

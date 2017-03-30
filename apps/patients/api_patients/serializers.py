@@ -5,12 +5,7 @@ from apps.patients.models import (
     Habit
 )
 
-
-class HabitSerializer(ModelSerializer):
-
-    class Meta:
-        model = Habit
-        exclude = ('order',)
+from apps.patients.api_habits.serializers import HabitSerializer
 
 
 class PatientSerializer(ModelSerializer):

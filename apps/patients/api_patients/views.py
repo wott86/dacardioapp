@@ -8,11 +8,11 @@ from rest_framework.generics import (
 from .serializers import PatientSerializer
 
 
-class PatientsView(ListCreateAPIView):
+class PatientView(ListCreateAPIView):
     queryset = Patient.objects.all()
     serializer_class = PatientSerializer
 
 
-class PatientView(RetrieveUpdateDestroyAPIView):
+class PatientDetailView(RetrieveUpdateDestroyAPIView):
     queryset = Patient.objects.all()
     serializer_class = PatientSerializer
