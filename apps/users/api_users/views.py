@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 
 from rest_framework.generics import (
+    CreateAPIView,
     ListCreateAPIView,
     RetrieveUpdateDestroyAPIView,
     UpdateAPIView
@@ -37,8 +38,3 @@ class UserView(ListCreateAPIView):
         if self.request.method == 'POST':
             return UserCreateSerializer
         return UserSerializer
-
-class UserUpdatePasswordView(UpdateAPIView):
-    permission_classes = (isOwner,)
-    queryset = User.objects.all()
-    serializer_class = UserUpdatePasswordSerializer
