@@ -38,3 +38,9 @@ class UserView(ListCreateAPIView):
         if self.request.method == 'POST':
             return UserCreateSerializer
         return UserSerializer
+
+class UserUpdatePasswordView(UpdateAPIView):
+    permission_classes = (isOwner,)
+    queryset = User.objects.all()
+    serializer_class = UserUpdatePasswordSerializer
+    
