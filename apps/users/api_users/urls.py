@@ -10,5 +10,5 @@ from .views import (
 urlpatterns = [
     url(r'^$', UserView.as_view()),
     url(r'^(?P<pk>[\w-]+)/$', UserDetailView.as_view()),
-    url(r'^(?P<pk>[\w-]+)/password/$', UserUpdatePasswordView.as_view())
+    url(r'^(?P<pk>[\w-]+)/change-password/$', UserUpdatePasswordView.as_view())
 ]

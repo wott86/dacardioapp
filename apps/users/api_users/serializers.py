@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from rest_framework.fields import CurrentUserDefault
+
 from rest_framework.serializers import (
     EmailField,
     ModelSerializer,
@@ -82,13 +83,7 @@ class UserUpdatePasswordSerializer(Serializer):
         return value
 
     def validate_old_password(self, value):
-        user = None
-        request = self.context.get("request")
-        if request and hasattr(request, "user"):
-            user = request.user
-        else:
-            raise ValidationError('You must be logged in.')
-
+        user = self.context.get("user")
         if user.check_password(value) is False:
             raise ValidationError('Wrong password.')
 

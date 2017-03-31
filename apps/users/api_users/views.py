@@ -1,4 +1,6 @@
 from django.contrib.auth import get_user_model
+from rest_framework.response import Response
+from rest_framework import status, permissions
 
 from rest_framework.generics import (
     CreateAPIView,
@@ -6,8 +8,11 @@ from rest_framework.generics import (
     RetrieveUpdateDestroyAPIView,
     UpdateAPIView
 )
-from rest_framework.response import Response
-from rest_framework import status, permissions
+
+from rest_framework.filters import (
+    SearchFilter,
+    OrderingFilter
+)
 
 from .serializers import (
     UserCreateSerializer,
@@ -33,6 +38,8 @@ class UserView(ListCreateAPIView):
     permission_classes = (permissions.IsAdminUser,)
     queryset = User.objects.all()
     serializer_class = UserCreateSerializer
+    filter_backends = (SearchFilter,)
+    search_fields = ('username', 'email', 'first_name', 'last_name')
 
     def get_serializer_class(self):
         if self.request.method == 'POST':
@@ -43,4 +50,14 @@ class UserUpdatePasswordView(UpdateAPIView):
     permission_classes = (isOwner,)
     queryset = User.objects.all()
     serializer_class = UserUpdatePasswordSerializer
-    
+
+    def get_serializer_context(self):
+        """
+        Extra context provided to the serializer class.
+        """
+        return {
+            'user': self.request.user,
+            'format': self.format_kwarg,
+            'view': self
+        }
+
