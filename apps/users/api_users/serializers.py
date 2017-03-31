@@ -1,8 +1,10 @@
 from django.contrib.auth import get_user_model
+from rest_framework.fields import CurrentUserDefault
 from rest_framework.serializers import (
     EmailField,
     ModelSerializer,
     CharField,
+    Serializer,
     ValidationError
 )
 
@@ -25,11 +27,6 @@ class UserCreateSerializer(ModelSerializer):
             'password',
             'confirm_password',
         )
-        read_only_fields = ('id', 'is_staff', 'is_superuser', 'is_active', 'date_joined')
-        extra_kwargs = {
-            'password': {'write_only': True},
-            'confirm_password': {'write_only': True},
-        }
 
     def create(self, validated_data):
         user = User(
@@ -47,7 +44,6 @@ class UserCreateSerializer(ModelSerializer):
 
     def validate_confirm_password(self, value):
         password = self.get_initial().get('password')
-        print password, value
         if password != value:
             raise ValidationError('Confirm password do not match.')
         return value
@@ -64,3 +60,44 @@ class UserSerializer(ModelSerializer):
             'last_name',
             'email',
         )
+
+class UserUpdatePasswordSerializer(Serializer):
+
+    old_password = CharField()
+    new_password = CharField()
+    confirm_new_password = CharField()
+
+    class Meta:
+        model = User
+        fields = (
+            'old_password',
+            'new_password',
+            'confirm_new_password',
+        )
+
+    def validate_confirm_new_password(self, value):
+        confirm_new_password = self.get_initial().get('new_password')
+        if confirm_new_password != value:
+            raise ValidationError('Confirm password do not match.')
+        return value
+
+    def validate_old_password(self, value):
+        user = None
+        request = self.context.get("request")
+        if request and hasattr(request, "user"):
+            user = request.user
+        else:
+            raise ValidationError('You must be logged in.')
+
+        if user.check_password(value) is False:
+            raise ValidationError('Wrong password.')
+
+        return value
+
+    def update(self, instance, validated_data):
+        instance.set_password(validated_data['new_password'])
+        instance.save()
+        return instance
+
+    def to_representation(self, obj):
+        return {}

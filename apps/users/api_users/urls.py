@@ -4,9 +4,11 @@ from django.contrib import admin
 from .views import (
     UserView,
     UserDetailView,
+    UserUpdatePasswordView
 )
 
 urlpatterns = [
     url(r'^$', UserView.as_view()),
-    url(r'^(?P<pk>[\w-]+)/$', UserDetailView.as_view())
+    url(r'^(?P<pk>[\w-]+)/$', UserDetailView.as_view()),
+    url(r'^(?P<pk>[\w-]+)/password/$', UserUpdatePasswordView.as_view())
 ]

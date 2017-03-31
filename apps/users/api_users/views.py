@@ -2,8 +2,8 @@ from django.contrib.auth import get_user_model
 
 from rest_framework.generics import (
     ListCreateAPIView,
-    CreateAPIView,
     RetrieveUpdateDestroyAPIView,
+    UpdateAPIView
 )
 from rest_framework.response import Response
 from rest_framework import status, permissions
@@ -11,9 +11,13 @@ from rest_framework import status, permissions
 from .serializers import (
     UserCreateSerializer,
     UserSerializer,
+    UserUpdatePasswordSerializer
 )
 
-from .permissions import isStaffOrOwner
+from .permissions import (
+    isStaffOrOwner,
+    isOwner
+)
 
 User = get_user_model()
 
@@ -27,8 +31,14 @@ class UserDetailView(RetrieveUpdateDestroyAPIView):
 class UserView(ListCreateAPIView):
     permission_classes = (permissions.IsAdminUser,)
     queryset = User.objects.all()
+    serializer_class = UserCreateSerializer
 
     def get_serializer_class(self):
-        if self.request.method == 'GET':
-            return UserSerializer
-        return UserCreateSerializer
+        if self.request.method == 'POST':
+            return UserCreateSerializer
+        return UserSerializer
+
+class UserUpdatePasswordView(UpdateAPIView):
+    permission_classes = (isOwner,)
+    queryset = User.objects.all()
+    serializer_class = UserUpdatePasswordSerializer
