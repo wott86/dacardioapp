@@ -28,6 +28,10 @@ urlpatterns = [
     url(r'^api/users/', include("apps.users.api_users.urls")),
     url(r'^api/patients/', include("apps.patients.api_patients.urls")),
     url(r'^api/habits/', include("apps.patients.api_habits.urls")),
+    url(r'^api/educations/', include("apps.patients.api_educations.urls")),
+    url(r'^api/occupations/', include("apps.patients.api_occupations.urls")),
+    url(r'^api/relationship-types/', include("apps.patients.api_relationship_types.urls")),
+    url(r'^api/socio-economic-status/', include("apps.patients.api_ses.urls")),
 ]
 
 

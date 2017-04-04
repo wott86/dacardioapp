@@ -51,6 +51,9 @@ class UserCreateSerializer(ModelSerializer):
 
 
 class UserSerializer(ModelSerializer):
+    email = EmailField()
+    first_name = CharField()
+    last_name = CharField()
 
     class Meta:
         model = User
@@ -61,6 +64,7 @@ class UserSerializer(ModelSerializer):
             'last_name',
             'email',
         )
+        read_only_fields = ('id',)
 
 class UserUpdatePasswordSerializer(Serializer):
 

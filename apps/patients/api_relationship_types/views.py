@@ -1,4 +1,4 @@
-from apps.patients.models import Habit
+from apps.patients.models import RelationshipType
 from rest_framework import permissions
 from rest_framework.generics import (
     ListCreateAPIView,
@@ -13,19 +13,19 @@ from rest_framework.filters import (
 from cardio.permissions import isStaffOrReadOnly
 
 from .serializers import (
-    HabitSerializer
+    RelationshipTypeSerializer
 )
 
 
-class HabitView(ListCreateAPIView):
+class RelationshipTypeView(ListCreateAPIView):
     permission_classes = (isStaffOrReadOnly,)
-    queryset = Habit.objects.all()
-    serializer_class = HabitSerializer
+    queryset = RelationshipType.objects.all()
+    serializer_class = RelationshipTypeSerializer
     filter_backends = (SearchFilter, OrderingFilter)
     search_fields = ('name',)
     ordering_fields = ('name', 'order')
 
-class HabitDetailView(RetrieveUpdateDestroyAPIView):
+class RelationshipTypeDetailView(RetrieveUpdateDestroyAPIView):
     permission_classes = (isStaffOrReadOnly,)
-    queryset = Habit.objects.all()
-    serializer_class = HabitSerializer
+    queryset = RelationshipType.objects.all()
+    serializer_class = RelationshipTypeSerializer

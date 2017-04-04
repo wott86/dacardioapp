@@ -2,8 +2,12 @@ from django.conf.urls import url
 from django.contrib import admin
 
 
-from .views import HabitsView
+from .views import (
+    HabitView,
+    HabitDetailView
+)
 
 urlpatterns = [
-    url(r'^$', HabitsView.as_view()),
+    url(r'^$', HabitView.as_view()),
+    url(r'^(?P<pk>[\w-]+)/$', HabitDetailView.as_view())
 ]

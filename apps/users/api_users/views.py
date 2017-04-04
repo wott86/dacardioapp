@@ -1,9 +1,7 @@
 from django.contrib.auth import get_user_model
-from rest_framework.response import Response
-from rest_framework import status, permissions
+from rest_framework import permissions
 
 from rest_framework.generics import (
-    CreateAPIView,
     ListCreateAPIView,
     RetrieveUpdateDestroyAPIView,
     UpdateAPIView
@@ -14,15 +12,15 @@ from rest_framework.filters import (
     OrderingFilter
 )
 
+from cardio.permissions import (
+    isStaffOrOwner,
+    isOwner
+)
+
 from .serializers import (
     UserCreateSerializer,
     UserSerializer,
     UserUpdatePasswordSerializer
-)
-
-from .permissions import (
-    isStaffOrOwner,
-    isOwner
 )
 
 User = get_user_model()
@@ -38,8 +36,9 @@ class UserView(ListCreateAPIView):
     permission_classes = (permissions.IsAdminUser,)
     queryset = User.objects.all()
     serializer_class = UserCreateSerializer
-    filter_backends = (SearchFilter,)
-    search_fields = ('username', 'email', 'first_name', 'last_name')
+    filter_backends = (SearchFilter, OrderingFilter)
+    search_fields = ('name', 'email', 'first_name', 'last_name')
+    ordering_fields = ('username', 'email', 'first_name', 'last_name')
 
     def get_serializer_class(self):
         if self.request.method == 'POST':

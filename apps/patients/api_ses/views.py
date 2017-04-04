@@ -1,4 +1,4 @@
-from apps.patients.models import Habit
+from apps.patients.models import Ses
 from rest_framework import permissions
 from rest_framework.generics import (
     ListCreateAPIView,
@@ -13,19 +13,19 @@ from rest_framework.filters import (
 from cardio.permissions import isStaffOrReadOnly
 
 from .serializers import (
-    HabitSerializer
+    SesSerializer
 )
 
 
-class HabitView(ListCreateAPIView):
+class SesView(ListCreateAPIView):
     permission_classes = (isStaffOrReadOnly,)
-    queryset = Habit.objects.all()
-    serializer_class = HabitSerializer
+    queryset = Ses.objects.all()
+    serializer_class = SesSerializer
     filter_backends = (SearchFilter, OrderingFilter)
     search_fields = ('name',)
     ordering_fields = ('name', 'order')
 
-class HabitDetailView(RetrieveUpdateDestroyAPIView):
+class SesDetailView(RetrieveUpdateDestroyAPIView):
     permission_classes = (isStaffOrReadOnly,)
-    queryset = Habit.objects.all()
-    serializer_class = HabitSerializer
+    queryset = Ses.objects.all()
+    serializer_class = SesSerializer

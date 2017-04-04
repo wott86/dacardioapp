@@ -1,10 +1,10 @@
 from rest_framework.serializers import ModelSerializer
-from apps.patients.models import Habit
+from apps.patients.models import RelationshipType
 
 
-class HabitSerializer(ModelSerializer):
+class RelationshipTypeSerializer(ModelSerializer):
 
     class Meta:
-        model = Habit
+        model = RelationshipType
         fields = '__all__'
         read_only_fields = ('id',)
