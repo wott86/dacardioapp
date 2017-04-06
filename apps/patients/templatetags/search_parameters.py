@@ -9,7 +9,6 @@ register = Library()
 def filter_params(params, *args):
     data = QueryDict('', mutable=True)
     data.update({param: params[param] for param in params if param not in args})
-    print data, args
     return data
 
 
