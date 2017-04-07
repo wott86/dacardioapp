@@ -34,7 +34,8 @@ def get_channel_image(channel, file_like, format_='png', interval_start=0,
         x,
         y,
         file_like,
-        'ECG: %s' % channel.record.patient.full_name,
+        _(u'Señal') if channel.type != 'r' else _(
+            'Serie temporal de intervalos RR'),
         format_=format_,
         ylabel=_('Tiempo (ms)') if channel.is_time else None,
         xlabel=_('Secuencia') if channel.is_time else 'ms',
@@ -267,12 +268,12 @@ def get_all_images(channel, file_like, initial_time, final_time, interval,
     if clear:
         plt.clf()
     plt.figure(1)
-    # Original
+    # Signal
     x, y = get_channel_points(channel, initial_time, final_time)
     plt.subplot(3, 2, 1)
     plt.plot(x, y, line_style,
-             color=random.rand(3, 1), label=label if label else _(u'Original'))
-    plt.title(_('Original'))
+             color=random.rand(3, 1), label=label if label else _(u'Señal'))
+    plt.title(_(u'Señal') if channel.type != 'r' else _('Serie temporal RR'))
     plt.grid(True)
     # Media
     x, y = channel.get_media_points(initial_time, final_time, interval)
