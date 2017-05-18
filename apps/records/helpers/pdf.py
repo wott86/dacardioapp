@@ -174,7 +174,7 @@ def create_pdf(channel, data=None, file_like=None):
     c.drawString(width - margin[1]-250, height - y_offset,
                  _(u'Final:'))
     c.drawRightString(width - margin[1], height - y_offset,
-                      data['request_data']['interval_start'])
+                      data['request_data']['interval_end'])
 
     y_offset += y_inc
     c.drawString(margin[3], height - y_offset,
