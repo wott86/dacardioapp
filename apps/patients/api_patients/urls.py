@@ -1,14 +1,20 @@
-from django.conf.urls import url
-from django.contrib import admin
+from django.conf.urls import url, include
+from rest_framework_nested import routers
 
 from .views import (
-    PatientView,
-    PatientDetailView,
+    DiagnosisViewSet,
+    PatientViewSet,
     PictureView
 )
 
-urlpatterns = [
-    url(r'^$', PatientView.as_view()),
-    url(r'^(?P<pk>[\w-]+)/$', PatientDetailView.as_view()),
-    url(r'^(?P<pk>[\w-]+)/picture/$', PictureView.as_view())
-]
+router = routers.SimpleRouter()
+router.register(r'patients', PatientViewSet)
+
+diagnosis_router = routers.NestedSimpleRouter(router, r'patients', lookup='patients')
+diagnosis_router.register(r'diagnosis', DiagnosisViewSet, base_name='patient-diagnosis')
+
+urlpatterns = (
+    url(r'^', include(router.urls)),
+    url(r'^', include(diagnosis_router.urls)),
+    url(r'^patients/(?P<pk>[\w-]+)/picture/$', PictureView.as_view())
+)

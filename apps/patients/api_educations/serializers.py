@@ -8,3 +8,4 @@ class EducationSerializer(ModelSerializer):
         model = Education
         fields = '__all__'
         read_only_fields = ('id',)
+        
