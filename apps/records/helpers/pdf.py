@@ -356,7 +356,7 @@ def create_pdf(channel, data=None, file_like=None):
     c.resetTransforms()
     c.rect(margin[3],
            margin[2] - 6,
-           width-margin[1]-margin[3]-10,
+           width-margin[1]-margin[3],
            height-y_offset-margin[2])
 
     # ########
