@@ -1,8 +1,15 @@
+from django.shortcuts import get_object_or_404
+from datetime import datetime
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.viewsets import (
-    ModelViewSet,
-    ViewSet
+    GenericViewSet,
+    ModelViewSet
+)
+from rest_framework.mixins import (
+    CreateModelMixin,
+    ListModelMixin,
+    RetrieveModelMixin
 )
 
 from rest_framework.generics import (
@@ -17,6 +24,7 @@ from rest_framework.filters import (
 )
 
 from apps.patients.models import (
+    History,
     Diagnosis,
     Patient
 )
@@ -44,7 +52,7 @@ class PatientViewSet(ModelViewSet):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        obj = serializer.save()
+        obj = serializer.save(created_by=self.request.user, updated_by=self.request.user)
         return_serializer = PatientSerializer(obj)
         headers = self.get_success_headers(return_serializer.data)
         return Response(return_serializer.data, status=status.HTTP_201_CREATED, headers=headers)
@@ -54,7 +62,7 @@ class PatientViewSet(ModelViewSet):
         instance = self.get_object()
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
-        obj = serializer.save()
+        obj = serializer.save(updated_by=self.request.user)
         return_serializer = PatientSerializer(obj)
         if getattr(instance, '_prefetched_objects_cache', None):
             instance._prefetched_objects_cache = {}
@@ -64,13 +72,19 @@ class PictureView(RetrieveUpdateAPIView):
     queryset = Patient.objects.all()
     serializer_class = PictureSerializer
 
-class DiagnosisViewSet(ViewSet):
+class DiagnosisViewSet(GenericViewSet, CreateModelMixin, ListModelMixin, RetrieveModelMixin):
     serializer_class = DiagnosisCreateSerializer
+    queryset = Diagnosis.objects.all()
+
+    def get_serializer_class(self):
+        if self.request.method == 'POST' or self.request.method == 'PUT' or self.request.method == 'PATCH':
+            return DiagnosisCreateSerializer
+        return DiagnosisSerializer
 
     def create(self, request, patients_pk=None):
         queryset = Diagnosis.objects.filter(patient=patients_pk)
         patient = Patient.objects.get(pk=patients_pk)
-        serializer = DiagnosisSerializer(data=request.data)
+        serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         obj = serializer.save(patient=patient, made_by=self.request.user)
         return_serializer = DiagnosisSerializer(obj)
@@ -78,10 +92,15 @@ class DiagnosisViewSet(ViewSet):
 
     def list(self, request, patients_pk=None):
         queryset = Diagnosis.objects.filter(patient=patients_pk)
-        serializer = DiagnosisSerializer(queryset, many=True)
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        serializer =  self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
     def retrieve(self, request, pk=None, patients_pk=None):
-        queryset = Diagnosis.objects.filter(pk=pk, patient=patients_pk)
-        serializer = DiagnosisSerializer(queryset, many=True)
+        queryset = Diagnosis.objects.filter(pk=pk)
+        diagnosis = get_object_or_404(queryset, pk=pk)
+        serializer = self.get_serializer(diagnosis)
         return Response(serializer.data)

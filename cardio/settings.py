@@ -40,6 +40,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.gis',
     'django_extensions',
+    'django_model_changes',
     'apps.users',
     'apps.patients',
     'apps.records',

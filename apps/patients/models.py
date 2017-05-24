@@ -2,6 +2,9 @@
 from django.db import models
 from django.db.models.aggregates import Max, Min
 from django.utils.translation import ugettext as _
+from django.db.models.signals import pre_save, post_save
+from django.dispatch import receiver
+from django_model_changes import ChangesMixin
 import os
 import uuid
 import mimetypes
@@ -104,7 +107,7 @@ def get_upload_path(instance, filename):
 
 
 # ################## Patient data models
-class Patient(models.Model):
+class Patient(models.Model, ChangesMixin):
     """
     The patient
     """
@@ -163,6 +166,9 @@ class Patient(models.Model):
     family_record = models.TextField(default='', blank=True, verbose_name=_('antecedentes familiares'))
     habits = models.ManyToManyField(Habit, related_name='patients', blank=True, verbose_name=_(u'hábitos personales'))
     physical_exam = models.TextField(default='', blank=True, verbose_name=_(u'examen físico'))
+
+    created_by = models.ForeignKey('users.User', blank=False, related_name='created_by', verbose_name=_(u'creado por'))
+    updated_by = models.ForeignKey('users.User', blank=False, related_name='updated_by', verbose_name=_(u'editado por'))
 
     @classmethod
     def get_ordered_items(cls, order):
@@ -293,3 +299,27 @@ class Diagnosis(models.Model):
     class Meta:
         verbose_name = _(u'diagnóstico')
         verbose_name_plural = _(u'diagnósticos')
+    
+@receiver(post_save, sender=Patient)
+def update_history_log(sender, instance, **kwargs):
+    if instance.was_persisted():
+        changes = instance.changes()
+        for key in changes:
+            old_value = changes[key][1]
+            new_value = changes[key][0]
+            History.objects.create(
+                modified_by=instance.updated_by,
+                patient=instance,
+                modified_field=key,
+                modified_old_value=unicode(changes[key][1])
+                if not isinstance(old_value, models.Model)
+                else str(old_value.id),
+                modified_new_value=unicode(new_value)
+                if not isinstance(new_value, models.Model)
+                else str(new_value.id)
+            )
+    else:
+        History.objects.create(
+            modified_by=instance.updated_by,
+            patient=instance,
+        )

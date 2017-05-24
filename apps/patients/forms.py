@@ -30,7 +30,7 @@ class PatientAdminForm(PatientBaseForm):
 
 class PatientForm(PatientBaseForm):
     class Meta(PatientBaseForm.Meta):
-        exclude = ['street_2', 'chart_number', 'active']
+        exclude = ['street_2', 'chart_number', 'active', 'created_by', 'updated_by']
         widgets = {
             'city': forms.TextInput,
             'habits': forms.SelectMultiple(attrs={'class': 'selectpicker'}),

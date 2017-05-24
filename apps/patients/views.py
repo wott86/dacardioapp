@@ -102,11 +102,10 @@ class PatientList(View):
 
         patient = None
         if form.is_valid():
-            patient = form.save()
-            History.objects.create(
-                modified_by=request.user,
-                patient=patient
-            )
+            patient = form.save(commit=False)
+            patient.created_by = request.user
+            patient.updated_by = request.user
+            patient.save()
             messages.success(
                 request,
                 _('Los datos del paciente %(name)s han sido guardados \
@@ -160,19 +159,9 @@ class PatientEdit(View):
         form = self.form_class(request.POST, request.FILES, instance=patient)
 
         if form.is_valid():
-            patient = form.save()
-            for changed in form.changed_data:
-                History.objects.create(
-                    modified_by=request.user,
-                    patient=patient,
-                    modified_field=changed,
-                    modified_old_value=unicode(form.initial[changed])
-                    if not isinstance(form.initial[changed], Model)
-                    else str(form.initial[changed].id),
-                    modified_new_value=unicode(form.cleaned_data[changed])
-                    if not isinstance(form.cleaned_data[changed], Model)
-                    else str(form.cleaned_data[changed].id)
-                )
+            patient = form.save(commit=False)
+            patient.updated_by = request.user
+            patient.save()
             messages.success(
                 request,
                 _('Los datos del paciente %(name)s han sido guardados \
