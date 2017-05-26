@@ -174,7 +174,7 @@ def create_pdf(channel, data=None, file_like=None):
     c.drawString(width - margin[1]-250, height - y_offset,
                  _(u'Final:'))
     c.drawRightString(width - margin[1], height - y_offset,
-                      data['request_data']['interval_start'])
+                      data['request_data']['interval_end'])
 
     y_offset += y_inc
     c.drawString(margin[3], height - y_offset,
@@ -317,6 +317,47 @@ def create_pdf(channel, data=None, file_like=None):
     c.drawImage(image_buffer, (width - image_width)/2,
                 height - y_offset - image_height,
                 width=image_width, height=image_height)
+
+    # Page 3
+    y_offset = margin[0]  # this must be incremented
+    c.showPage()
+    c.drawCentredString(width/2, height-y_offset,
+                        _(u'Electrocardiografía ambulatoria continua'))
+    y_offset += y_inc
+    c.drawCentredString(width/2, height-y_offset,
+                        _(u'(Holter 24 Hrs)'))
+    y_offset += y_inc
+    c.setStrokeColor(colors.grey)
+    c.setLineWidth(4)
+    c.line(margin[3], height - y_offset, width - margin[1], height - y_offset)
+    y_offset += (y_inc * 2)
+    c.setStrokeColor(colors.black)
+
+    # patient data
+    c.drawString(margin[3], height - y_offset,
+                 _('Nombre del paciente: %(patient_name)s') % {
+                     'patient_name': channel.record.patient.full_name
+                 })
+    c.drawString(width - margin[1]-250, height - y_offset,
+                 _(u'Médico tratante:'))
+    c.drawRightString(width - margin[1], height - y_offset,
+                      channel.record.patient.added_by.full_name)
+
+    y_offset += 6
+    c.setLineWidth(0.5)
+    c.line(margin[3], height - y_offset, width - margin[1], height - y_offset)
+    y_offset += (y_inc * 2)
+
+    c.drawCentredString(width/2, height-y_offset,
+                        _(u'Observaciones'))
+    y_offset += 6
+
+    c.saveState()
+    c.resetTransforms()
+    c.rect(margin[3],
+           margin[2] - 6,
+           width-margin[1]-margin[3],
+           height-y_offset-margin[2])
 
     # ########
     c.showPage()

@@ -187,7 +187,7 @@
                                 </p>
                                 <p class='input-group col-lg-6 col-md-6 col-sm-6 col-sx-6'>
                                     <select name="stat_type" id="id_stat_type" class="form-control">
-                                        <option value="normal">{% trans 'Original' %}</option>
+                                        <option value="normal">{% if channel.type == 'r' %}{% trans 'Serie temporal de intervalos RR' %}{% else %}{% trans 'Señal' %}{% endif %}</option>
                                         <option value="media">{% trans 'Media' %}</option>
                                         <option value="std_dev">{% trans 'Desviación Estándar' %}</option>
                                         <option value="return">{% trans 'Mapa de retorno' %}</option>

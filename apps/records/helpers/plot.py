@@ -26,6 +26,17 @@ def get_channel_points(channel, interval_start, interval_end):
     return x, y
 
 
+def get_all_channel_points(channel):
+    x = []
+    y = []
+    [(
+        x.append(point.x),
+        y.append(point.y)
+    ) for point in channel.points.all().order_by('x')]
+
+    return x, y
+
+
 def get_channel_image(channel, file_like, format_='png', interval_start=0,
                       interval_end=None, clear=True, color='r', line_style='-'):
     x, y = get_channel_points(channel, interval_start, interval_end)
@@ -34,7 +45,8 @@ def get_channel_image(channel, file_like, format_='png', interval_start=0,
         x,
         y,
         file_like,
-        'ECG: %s' % channel.record.patient.full_name,
+        _(u'Señal') if channel.type != 'r' else _(
+            'Serie temporal de intervalos RR'),
         format_=format_,
         ylabel=_('Tiempo (ms)') if channel.is_time else None,
         xlabel=_('Secuencia') if channel.is_time else 'ms',
@@ -45,13 +57,16 @@ def get_channel_image(channel, file_like, format_='png', interval_start=0,
     )
 
 
-def get_media_image(channel, file_like, initial_time, final_time, interval, format_='png', clear=True, color='r', line_style='-', label=None, title=None):
+def get_media_image(channel, file_like, initial_time, final_time,
+                    interval, format_='png', clear=True, color='r',
+                    line_style='-', label=None, title=None):
     x, y = channel.get_media_points(initial_time, final_time, interval)
     get_image(
         x,
         y,
         file_like,
-        'RR Media: %s' % channel.record.patient.full_name if title is None else title,
+        'RR Media: %s' % channel.record.patient.full_name if title is None else
+        title,
         format_=format_,
         ylabel=_('Media (ms)'),
         xlabel=_('Intervalo (%(interval)d m)') % {'interval': interval / 60000},
@@ -63,7 +78,10 @@ def get_media_image(channel, file_like, initial_time, final_time, interval, form
     )
 
 
-def get_standard_deviation_image(channel, file_like, initial_time, final_time, interval, format_='png', clear=True, color='r', line_style='-', label=None, title=None):
+def get_standard_deviation_image(channel, file_like, initial_time, final_time,
+                                 interval, format_='png', clear=True,
+                                 color='r', line_style='-', label=None,
+                                 title=None):
     x, y = channel.get_standard_deviation_points(
         initial_time, final_time, interval)
     get_image(
@@ -84,7 +102,9 @@ def get_standard_deviation_image(channel, file_like, initial_time, final_time, i
     )
 
 
-def get_return_map_image(channel, file_like, initial_time, final_time, format_='png', clear=True, color='r', line_style='.', title=None, label=None):
+def get_return_map_image(channel, file_like, initial_time, final_time,
+                         format_='png', clear=True, color='r', line_style='.',
+                         title=None, label=None):
     x, y = channel.get_return_map(initial_time, final_time)
     get_image(
         x,
@@ -104,7 +124,9 @@ def get_return_map_image(channel, file_like, initial_time, final_time, format_='
     )
 
 
-def get_SDSD_image(channel, file_like, initial_time, final_time, interval, format_='png', clear=True, color='r', line_style='-', label=None, title=None):
+def get_SDSD_image(channel, file_like, initial_time, final_time, interval,
+                   format_='png', clear=True, color='r', line_style='-',
+                   label=None, title=None):
     x, y = channel.get_SDSD(initial_time, final_time, interval)
     get_image(
         x,
@@ -124,7 +146,9 @@ def get_SDSD_image(channel, file_like, initial_time, final_time, interval, forma
     )
 
 
-def get_PNN50_image(channel, file_like, initial_time, final_time, interval, format_='png', clear=True, color='r', line_style='-', label=None, title=None):
+def get_PNN50_image(channel, file_like, initial_time, final_time, interval,
+                    format_='png', clear=True, color='r', line_style='-',
+                    label=None, title=None):
     x, y = channel.get_PNN50(initial_time, final_time, interval)
     get_image(
         x,
@@ -267,46 +291,64 @@ def get_all_images(channel, file_like, initial_time, final_time, interval,
     if clear:
         plt.clf()
     plt.figure(1)
-    # Original
+    # All signal
+
+    x, y = get_all_channel_points(channel)
+    ax1 = plt.subplot2grid((4, 2), (0, 0), colspan=2)
+    ax1.plot(x, y, line_style,
+             color=random.rand(3, 1), label=None)
+    ax1.grid(False)
+    ax1.set_xlim([min(x), max(x)])
+    ax1.get_xaxis().set_visible(False)
+    ax1.get_yaxis().set_visible(False)
+    # Signal
     x, y = get_channel_points(channel, initial_time, final_time)
-    plt.subplot(3, 2, 1)
-    plt.plot(x, y, line_style,
-             color=random.rand(3, 1), label=label if label else _(u'Original'))
-    plt.title(_('Original'))
-    plt.grid(True)
+    # setting background for our interval
+    ax1.axvspan(min(x), max(x), facecolor='b', alpha=0.5)
+    ax2 = plt.subplot2grid((4, 2), (1, 0))
+    ax2.plot(x, y, line_style,
+             color=random.rand(3, 1), label=label if label else _(u'Señal'))
+    ax2.set_title(
+        _(u'Señal') if channel.type != 'r' else _('Serie temporal RR'))
+    ax2.grid(True)
+    ax2.set_xlim([min(x), max(x)])
     # Media
     x, y = channel.get_media_points(initial_time, final_time, interval)
-    plt.subplot(3, 2, 2)
-    plt.plot(x, y, line_style,
+    ax3 = plt.subplot2grid((4, 2), (1, 1))
+    ax3.plot(x, y, line_style,
              color=random.rand(3, 1), label=label if label else _(u'Media'))
-    plt.title(_('Media'))
-    plt.grid(True)
+    ax3.set_title(_('Media'))
+    ax3.grid(True)
+    ax3.set_xlim([min(x), max(x)])
     # STD
-    x, y = channel.get_standard_deviation_points(initial_time, final_time, interval)
-    plt.subplot(3, 2, 3)
-    plt.title(_(u'Desviación estándar'))
-    plt.grid(True)
-    plt.plot(x, y, line_style,
+    x, y = channel.get_standard_deviation_points(
+        initial_time, final_time, interval)
+    ax4 = plt.subplot2grid((4, 2), (2, 0))
+    ax4.set_title(_(u'Desviación estándar'))
+    ax4.grid(True)
+    ax4.plot(x, y, line_style,
              color=random.rand(3, 1), label=label if label else '')
     # Return map
     x, y = channel.get_return_map(initial_time, final_time)
-    plt.subplot(3, 2, 4)
-    plt.title(_('Mapa de retorno'))
-    plt.grid(True)
-    plt.plot(x, y, '.', color=random.rand(3, 1), label=label if label else '')
+    ax5 = plt.subplot2grid((4, 2), (2, 1))
+    ax5.set_title(_('Mapa de retorno'))
+    ax5.grid(True)
+    ax5.plot(x, y, '.', color=random.rand(3, 1), label=label if label else '')
     # SDSD
     x, y = channel.get_SDSD(initial_time, final_time, interval)
-    plt.subplot(3, 2, 5)
-    plt.title(_('rMSSD o SDSD'))
-    plt.grid(True)
-    plt.plot(x, y, line_style, color=random.rand(3, 1), label=label if label else '')
+    ax6 = plt.subplot2grid((4, 2), (3, 0))
+    ax6.set_title(_('rMSSD o SDSD'))
+    ax6.grid(True)
+    ax6.plot(x, y, line_style, color=random.rand(3, 1),
+             label=label if label else '')
     # PNN50
     x, y = channel.get_PNN50_points(
         initial_time, final_time, interval)
-    plt.subplot(3, 2, 6)
-    plt.title(_('PNN50'))
-    plt.grid(True)
-    plt.plot(x, y, line_style, color=random.rand(3, 1), label=label if label else '')
+    ax7 = plt.subplot2grid((4, 2), (3, 1))
+    ax7.set_title(_('PNN50'))
+    ax7.grid(True)
+    ax7.plot(x, y, line_style, color=random.rand(3, 1),
+             label=label if label else '')
 
     # Finally drawing
     plt.tight_layout()
@@ -314,7 +356,9 @@ def get_all_images(channel, file_like, initial_time, final_time, interval,
         plt.savefig(file_like, format=format_, bbox_inches='tight')
 
 
-def get_image(x, y, file_like=None, title=None, format_='png', xlabel=None, ylabel=None, line_style='-', hide_axis=False, clear=True, color='r', label=None):
+def get_image(x, y, file_like=None, title=None, format_='png', xlabel=None,
+              ylabel=None, line_style='-', hide_axis=False, clear=True,
+              color='r', label=None):
     if clear:
         plt.clf()
     plt.plot(x, y, line_style, color=color, label=label if label else '')
