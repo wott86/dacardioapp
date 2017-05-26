@@ -36,11 +36,6 @@ if __name__ == "__main__":
             ses=Ses.objects.all()[0],
             occupation=Occupation.objects.all()[0],
             education=Education.objects.all()[0],
+            created_by=user,
+            updated_by=user,
         )
-
-        History.objects.create(
-            modified_by=user,
-            patient=patient
-        )
-
-

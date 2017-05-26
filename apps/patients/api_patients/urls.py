@@ -10,7 +10,7 @@ from .views import (
 router = routers.SimpleRouter()
 router.register(r'patients', PatientViewSet)
 
-diagnosis_router = routers.NestedSimpleRouter(router, r'patients', lookup='patients')
+diagnosis_router = routers.NestedSimpleRouter(router, r'patients', lookup='patient')
 diagnosis_router.register(r'diagnosis', DiagnosisViewSet, base_name='patient-diagnosis')
 
 urlpatterns = (

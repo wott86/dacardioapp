@@ -81,17 +81,18 @@ class DiagnosisViewSet(GenericViewSet, CreateModelMixin, ListModelMixin, Retriev
             return DiagnosisCreateSerializer
         return DiagnosisSerializer
 
-    def create(self, request, patients_pk=None):
-        queryset = Diagnosis.objects.filter(patient=patients_pk)
-        patient = Patient.objects.get(pk=patients_pk)
+    def create(self, request, patient_pk=None):
+        queryset = Diagnosis.objects.filter(patient=patient_pk)
+        patient = Patient.objects.get(pk=patient_pk)
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         obj = serializer.save(patient=patient, made_by=self.request.user)
         return_serializer = DiagnosisSerializer(obj)
         return Response(return_serializer.data)
 
-    def list(self, request, patients_pk=None):
-        queryset = Diagnosis.objects.filter(patient=patients_pk)
+    def list(self, request, patient_pk=None):
+        patient = get_object_or_404(Patient, pk=patient_pk)
+        queryset = patient.diagnosis.all()
         page = self.paginate_queryset(queryset)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
@@ -99,8 +100,8 @@ class DiagnosisViewSet(GenericViewSet, CreateModelMixin, ListModelMixin, Retriev
         serializer =  self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
-    def retrieve(self, request, pk=None, patients_pk=None):
-        queryset = Diagnosis.objects.filter(pk=pk)
+    def retrieve(self, request, pk=None, patient_pk=None):
+        queryset = Diagnosis.objects.filter(pk=pk, patient=patient_pk)
         diagnosis = get_object_or_404(queryset, pk=pk)
         serializer = self.get_serializer(diagnosis)
         return Response(serializer.data)
