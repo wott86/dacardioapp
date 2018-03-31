@@ -37,7 +37,7 @@ class UserView(ListCreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserCreateSerializer
     filter_backends = (SearchFilter, OrderingFilter)
-    search_fields = ('name', 'email', 'first_name', 'last_name')
+    search_fields = ('email', 'first_name', 'last_name')
     ordering_fields = ('username', 'email', 'first_name', 'last_name')
 
     def get_serializer_class(self):
